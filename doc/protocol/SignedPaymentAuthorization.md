@@ -131,4 +131,4 @@ Settlement Execution
 Settlement Verification
 ```
 
-See [SettlementIntentIntentHash](./SettlementIntentIntentHash.md) for details on the optional intent binding.
+See [SettlementIntentHash](./SettlementIntentHash.md) for details on the optional intent binding.

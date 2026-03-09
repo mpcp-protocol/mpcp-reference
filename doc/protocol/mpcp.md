@@ -272,7 +272,7 @@ Example structure:
 
 The SPA binds the authorized payment parameters and optionally includes an `intentHash` to bind the authorization to a canonical settlement intent.
 
-See [SignedPaymentAuthorization](./SignedPaymentAuthorization.md) for the full specification. For `intentHash`, see [SettlementIntentIntentHash](./SettlementIntentIntentHash.md).
+See [SignedPaymentAuthorization](./SignedPaymentAuthorization.md) for the full specification. For `intentHash`, see [SettlementIntentHash](./SettlementIntentHash.md).
 
 ---
 
@@ -298,7 +298,7 @@ Example structure:
 
 This structure is used to compute the `intentHash`.
 
-See [SettlementIntent](./SettlementIntent.md) for the full specification. For the hash computation, see [SettlementIntentIntentHash](./SettlementIntentIntentHash.md).
+See [SettlementIntent](./SettlementIntent.md) for the full specification. For the hash computation, see [SettlementIntentHash](./SettlementIntentHash.md).
 
 ---
 

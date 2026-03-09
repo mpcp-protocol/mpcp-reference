@@ -1,4 +1,4 @@
-# SettlementIntentIntentHash
+# SettlementIntentHash
 
 Part of the [Machine Payment Control Protocol (MPCP)](./mpcp.md).
 
