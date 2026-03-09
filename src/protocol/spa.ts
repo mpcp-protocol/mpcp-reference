@@ -1,5 +1,5 @@
 import crypto, { createHash } from "node:crypto";
-import type { Asset, PaymentPolicyDecision, SettlementResult } from "../policy-core/types.js";
+import type { Asset, PaymentPolicyDecision, Rail, SettlementResult } from "../policy-core/types.js";
 import { canonicalJson } from "../crypto/canonicalJson.js";
 import { computeIntentHash } from "../crypto/intentHash.js";
 
@@ -9,7 +9,7 @@ export interface PaymentAuthorization {
   sessionId: string;
   policyHash: string;
   quoteId: string;
-  rail: string;
+  rail: Rail;
   asset: Asset;
   amount: string;
   destination: string;
@@ -138,7 +138,10 @@ export function verifySignedPaymentAuthorizationForSettlement(
     return { ok: false, reason: "expired" };
   }
 
-  if (envelope.authorization.intentHash && options?.settlementIntent) {
+  if (envelope.authorization.intentHash) {
+    if (!options?.settlementIntent) {
+      return { ok: false, reason: "mismatch" };
+    }
     if (envelope.authorization.intentHash !== computeIntentHash(options.settlementIntent)) {
       return { ok: false, reason: "mismatch" };
     }
@@ -149,7 +152,7 @@ export function verifySignedPaymentAuthorizationForSettlement(
     auth.decisionId !== decisionId ||
     auth.rail !== settlement.rail ||
     auth.amount !== settlement.amount ||
-    (settlement.destination && auth.destination !== settlement.destination) ||
+    (auth.destination && (!settlement.destination || settlement.destination !== auth.destination)) ||
     !assetMatches(auth.asset, settlement.asset)
   ) {
     return { ok: false, reason: "mismatch" };
