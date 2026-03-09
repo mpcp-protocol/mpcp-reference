@@ -1,8 +1,17 @@
 import type { PolicyGrant, SignedBudgetAuthorization } from "../protocol/types.js";
 import type { SignedPaymentAuthorization } from "../protocol/spa.js";
-import type { PaymentPolicyDecision, SettlementResult } from "../policy-core/types.js";
+import type {
+  Asset,
+  Policy,
+  Rail,
+  PaymentPolicyDecision,
+  SettlementResult,
+} from "../policy-core/types.js";
 
 export type VerificationResult = { ok: true } | { ok: false; reason: string };
+
+/** Rail-specific settlement intent. Use Record<string, unknown> for custom shapes. */
+export type SettlementIntent = Record<string, unknown>;
 
 export interface MPCPClientConfig {
   baseUrl: string;
@@ -10,12 +19,12 @@ export interface MPCPClientConfig {
 }
 
 export interface GrantRequest {
-  policy: unknown;
+  policy: Policy;
   lotId: string;
   vehicleId?: string;
   operatorId?: string;
-  railsOffered: string[];
-  assetsOffered: unknown[];
+  railsOffered: Rail[];
+  assetsOffered: Asset[];
   nowISO?: string;
 }
 
@@ -25,24 +34,23 @@ export interface BudgetRequest {
   grantId: string;
   policyHash: string;
   maxAmountMinor: string;
-  allowedRails: string[];
-  allowedAssets: unknown[];
+  allowedRails: Rail[];
+  allowedAssets: Asset[];
   destinationAllowlist: string[];
   expiresAt: string;
-  [key: string]: unknown;
 }
 
 export interface AuthorizeRequest {
   sessionId: string;
   decision: PaymentPolicyDecision;
-  settlementIntent?: unknown;
+  settlementIntent?: SettlementIntent;
 }
 
 export interface VerifySettlementRequest {
   decisionId: string;
   settlement: SettlementResult;
   spa: SignedPaymentAuthorization;
-  settlementIntent?: unknown;
+  settlementIntent?: SettlementIntent;
 }
 
 export interface MPCPError extends Error {
@@ -109,7 +117,7 @@ export class MPCPClient {
     });
   }
 
-  async computeIntentHash(intent: unknown): Promise<{ intentHash: string; canonicalIntent: object }> {
+  async computeIntentHash(intent: SettlementIntent): Promise<{ intentHash: string; canonicalIntent: object }> {
     return this.json<{ intentHash: string; canonicalIntent: object }>("/intent/hash", {
       method: "POST",
       body: { intent },
