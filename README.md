@@ -21,14 +21,19 @@ This document defines the MPCP artifacts, verification rules, canonical hashing,
 
 # Quick Start
 
+The following example demonstrates the core MPCP lifecycle: entry policy evaluation → payment authorization → settlement verification.
+
 ```ts
 import {
   evaluateEntryPolicy,
   evaluatePaymentPolicy,
   enforcePayment,
-} from "mpcp-service";
+  computeIntentHash,
+  canonicalJson,
+  type MPCPPolicy,
+} from "mpcp-service/sdk";
 
-const policy = { version: 1, lotAllowlist: ["LOT-A"], railAllowlist: ["xrpl"], capPerTxMinor: "5000" };
+const policy: MPCPPolicy = { version: 1, lotAllowlist: ["LOT-A"], railAllowlist: ["xrpl"], capPerTxMinor: "5000" };
 const now = new Date().toISOString();
 const asset = { kind: "IOU" as const, currency: "USDC", issuer: "rIssuer" };
 
@@ -52,12 +57,32 @@ const decision = evaluatePaymentPolicy({
 const result = enforcePayment(decision, {
   amount: "1000",
   rail: "xrpl",
+  destination: "rDestination",
   asset,
 });
 // result.allowed === true
+
+// Canonical intent helpers
+const intent = {
+  rail: "xrpl",
+  destination: "rDestination",
+  amount: "1000",
+  asset: { kind: "IOU" as const, currency: "USDC", issuer: "rIssuer" },
+};
+
+const hash = computeIntentHash(intent);
+
+const canonical = canonicalJson({
+  rail: "xrpl",
+  destination: "rDestination",
+  amount: "1000",
+});
+
+console.log(hash);
+console.log(canonical);
 ```
 
-To issue **SignedBudgetAuthorization** and **SignedPaymentAuthorization**, configure `MPCP_SBA_SIGNING_*` and `MPCP_SPA_SIGNING_*` env vars, then use `createSignedSessionBudgetAuthorization` and `createSignedPaymentAuthorization`.
+To issue **SignedBudgetAuthorization** and **SignedPaymentAuthorization**, configure `MPCP_SBA_SIGNING_*` and `MPCP_SPA_SIGNING_*` env vars, then use `createSignedSessionBudgetAuthorization` and `createSignedPaymentAuthorization` from `mpcp-service/sdk`.
 
 ---
 
@@ -73,6 +98,26 @@ Machine economies require a different model:
 - AI agents executing programmatic purchases
 
 MPCP introduces a **cryptographically enforced authorization pipeline** that constrains these payments through signed artifacts and deterministic verification.
+
+---
+
+# MPCP Artifacts
+
+## PolicyGrant
+
+The result of entry policy evaluation. Grants a session permission to enter a lot (or scope) and defines the allowed rails, assets, and spending caps for that session. Includes a `policyHash` that binds subsequent authorizations to the evaluated policy.
+
+## SBA (SignedBudgetAuthorization)
+
+SignedBudgetAuthorization authorizes a spending envelope for a session. It specifies a budget (`maxAmountMinor`), allowed rails, allowed assets, and destination allowlist. The SBA is cryptographically signed before the session begins. It constrains subsequent payment authorizations.
+
+## SPA (SignedPaymentAuthorization)
+
+SignedPaymentAuthorization binds a specific payment to a policy decision. It includes the decision ID, rail, asset, amount, destination, and optional `intentHash`. The SPA is signed when the payment is authorized. It is verified against the executed settlement.
+
+## intentHash
+
+A deterministic hash of a settlement intent (e.g. `SHA256(canonicalJson(intent))`). Used to bind a payment authorization to a specific settlement intent. Ensures the executed settlement matches the authorized intent.
 
 ---
 
@@ -100,7 +145,8 @@ Each stage cryptographically constrains the next.
 
 # Core Components in This Repository
 
-The repository currently implements the **protocol core**, not the full network service.
+This repository implements the MPCP protocol core and reference verification engine.
+It does not yet include the full MPCP network service.
 
 ## Policy Engine
 
@@ -132,6 +178,19 @@ Artifacts contain the parameters that bound autonomous spending.
 
 ---
 
+## Intent Hashing
+
+Implements deterministic hashing for payment intents.
+
+Components include:
+
+- canonical JSON serialization
+- `intentHash` computation
+
+These are used to bind authorizations to a specific settlement intent.
+
+---
+
 ## Verification Engine
 
 Settlement verification logic ensures that executed transactions match the authorized parameters.
@@ -144,19 +203,6 @@ Verification checks include:
 - destination verification
 - expiration enforcement
 - replay protection
-
----
-
-## Intent Hashing
-
-Implements deterministic hashing for payment intents.
-
-Components include:
-
-- canonical JSON serialization
-- `intentHash` computation
-
-These are used to bind authorizations to a specific settlement intent.
 
 ---
 
@@ -215,11 +261,11 @@ Wallet executes settlement
 ```
 mpcp-service
  ├── src
- │   ├── artifacts
  │   ├── crypto
  │   ├── policy-core
  │   ├── protocol
- │   └── verifier
+ │   ├── sdk
+ │   └── ...
  │
  ├── test
  ├── doc

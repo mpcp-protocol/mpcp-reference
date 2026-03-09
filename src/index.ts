@@ -4,3 +4,4 @@ export * from "./protocol/spa.js";
 export * from "./protocol/sba.js";
 export * from "./crypto/canonicalJson.js";
 export * from "./crypto/intentHash.js";
+export * from "./sdk/index.js";
