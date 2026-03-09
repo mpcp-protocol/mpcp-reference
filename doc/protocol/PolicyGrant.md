@@ -1,5 +1,3 @@
-
-
 # PolicyGrant
 
 Artifact Type: MPCP:PolicyGrant

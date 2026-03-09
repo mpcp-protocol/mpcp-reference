@@ -2,7 +2,7 @@
 
 Artifact Type: MPCP:FPA
 
-Extension to the [Machine Payment Control Protocol (MPCP)](./mpcp.md).
+Part of the [Machine Payment Control Protocol (MPCP)](./mpcp.md).
 
 ---
 
