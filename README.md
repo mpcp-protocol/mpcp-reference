@@ -13,7 +13,7 @@ For the rationale behind the protocol, see:
 
 For the full protocol specification, see:
 
-[Machine Payment Control Protocol Specification](./doc/Protocol/mpcp.md)
+[Machine Payment Control Protocol Specification](./doc/protocol/mpcp.md)
 
 This document defines the MPCP artifacts, verification rules, canonical hashing, replay protection, the authorization lifecycle, and the verification algorithm used by MPCP implementations.
 
