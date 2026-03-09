@@ -1,6 +1,6 @@
-# @mpcp/sdk Minimal Plan
+# SDK Minimal Plan
 
-A single source of truth for the SDK scope. Implementation must stay within these bounds.
+The **root package** (`mpcp-service`) is the SDK. A single source of truth for the SDK scope. Implementation must stay within these bounds.
 
 ---
 
@@ -90,7 +90,7 @@ Pure functions. No network calls.
 | `verifySignedPaymentAuthorizationForSettlement` | `(envelope, decisionId, settlement, options?) => { ok } \| { ok: false; reason }` |
 | `enforcePayment` | `(decision, settlement) => EnforcementResult` |
 
-Local helpers depend on `mpcp-service`; they re‑export or wrap its logic.
+Local helpers live in `src/sdk/`. No separate npm package.
 
 ---
 
@@ -99,7 +99,7 @@ Local helpers depend on `mpcp-service`; they re‑export or wrap its logic.
 ### With the hosted service
 
 ```ts
-import { MPCPClient } from "@mpcp/sdk";
+import { MPCPClient } from "mpcp-service";
 
 const client = new MPCPClient({
   baseUrl: "https://mpcp.example.com",
@@ -123,7 +123,7 @@ import {
   verifySignedBudgetAuthorization,
   createSignedPaymentAuthorization,
   verifySignedPaymentAuthorizationForSettlement,
-} from "@mpcp/sdk";
+} from "mpcp-service";
 
 const hash = computeIntentHash(intent);
 const canonical = canonicalJson(value);
@@ -158,4 +158,4 @@ const ok2 = verifySignedPaymentAuthorizationForSettlement(spa, decisionId, settl
 
 - New exports require an update to this document.
 - If a feature is in “Out of Scope,” it does not go in the SDK without revising this plan first.
-- Keep `packages/sdk` small. Prefer re-exports over new logic.
+- Keep the SDK surface small. Prefer re-exports over new logic.

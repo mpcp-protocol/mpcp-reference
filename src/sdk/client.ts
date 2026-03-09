@@ -1,7 +1,6 @@
-import type { PolicyGrant } from "mpcp-service";
-import type { SignedBudgetAuthorization } from "mpcp-service";
-import type { SignedPaymentAuthorization } from "mpcp-service";
-import type { PaymentPolicyDecision, SettlementResult } from "mpcp-service";
+import type { PolicyGrant, SignedBudgetAuthorization } from "../protocol/types.js";
+import type { SignedPaymentAuthorization } from "../protocol/spa.js";
+import type { PaymentPolicyDecision, SettlementResult } from "../policy-core/types.js";
 
 export type VerificationResult = { ok: true } | { ok: false; reason: string };
 

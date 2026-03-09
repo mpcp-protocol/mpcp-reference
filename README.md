@@ -215,11 +215,11 @@ Wallet executes settlement
 ```
 mpcp-service
  ├── src
- │   ├── artifacts
  │   ├── crypto
  │   ├── policy-core
  │   ├── protocol
- │   └── verifier
+ │   ├── sdk
+ │   └── ...
  │
  ├── test
  ├── doc
