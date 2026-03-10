@@ -1,0 +1,42 @@
+[
+  {
+    "id": "parking",
+    "description": "Parking payment request",
+    "amountMinor": "250",
+    "amountUsd": "$2.50",
+    "destination": "rParking",
+    "vendor": "parking"
+  },
+  {
+    "id": "toll",
+    "description": "Toll payment request",
+    "amountMinor": "600",
+    "amountUsd": "$6.00",
+    "destination": "rToll",
+    "vendor": "toll"
+  },
+  {
+    "id": "charging",
+    "description": "Charging payment request",
+    "amountMinor": "1800",
+    "amountUsd": "$18.00",
+    "destination": "rCharging",
+    "vendor": "charging"
+  },
+  {
+    "id": "unexpected-vendor",
+    "description": "Unexpected vendor (over budget + unknown destination)",
+    "amountMinor": "5000",
+    "amountUsd": "$50.00",
+    "destination": "rUnknownVendor",
+    "vendor": "unexpected"
+  },
+  {
+    "id": "unknown-destination",
+    "description": "Unknown destination (within budget)",
+    "amountMinor": "500",
+    "amountUsd": "$5.00",
+    "destination": "rUnknownVendor",
+    "vendor": "unknown"
+  }
+]
