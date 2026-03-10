@@ -187,8 +187,11 @@ const tamperedBundle = {
 };
 const tamperedPath = join(EXAMPLE_DIR, "guardrails-demo-tampered.json");
 writeFileSync(tamperedPath, JSON.stringify(tamperedBundle, null, 2));
-const { ok: tamperedOk } = runVerify(tamperedPath);
+const { ok: tamperedOk, output: tamperedOutput } = runVerify(tamperedPath, {
+  explain: true,
+});
 if (!tamperedOk) {
+  log(tamperedOutput);
   log("   ✓ Tampered amount correctly rejected (payment_auth_mismatch)");
 } else {
   log("   ✗ Expected tampered verification to fail");
