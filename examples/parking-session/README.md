@@ -50,3 +50,33 @@ npx mpcp verify examples/parking-session/settlement-bundle.json --explain
 The bundle is self-contained: it includes `sbaPublicKeyPem` and `spaPublicKeyPem`, so anyone can run `mpcp verify` on it without setting env vars or regenerating.
 
 Committed artifacts use fixed timestamps (`expiresAt: 2030-12-31`, `nowISO: 2026-01-15`) so they remain verifiable indefinitely.
+
+---
+
+## Machine Wallet Guardrails Demo (PR8A)
+
+A narrative demo that illustrates **autonomous spend guardrails**: machine wallets spending within cryptographically enforced limits, with local verification and tamper detection.
+
+**Scenario:** Robotaxi at parking facility → meter requests payment → vehicle checks policy → signs SPA within budget → meter verifies chain → gate opens.
+
+**Guardrails demonstrated:**
+
+- Policy limits (allowed rails, assets, destinations, max spend)
+- Cryptographic signatures (SBA, SPA)
+- Local verification (no central approval API)
+- Tamper detection (modified amount rejected)
+
+**Run:**
+
+```bash
+npm run build
+npm run example:guardrails
+```
+
+Or:
+
+```bash
+node examples/parking-session/demo-guardrails.mjs
+```
+
+The script runs the full MPCP flow, prints a step-by-step narrative, writes `guardrails-demo-bundle.json`, runs verification, and demonstrates tamper detection by modifying the settlement amount and showing verification fails.
