@@ -64,7 +64,7 @@ describe("createBudgetAuthorization", () => {
       destinationAllowlist: ["rDest"],
       expiresAt,
     });
-    expect(auth.version).toBe(1);
+    expect(auth.version).toBe("1.0");
     expect(auth.sessionId).toBe("11111111-1111-4111-8111-111111111111");
     expect(auth.vehicleId).toBe("v1");
     expect(auth.policyHash).toBe("a1b2c3");

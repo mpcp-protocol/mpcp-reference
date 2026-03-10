@@ -1,7 +1,7 @@
 import type { Asset } from "../policy-core/types.js";
 
 export interface SettlementIntent {
-  version: 1;
+  version: "1.0";
   rail: string;
   amount: string;
   destination?: string;
@@ -27,7 +27,7 @@ export interface CreateSettlementIntentInput {
  */
 export function createSettlementIntent(input: CreateSettlementIntentInput): SettlementIntent {
   return {
-    version: 1,
+    version: "1.0",
     rail: input.rail,
     amount: input.amount,
     createdAt: new Date().toISOString(),

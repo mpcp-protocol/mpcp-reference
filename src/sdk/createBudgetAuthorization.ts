@@ -3,7 +3,7 @@ import type { Asset } from "../policy-core/types.js";
 import type { BudgetScope } from "../protocol/sba.js";
 
 export interface BudgetAuthorization {
-  version: 1;
+  version: "1.0";
   budgetId: string;
   sessionId: string;
   vehicleId: string;
@@ -44,7 +44,7 @@ export interface CreateBudgetAuthorizationInput {
  */
 export function createBudgetAuthorization(input: CreateBudgetAuthorizationInput): BudgetAuthorization {
   return {
-    version: 1,
+    version: "1.0",
     budgetId: input.budgetId ?? randomUUID(),
     sessionId: input.sessionId,
     vehicleId: input.vehicleId,
