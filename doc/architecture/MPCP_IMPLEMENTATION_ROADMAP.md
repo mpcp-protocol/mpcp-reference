@@ -483,6 +483,126 @@ Provide a **clear real‑world demonstration** of MPCP enabling autonomous machi
 
 This demo will serve as the primary reference for developers, partners, and mobility companies evaluating MPCP.
 
+### PR 8C — Fleet Spend Policy Simulator
+
+Create a lightweight tool that allows developers and fleet operators to simulate MPCP spend policies before deploying them to real vehicles or robots.
+
+Goal:
+
+Make it easy to test **machine wallet guardrails** and spending policies in a safe environment.
+
+Background:
+
+Fleet operators need confidence that their policies will behave correctly before allowing autonomous machines to spend money in the real world. A simulation environment allows policies to be tested against many payment scenarios.
+
+Capabilities:
+
+The simulator should allow users to define a fleet policy and test it against simulated payment requests.
+
+Example policy:
+
+maxSessionSpend: $30  
+allowedRails: XRPL  
+allowedAssets: RLUSD  
+destinations: parking, charging, toll  
+
+Example simulated events:
+
+- parking payment request ($2.50)
+- toll payment request ($6.00)
+- charging payment request ($18.00)
+- unexpected vendor request ($50.00)
+
+The simulator evaluates the MPCP chain:
+
+FleetPolicy → PolicyGrant → BudgetAuthorization → SignedPaymentAuthorization
+
+and reports whether each payment would be allowed or rejected.
+
+Features:
+
+- define fleet policies interactively
+- simulate payment requests
+- visualize policy enforcement
+- show MPCP artifact chain produced for each decision
+- demonstrate when and why payments are rejected
+
+Deliverables:
+
+- CLI or small web interface
+- example fleet policies
+- example payment scenarios
+- documentation explaining policy behavior
+
+
+Purpose:
+
+Help fleet operators and developers **understand and validate MPCP spending guardrails** before deploying them to real autonomous systems. The simulator provides a safe environment to experiment with policies, visualize how MPCP artifact chains are produced, and verify that machines will only authorize payments that comply with fleet constraints. It also serves as an educational reference demonstrating how MPCP enforces policy-driven machine spending.
+
+
+### PR 8D — Offline Payment Authorization
+
+Add documentation and example flows demonstrating how MPCP enables **offline machine payments** using pre-authorized spending envelopes.
+
+Goal:
+
+Allow autonomous systems (vehicles, robots, devices) to complete payments even when temporary network connectivity is unavailable.
+
+Background:
+
+Autonomous fleets frequently operate in environments where network connectivity may be intermittent or unavailable, such as:
+
+- underground parking garages
+- tunnels
+- charging facilities
+- dense urban environments
+- rural infrastructure
+
+Traditional payment systems rely on centralized approval APIs, which prevents transactions from completing when connectivity is lost.
+
+MPCP solves this by allowing machines to hold **pre-authorized spending budgets** that can be used locally.
+
+Example Flow:
+
+Vehicle begins trip with a valid policy chain:
+
+FleetPolicy  
+→ PolicyGrant  
+→ BudgetAuthorization  
+
+Vehicle enters an underground parking garage where connectivity is unavailable.
+
+Parking meter issues a payment request.
+
+Vehicle evaluates the request locally:
+
+- within authorized budget
+- destination allowed
+- asset and rail permitted
+
+Vehicle signs a SignedPaymentAuthorization (SPA) and executes the settlement.
+
+Parking system verifies the MPCP artifact chain and allows entry.
+
+Payment succeeds **without contacting any centralized backend service**.
+
+Key Behaviors to Demonstrate:
+
+- local authorization decisions using BudgetAuthorization
+- deterministic verification of MPCP artifacts
+- successful payment execution during network outage
+- later reconciliation once connectivity returns
+
+Deliverables:
+
+- documentation describing offline MPCP payment flows
+- extension of the parking demo to simulate offline mode
+- example artifact bundle demonstrating offline authorization
+
+Purpose:
+
+Show that MPCP enables **resilient autonomous payments** for machines operating in real-world environments where connectivity cannot always be guaranteed.
+
 ---
 
 ## PR 9 — Integration Tests
