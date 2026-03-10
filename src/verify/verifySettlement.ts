@@ -88,7 +88,7 @@ export function verifySettlementDetailedSafe(
     const message = err instanceof Error ? err.message : String(err);
     return {
       valid: false,
-      checks: [{ name: "Verification.error", artifact: "Verification", check: "error", valid: false, reason: message }],
+      checks: [{ name: "Verification.error", phase: "policy", artifact: "Verification", check: "error", valid: false, reason: message }],
     };
   }
 }

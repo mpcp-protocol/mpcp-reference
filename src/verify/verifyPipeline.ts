@@ -1,6 +1,14 @@
 /**
  * Single internal verification pipeline.
  * Emits bare result, steps (for report), and checks (for detailed report).
+ *
+ * Check naming: Artifact.check (PascalCase artifact, camelCase check)
+ * - PolicyGrant.schema, PolicyGrant.valid
+ * - SignedBudgetAuthorization.schema, SignedBudgetAuthorization.valid
+ * - SignedPaymentAuthorization.schema, SignedPaymentAuthorization.valid
+ * - SettlementIntent.schema, SettlementIntent.required, SettlementIntent.intentHash, SettlementIntent.fields
+ *
+ * Check ordering: schema → linkage → hash → policy (checks are sorted by phase before return)
  */
 
 import { computeSettlementIntentHash } from "../hash/computeSettlementIntentHash.js";
@@ -15,9 +23,12 @@ import { verifySettlementIntent } from "./verifySettlementIntent.js";
 import type {
   SettlementVerificationContext,
   VerificationCheck,
+  VerificationCheckPhase,
   VerificationResult,
   VerificationStep,
 } from "./types.js";
+
+const PHASE_ORDER: VerificationCheckPhase[] = ["schema", "linkage", "hash", "policy"];
 
 /** Internal pipeline output — single source of truth. */
 export interface VerificationPipelineOutput {
@@ -46,11 +57,13 @@ function pushCheck(
   checks: VerificationCheck[],
   artifact: string,
   check: string,
+  phase: VerificationCheckPhase,
   valid: boolean,
   opts?: { reason?: string; expected?: unknown; actual?: unknown },
 ): boolean {
   checks.push({
     name: `${artifact}.${check}`,
+    phase,
     artifact,
     check,
     valid,
@@ -59,6 +72,12 @@ function pushCheck(
     actual: opts?.actual,
   });
   return valid;
+}
+
+function sortChecksByPhase(checks: VerificationCheck[]): VerificationCheck[] {
+  return [...checks].sort(
+    (a, b) => PHASE_ORDER.indexOf(a.phase) - PHASE_ORDER.indexOf(b.phase),
+  );
 }
 
 function pushStep(steps: VerificationStep[], name: string, result: VerificationResult): boolean {
@@ -76,58 +95,68 @@ export function runVerificationPipeline(
   const steps: VerificationStep[] = [];
   const checks: VerificationCheck[] = [];
 
+  const out = (): VerificationPipelineOutput => ({
+    result: { valid: true },
+    steps,
+    checks: sortChecksByPhase(checks),
+  });
+  const fail = (result: VerificationResult): VerificationPipelineOutput => ({
+    result,
+    steps,
+    checks: sortChecksByPhase(checks),
+  });
+
   // --- Schema validation ---
   const grantCheck = parseArtifact("policyGrant", policyGrantForVerificationSchema, ctx.policyGrant);
-  if (!pushCheck(checks, "PolicyGrant", "schema", grantCheck.valid, {
+  if (!pushCheck(checks, "PolicyGrant", "schema", "schema", grantCheck.valid, {
     reason: grantCheck.valid ? undefined : grantCheck.reason,
   })) {
-    return { result: grantCheck, steps, checks };
+    return fail(grantCheck);
   }
 
   const sbaCheck = parseArtifact("signedBudgetAuthorization", signedBudgetAuthorizationSchema, ctx.signedBudgetAuthorization);
-  if (!pushCheck(checks, "SignedBudgetAuthorization", "schema", sbaCheck.valid, {
+  if (!pushCheck(checks, "SignedBudgetAuthorization", "schema", "schema", sbaCheck.valid, {
     reason: sbaCheck.valid ? undefined : sbaCheck.reason,
   })) {
-    return { result: sbaCheck, steps, checks };
+    return fail(sbaCheck);
   }
 
   const spaCheck = parseArtifact("signedPaymentAuthorization", signedPaymentAuthorizationSchema, ctx.signedPaymentAuthorization);
-  if (!pushCheck(checks, "SignedPaymentAuthorization", "schema", spaCheck.valid, {
+  if (!pushCheck(checks, "SignedPaymentAuthorization", "schema", "schema", spaCheck.valid, {
     reason: spaCheck.valid ? undefined : spaCheck.reason,
   })) {
-    return { result: spaCheck, steps, checks };
+    return fail(spaCheck);
   }
 
   if (ctx.settlementIntent) {
     const intentCheck = parseArtifact("settlementIntent", settlementIntentForVerificationSchema, ctx.settlementIntent);
-    if (!pushCheck(checks, "SettlementIntent", "schema", intentCheck.valid, {
+    if (!pushCheck(checks, "SettlementIntent", "schema", "schema", intentCheck.valid, {
       reason: intentCheck.valid ? undefined : intentCheck.reason,
     })) {
-      return { result: intentCheck, steps, checks };
+      return fail(intentCheck);
     }
   }
 
   if (ctx.signedPaymentAuthorization.authorization.intentHash && !ctx.settlementIntent) {
-    const result: VerificationResult = {
+    pushCheck(checks, "SettlementIntent", "required", "schema", false, { reason: "intent_required" });
+    return fail({
       valid: false,
       reason: "intent_required",
       artifact: "signedPaymentAuthorization",
-    };
-    pushCheck(checks, "SettlementIntent", "required", false, { reason: "intent_required" });
-    return { result, steps, checks };
+    });
   }
 
   // --- Policy grant ---
   const grantResult = verifyPolicyGrant(ctx.policyGrant, { nowMs: ctx.nowMs });
   if (!pushStep(steps, "PolicyGrant.valid", grantResult)) {
-    pushCheck(checks, "PolicyGrant", "valid", false, {
+    pushCheck(checks, "PolicyGrant", "valid", "policy", false, {
       reason: grantResult.valid ? undefined : grantResult.reason,
     });
-    return { result: grantResult, steps, checks };
+    return fail(grantResult);
   }
-  pushCheck(checks, "PolicyGrant", "valid", true);
+  pushCheck(checks, "PolicyGrant", "valid", "policy", true);
 
-  // --- Budget ---
+  // --- Budget (linkage) ---
   const budgetResult = verifyBudgetAuthorization(
     ctx.signedBudgetAuthorization,
     ctx.policyGrant,
@@ -135,14 +164,14 @@ export function runVerificationPipeline(
     { nowMs: ctx.nowMs },
   );
   if (!pushStep(steps, "SignedBudgetAuthorization.valid", budgetResult)) {
-    pushCheck(checks, "SignedBudgetAuthorization", "valid", false, {
+    pushCheck(checks, "SignedBudgetAuthorization", "valid", "linkage", false, {
       reason: budgetResult.valid ? undefined : budgetResult.reason,
     });
-    return { result: budgetResult, steps, checks };
+    return fail(budgetResult);
   }
-  pushCheck(checks, "SignedBudgetAuthorization", "valid", true);
+  pushCheck(checks, "SignedBudgetAuthorization", "valid", "linkage", true);
 
-  // --- Intent hash with expected/actual when SPA binds to intent (for detailed report) ---
+  // --- Intent hash ---
   if (ctx.settlementIntent && ctx.signedPaymentAuthorization.authorization.intentHash) {
     const intentParsed = settlementIntentForVerificationSchema.safeParse(ctx.settlementIntent);
     if (intentParsed.success) {
@@ -150,7 +179,7 @@ export function runVerificationPipeline(
       const expectedHash = computeSettlementIntentHash(intentParsed.data);
       const actualHash = auth.intentHash;
       const hashMatch = expectedHash === actualHash;
-      pushCheck(checks, "SettlementIntent", "intentHash", hashMatch, hashMatch ? undefined : {
+      pushCheck(checks, "SettlementIntent", "intentHash", "hash", hashMatch, hashMatch ? undefined : {
         reason: "mismatch",
         expected: expectedHash,
         actual: actualHash,
@@ -161,16 +190,16 @@ export function runVerificationPipeline(
           reason: "intent_hash_mismatch",
           artifact: "settlementIntent",
         });
-        return {
-          result: { valid: false, reason: "intent_hash_mismatch", artifact: "settlementIntent" },
-          steps,
-          checks,
-        };
+        return fail({
+          valid: false,
+          reason: "intent_hash_mismatch",
+          artifact: "settlementIntent",
+        });
       }
     }
   }
 
-  // --- Payment (SPA signature, settlement match) ---
+  // --- Payment (linkage) ---
   const paymentResult = verifyPaymentAuthorization(
     ctx.signedPaymentAuthorization,
     ctx.signedBudgetAuthorization,
@@ -180,12 +209,12 @@ export function runVerificationPipeline(
     { nowMs: ctx.nowMs, settlementIntent: ctx.settlementIntent },
   );
   if (!pushStep(steps, "SignedPaymentAuthorization.valid", paymentResult)) {
-    pushCheck(checks, "SignedPaymentAuthorization", "valid", false, {
+    pushCheck(checks, "SignedPaymentAuthorization", "valid", "linkage", false, {
       reason: paymentResult.valid ? undefined : paymentResult.reason,
     });
-    return { result: paymentResult, steps, checks };
+    return fail(paymentResult);
   }
-  pushCheck(checks, "SignedPaymentAuthorization", "valid", true);
+  pushCheck(checks, "SignedPaymentAuthorization", "valid", "linkage", true);
 
   // --- Intent verification (hash + field match when intent present) ---
   if (ctx.settlementIntent) {
@@ -195,21 +224,19 @@ export function runVerificationPipeline(
     );
     if (!pushStep(steps, "SettlementIntent.intentHash", intentResult)) {
       if (!checks.some((c) => c.name === "SettlementIntent.intentHash" && !c.valid)) {
-        pushCheck(checks, "SettlementIntent", "fields", false, {
+        pushCheck(checks, "SettlementIntent", "fields", "policy", false, {
           reason: intentResult.valid ? undefined : intentResult.reason,
         });
       }
-      return { result: intentResult, steps, checks };
+      return fail(intentResult);
     }
-    // Step added above on success
   } else if (ctx.signedPaymentAuthorization.authorization.intentHash) {
-    const result: VerificationResult = {
+    return fail({
       valid: false,
       reason: "intent_required",
       artifact: "signedPaymentAuthorization",
-    };
-    return { result, steps, checks };
+    });
   }
 
-  return { result: { valid: true }, steps, checks };
+  return out();
 }

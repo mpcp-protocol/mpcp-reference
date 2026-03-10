@@ -2,6 +2,7 @@ export type {
   DetailedVerificationReport,
   PolicyGrantLike,
   VerificationCheck,
+  VerificationCheckPhase,
   VerificationReport,
   VerificationResult,
   VerificationStep,

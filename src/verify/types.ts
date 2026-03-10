@@ -33,10 +33,15 @@ export interface VerificationReport {
   steps: VerificationStep[];
 }
 
+/** Check phase for ordering: schema → linkage → hash → policy */
+export type VerificationCheckPhase = "schema" | "linkage" | "hash" | "policy";
+
 /** Single check in a detailed verification report (--explain mode). */
 export interface VerificationCheck {
   /** Combined identifier: artifact.check (e.g. SettlementIntent.intentHash) */
   name: string;
+  /** Phase for ordering: schema → linkage → hash → policy */
+  phase: VerificationCheckPhase;
   /** Artifact type, PascalCase (e.g. SettlementIntent, PolicyGrant). Omitted for synthetic error checks. */
   artifact?: string;
   /** Check type (e.g. schema, valid, intentHash). Omitted for synthetic error checks. */
@@ -54,12 +59,7 @@ export interface DetailedVerificationReport {
 }
 
 /**
- * Fixed verification order applied across all verifiers:
- * 1. Schema validation
- * 2. Hash validation (intentHash recompute)
- * 3. Artifact linkage (chain references)
- * 4. Budget limits
- * 5. Policy constraints (signatures, expiry, settlement match)
+ * Check phase ordering for report output: schema → linkage → hash → policy
  */
 
 /** Context for full settlement verification */
