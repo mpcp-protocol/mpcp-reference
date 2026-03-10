@@ -1,0 +1,5 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`canonicalJson > canonical serialization snapshot — nested structures 1`] = `"{"a":{"b":{"x":3},"y":2},"m":[4,{"p":5}],"z":1}"`;
+
+exports[`canonicalJson > canonical serialization snapshot — settlement intent 1`] = `"{"amount":"19440000","asset":{"currency":"USDC","issuer":"rIssuer...","kind":"IOU"},"destination":"rDest...","rail":"xrpl"}"`;

@@ -1,6 +1,6 @@
 import crypto, { createHash, randomUUID } from "node:crypto";
 import type { Asset, PaymentPolicyDecision, Rail } from "../policy-core/types.js";
-import { canonicalJson } from "../crypto/canonicalJson.js";
+import { canonicalJson } from "../canonical/canonicalJson.js";
 
 export type BudgetScope = "SESSION" | "DAY" | "VEHICLE" | "FLEET";
 

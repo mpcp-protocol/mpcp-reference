@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { canonicalJson } from "../../src/crypto/canonicalJson.js";
+import { canonicalJson } from "../../src/canonical/canonicalJson.js";
 
 describe("canonicalJson", () => {
   it("uses deterministic key ordering (sorted lexicographically)", () => {
@@ -26,5 +26,24 @@ describe("canonicalJson", () => {
   it("serializes arrays deterministically with undefined as null", () => {
     const arr = [1, undefined, 3] as unknown[];
     expect(canonicalJson(arr)).toBe("[1,null,3]");
+  });
+
+  it("canonical serialization snapshot — settlement intent", () => {
+    const intent = {
+      rail: "xrpl",
+      destination: "rDest...",
+      amount: "19440000",
+      asset: { kind: "IOU", currency: "USDC", issuer: "rIssuer..." },
+    };
+    expect(canonicalJson(intent)).toMatchSnapshot();
+  });
+
+  it("canonical serialization snapshot — nested structures", () => {
+    const obj = {
+      z: 1,
+      a: { y: 2, b: { x: 3 } },
+      m: [4, { p: 5, q: null }],
+    } as Record<string, unknown>;
+    expect(canonicalJson(obj)).toMatchSnapshot();
   });
 });

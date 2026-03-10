@@ -1,6 +1,6 @@
 import crypto, { createHash } from "node:crypto";
 import type { Asset, PaymentPolicyDecision, Rail, SettlementResult } from "../policy-core/types.js";
-import { canonicalJson } from "../crypto/canonicalJson.js";
+import { canonicalJson } from "../canonical/canonicalJson.js";
 import { computeIntentHash } from "../crypto/intentHash.js";
 
 export interface PaymentAuthorization {

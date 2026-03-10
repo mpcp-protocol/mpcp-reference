@@ -1,0 +1,3 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`sha256Hex > hash stability — settlement intent canonical form 1`] = `"91f2e9eba9b359fc271a6a74f1e51733418bee55637838ea1b9f6dca7d9e455b"`;

@@ -18,5 +18,5 @@ export {
   verifySignedPaymentAuthorizationForSettlement as verifySettlement,
 } from "../protocol/spa.js";
 
-export { canonicalJson } from "../crypto/canonicalJson.js";
+export { canonicalJson } from "../canonical/canonicalJson.js";
 export { computeIntentHash } from "../crypto/intentHash.js";

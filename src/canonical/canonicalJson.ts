@@ -2,6 +2,11 @@
  * Canonical JSON serialization for deterministic hashing.
  * Per protocol spec: object fields with null or undefined values MUST be omitted.
  * Never emits undefined (JSON.stringify(undefined) is invalid).
+ *
+ * Rules:
+ * - Sorts object keys lexicographically
+ * - Omits fields with null or undefined values
+ * - Recursively canonicalizes nested objects and arrays
  */
 export function canonicalJson(value: unknown): string {
   if (value === undefined) {
