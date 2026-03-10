@@ -1,10 +1,10 @@
 # Fleet Spend Policy Simulator (PR8C)
 
-A lightweight tool to simulate MPCP spend policies against payment scenarios before deploying to real vehicles or robots.
+A lightweight SBA (SignedBudgetAuthorization) policy simulator. Tests fleet spending constraints against payment scenarios before deploying to real vehicles or robots.
 
 ## Purpose
 
-Fleet operators need confidence that policies will behave correctly before allowing autonomous machines to spend money. The simulator evaluates the MPCP chain (FleetPolicy → PolicyGrant → BudgetAuthorization → SPA decision) and reports whether each payment would be allowed or rejected.
+Fleet operators need confidence that policies will behave correctly before allowing autonomous machines to spend money. The simulator evaluates MPCP-style spending constraints by generating a SignedBudgetAuthorization (SBA) from fleet policy inputs and testing payment decisions against it. It models the broader MPCP chain conceptually (PolicyGrant → BudgetAuthorization → SPA) but does not create or verify PolicyGrant, SPA, or the full settlement chain — it focuses on budget-envelope enforcement.
 
 ## Policy
 
@@ -56,8 +56,8 @@ The simulator reports ALLOW or REJECT for each scenario with the reason:
 
 ## Features
 
-- Define fleet policies via JSON
+- Define fleet policies via JSON (`allowedAssets` is an array of asset objects, e.g. `{ kind, currency, issuer }`)
 - Simulate payment requests
 - Visualize policy enforcement (ALLOW/REJECT)
 - Show rejection reasons (budget_exceeded, mismatch)
-- Uses real MPCP SBA verification logic
+- Uses real MPCP SBA verification logic (`verifySignedBudgetAuthorization`)

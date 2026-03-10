@@ -2,8 +2,8 @@
 /**
  * PR8C — Fleet Spend Policy Simulator
  *
- * Simulates MPCP spend policies against payment scenarios.
- * Evaluates FleetPolicy → PolicyGrant → BudgetAuthorization → SPA decision.
+ * SBA policy simulator: builds an SBA from fleet policy inputs and tests
+ * payment decisions against it via verifySignedBudgetAuthorization.
  *
  * Run: npm run build && npm run example:simulate
  * Or:  node examples/fleet-simulator/simulate.mjs [policy.json] [scenarios.json]
@@ -57,6 +57,10 @@ function log(msg) {
   console.log(msg);
 }
 
+const rail = (policy.allowedRails ?? ["xrpl"])[0];
+const defaultAsset = { kind: "IOU", currency: "RLUSD", issuer: "rIssuer" };
+const asset = (policy.allowedAssets ?? [defaultAsset])[0];
+
 log("");
 log("MPCP Fleet Spend Policy Simulator (PR8C)");
 log("=========================================");
@@ -64,7 +68,7 @@ log("");
 log("Policy:");
 log(`  maxSessionSpend: $${policy.maxSessionSpend ?? Number(policy.maxSessionSpendMinor) / 100}`);
 log(`  allowedRails: ${(policy.allowedRails ?? ["xrpl"]).join(", ")}`);
-log(`  allowedAssets: RLUSD`);
+log(`  allowedAssets: ${asset.kind === "IOU" ? asset.currency : JSON.stringify(asset)}`);
 log(`  destinations: ${(policy.destinations ?? []).join(", ")}`);
 log("");
 log("Scenarios:");
@@ -74,7 +78,12 @@ const nowISO = new Date(Date.now() + 60_000).toISOString();
 let allowedCount = 0;
 
 for (const scenario of scenarios) {
-  const amountMinor = scenario.amountMinor ?? String(Math.round(scenario.amountUsd?.replace(/[^0-9.]/g, "") * 100));
+  const amountMinor =
+    scenario.amountMinor ??
+    String(Math.round(Number(String(scenario.amountUsd ?? "0").replace(/[^0-9.]/g, "")) * 100));
+  if (amountMinor === "NaN" || Number.isNaN(Number(amountMinor))) {
+    throw new Error(`Invalid amount for scenario ${scenario.id}: need amountMinor or parseable amountUsd`);
+  }
   const destination = scenario.destination ?? "rUnknown";
   const amountRail = String(Number(amountMinor) * 1_000_000);
 
@@ -84,18 +93,18 @@ for (const scenario of scenarios) {
     action: "ALLOW",
     reasons: ["OK"],
     expiresAtISO: nowISO,
-    rail: (policy.allowedRails ?? ["xrpl"])[0],
-    asset: (policy.allowedAssets ?? [{ kind: "IOU", currency: "RLUSD", issuer: "rIssuer" }])[0],
+    rail,
+    asset,
     priceFiat: { amountMinor, currency: "USD" },
-    chosen: { rail: "xrpl", quoteId: `q-${scenario.id}` },
+    chosen: { rail, quoteId: `q-${scenario.id}` },
     settlementQuotes: [
       {
         quoteId: `q-${scenario.id}`,
-        rail: "xrpl",
+        rail,
         amount: { amount: amountRail, decimals: 6 },
         destination,
         expiresAt: nowISO,
-        asset: { kind: "IOU", currency: "RLUSD", issuer: "rIssuer" },
+        asset,
       },
     ],
   };
