@@ -19,4 +19,7 @@ export {
 } from "../protocol/spa.js";
 
 export { canonicalJson } from "../canonical/canonicalJson.js";
-export { computeIntentHash } from "../crypto/intentHash.js";
+export {
+  computeSettlementIntentHash,
+  computeIntentHash,
+} from "../hash/index.js";
