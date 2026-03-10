@@ -170,11 +170,11 @@ The protocol operates as a multi-stage authorization pipeline.
 ```text
 Policy Engine
       ↓
-Policy Grant
+PolicyGrant
       ↓
-Budget Authorization (SBA)
+SignedBudgetAuthorization (SBA)
       ↓
-Signed Payment Authorization (SPA)
+SignedPaymentAuthorization (SPA)
       ↓
 Settlement Execution
       ↓
@@ -184,6 +184,7 @@ Optional Intent Attestation
 ```
 
 Each stage cryptographically binds the parameters for the following stage.
+In MPCP, every settlement must be authorized by a deterministic chain of artifacts that progressively constrain the transaction parameters.
 
 ---
 
@@ -221,6 +222,7 @@ Example:
 
 ```text
 SHA256("MPCP:SettlementIntent:1.0:" || canonical_json(settlementIntent))
+```
 
 ---
 
@@ -252,7 +254,7 @@ The PolicyGrant defines the operational scope in which further authorizations ma
 
 ---
 
-## SignedBudgetAuthorization (SBA)
+### SignedBudgetAuthorization (SBA)
 
 The **SignedBudgetAuthorization (SBA)** establishes the maximum spending envelope available to the machine.
 
@@ -280,7 +282,7 @@ The SBA ensures that spending remains within defined limits.
 
 ---
 
-## SignedPaymentAuthorization (SPA)
+### SignedPaymentAuthorization (SPA)
 
 The **SignedPaymentAuthorization (SPA)** authorizes a specific settlement transaction.
 
@@ -310,7 +312,7 @@ The SPA binds the authorized payment parameters and optionally includes an `inte
 
 ---
 
-## SettlementIntent
+### SettlementIntent
 
 A **SettlementIntent** describes the canonical form of the transaction that the machine wallet must execute.
 
@@ -335,7 +337,7 @@ This structure is used to compute the `intentHash`.
 
 ---
 
-## IntentCommitment
+### IntentCommitment
 
 An **IntentCommitment** represents the hashed commitment of the settlement intent.
 
@@ -345,6 +347,7 @@ Example:
 commitment = SHA256("MPCP:SettlementIntent:1.0:" || canonical_json(settlementIntent))
 ```
 
+IntentCommitment represents the canonical MPCP artifact used when publishing commitments to an external attestation system such as the Intent Attestation Layer (IAL).
 Commitments may optionally be published to the **Intent Attestation Layer (IAL)** to create a publicly verifiable record that the intent existed prior to settlement.
 
 ---
@@ -885,7 +888,7 @@ This pseudocode is illustrative only. Production systems may split verification 
 
 MPCP authorization and settlement artifacts move through a small set of states.
 
-## PolicyGrant
+### PolicyGrant
 
 ```text
 ISSUED → EXPIRED
