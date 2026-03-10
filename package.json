@@ -28,7 +28,8 @@
     "mpcp": "node dist/cli/index.js",
     "demo:verify": "node scripts/demo-verify.mjs",
     "example:parking": "node examples/parking-session/generate.mjs",
-    "example:guardrails": "node examples/parking-session/demo-guardrails.mjs"
+    "example:guardrails": "node examples/parking-session/demo-guardrails.mjs",
+    "example:fleet": "node examples/fleet-payment/demo-fleet.mjs"
   },
   "dependencies": {
     "zod": "^3.25.76"
