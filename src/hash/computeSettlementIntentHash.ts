@@ -1,11 +1,11 @@
 import { canonicalJson } from "../canonical/canonicalJson.js";
 import { sha256Hex } from "../canonical/hash.js";
 
-const INTENT_HASH_PREFIX = "MPCP:Intent:1.0:";
+const MPCP_INTENT_HASH_DOMAIN = "MPCP:SettlementIntent:1.0:";
 
 /**
  * Compute deterministic SHA256 hash of a settlement intent.
- * Per MPCP spec: intentHash = SHA256("MPCP:Intent:1.0:" + canonicalJson(settlementIntent))
+ * Per MPCP spec: intentHash = SHA256(MPCP_INTENT_HASH_DOMAIN + canonicalJson(settlementIntent))
  *
  * Domain separation ensures the hash cannot collide with other MPCP artifact hashes.
  *
@@ -14,5 +14,5 @@ const INTENT_HASH_PREFIX = "MPCP:Intent:1.0:";
  */
 export function computeSettlementIntentHash(intent: unknown): string {
   const canonical = canonicalJson(intent);
-  return sha256Hex(`${INTENT_HASH_PREFIX}${canonical}`);
+  return sha256Hex(`${MPCP_INTENT_HASH_DOMAIN}${canonical}`);
 }

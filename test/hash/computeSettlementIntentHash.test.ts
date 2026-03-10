@@ -7,14 +7,14 @@ import { canonicalJson } from "../../src/canonical/canonicalJson.js";
 import { sha256Hex } from "../../src/canonical/hash.js";
 
 describe("computeSettlementIntentHash", () => {
-  it("uses domain-separated hashing (MPCP:Intent:1.0: prefix)", () => {
+  it("uses domain-separated hashing (MPCP:SettlementIntent:1.0: prefix)", () => {
     const intent = {
       rail: "xrpl",
       amount: "19440000",
       asset: { kind: "IOU" as const, currency: "USDC", issuer: "rIssuer" },
     };
     const canonical = canonicalJson(intent);
-    const expected = sha256Hex(`MPCP:Intent:1.0:${canonical}`);
+    const expected = sha256Hex(`MPCP:SettlementIntent:1.0:${canonical}`);
     expect(computeSettlementIntentHash(intent)).toBe(expected);
   });
   it("produces identical hash across identical intents", () => {
