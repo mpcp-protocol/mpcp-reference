@@ -22,7 +22,7 @@ Commands:
 Verify options:
   --explain      Step-by-step diagnostics (schema checks, expected/actual)
   --json         Machine-readable JSON output
-  --append-log   Append verification result to audit log (JSONL file)
+  --append-log <file>   Append verification result to JSONL audit log
 
 Accepts:
   - Full SettlementVerificationContext (policyGrant, signedBudgetAuthorization, etc.)

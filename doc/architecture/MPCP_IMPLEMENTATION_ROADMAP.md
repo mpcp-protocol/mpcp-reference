@@ -687,11 +687,41 @@ Examples:
 
 ---
 
-Phase 5 — External Adoption & Productionization
+# Phase 5 — External Adoption & Productionization
+
+Goal: Enable independent implementations, ecosystem adoption, and production deployment of the MPCP protocol.
+
+This phase focuses on turning the MPCP reference implementation into a protocol that can be safely implemented by third parties. It introduces interoperability artifacts, production integrations, deployment profiles, and documentation required for real‑world adoption.
 
 That’s where MPCP stops being “a strong reference implementation” and starts becoming something other teams can adopt safely.
 
 I’d structure it like this:
+
+⸻
+
+PR12A — Artifact Bundle Specification
+
+Define a canonical MPCP **artifact bundle format** used to exchange complete payment verification data between systems.
+
+Example bundle contents:
+
+• policyGrant  
+• signedBudgetAuthorization  
+• signedPaymentAuthorization  
+• settlementIntent  
+• settlement  
+• optional ledgerAnchor  
+
+Purpose:
+• standardize how MPCP artifacts are packaged for verification  
+• support dispute resolution workflows  
+• enable deterministic protocol test vectors  
+• simplify developer tooling and debugging
+
+Deliverables:
+• bundle schema definition
+• example artifact bundles
+• verifier support for bundle inputs
 
 ⸻
 

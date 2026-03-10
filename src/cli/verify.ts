@@ -17,6 +17,7 @@ function appendAuditLog(
 ): void {
   if (!logPath) return;
   try {
+    const resolvedLog = resolve(process.cwd(), logPath);
     const entry: Record<string, unknown> = {
       ts: new Date().toISOString(),
       event: "settlement_verification",
@@ -26,7 +27,7 @@ function appendAuditLog(
     };
     if (!result.valid && result.reason) entry.reason = result.reason;
     if (!result.valid && result.artifact) entry.artifact = result.artifact;
-    appendFileSync(resolve(process.cwd(), logPath), JSON.stringify(entry) + "\n");
+    appendFileSync(resolvedLog, JSON.stringify(entry) + "\n");
   } catch {
     /* ignore audit log write errors */
   }
