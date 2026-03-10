@@ -80,3 +80,33 @@ node examples/parking-session/demo-guardrails.mjs
 ```
 
 The script runs the full MPCP flow, prints a step-by-step narrative, writes `guardrails-demo-bundle.json`, runs verification, and demonstrates tamper detection by modifying the settlement amount and showing verification fails.
+
+---
+
+## Offline Payment Demo (PR8D)
+
+Demonstrates **offline machine payments**: vehicle holds pre-authorized policy chain, completes payment when network is unavailable.
+
+**Scenario:** Vehicle loads PolicyGrant + SBA before trip → enters underground garage (no network) → parking meter requests payment → vehicle evaluates locally → signs SPA locally → parking verifies chain locally → gate opens. No central backend contacted.
+
+**Key behaviors:**
+
+- Pre-authorized spending envelope (PolicyGrant + SBA)
+- Local authorization decisions
+- Local SPA signing and verification
+- Reconciliation when connectivity returns
+
+**Run:**
+
+```bash
+npm run build
+npm run example:offline
+```
+
+Or:
+
+```bash
+node examples/parking-session/demo-offline.mjs
+```
+
+See [doc/architecture/OFFLINE_PAYMENTS.md](../../doc/architecture/OFFLINE_PAYMENTS.md) for full documentation.

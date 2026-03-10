@@ -30,7 +30,8 @@
     "example:parking": "node examples/parking-session/generate.mjs",
     "example:guardrails": "node examples/parking-session/demo-guardrails.mjs",
     "example:fleet": "node examples/fleet-payment/demo-fleet.mjs",
-    "example:simulate": "node examples/fleet-simulator/simulate.mjs"
+    "example:simulate": "node examples/fleet-simulator/simulate.mjs",
+    "example:offline": "node examples/parking-session/demo-offline.mjs"
   },
   "dependencies": {
     "zod": "^3.25.76"
