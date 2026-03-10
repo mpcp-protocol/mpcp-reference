@@ -699,9 +699,9 @@ I’d structure it like this:
 
 ⸻
 
-PR12A — Artifact Bundle Specification
+PR12A — Artifact Bundle Specification ✓
 
-Define a canonical MPCP **artifact bundle format** used to exchange complete payment verification data between systems.
+Define a canonical MPCP **artifact bundle format** used to exchange complete payment verification data between systems. Implemented: `src/schema/artifactBundle.ts`, `doc/protocol/ArtifactBundle.md`.
 
 Example bundle contents:
 

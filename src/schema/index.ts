@@ -1,4 +1,5 @@
 export * from "./shared.js";
+export * from "./artifactBundle.js";
 export * from "./policyGrant.js";
 export * from "./budgetAuthorization.js";
 export * from "./signedBudgetAuthorization.js";

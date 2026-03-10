@@ -7,6 +7,7 @@ import {
   signedPaymentAuthorizationSchema,
   settlementIntentSchema,
   fleetPolicyAuthorizationSchema,
+  artifactBundleSchema,
   validateWithSchema,
 } from "../../src/schema/index.js";
 
@@ -308,6 +309,71 @@ describe("FleetPolicyAuthorization schema", () => {
       authorization: { ...validFleetPolicyPayload, invalidPayloadField: "x" },
       signature: "base64...",
       keyId: "key",
+    });
+    expect(result.ok).toBe(false);
+  });
+});
+
+const validArtifactBundle = {
+  policyGrant: {
+    grantId: "grant-1",
+    policyHash: "a1b2c3",
+    expiresAt: "2030-12-31T23:59:59Z",
+    allowedRails: ["xrpl"],
+    allowedAssets: [{ kind: "IOU", currency: "RLUSD", issuer: "rIssuer" }],
+  },
+  sba: {
+    authorization: validBudgetAuthorization,
+    signature: "base64...",
+    keyId: "mpcp-sba-signing-key-1",
+  },
+  spa: {
+    authorization: validPaymentAuthorization,
+    signature: "base64...",
+    keyId: "mpcp-spa-signing-key-1",
+  },
+  settlement: {
+    amount: "19440000",
+    rail: "xrpl",
+    asset: { kind: "IOU", currency: "RLUSD", issuer: "rIssuer" },
+    destination: "rDestination",
+    nowISO: "2026-01-15T12:00:00Z",
+  },
+};
+
+describe("ArtifactBundle schema", () => {
+  it("accepts valid artifact bundle", () => {
+    const result = validateWithSchema(artifactBundleSchema, validArtifactBundle);
+    expect(result.ok).toBe(true);
+  });
+
+  it("accepts bundle with optional settlementIntent", () => {
+    const result = validateWithSchema(artifactBundleSchema, {
+      ...validArtifactBundle,
+      settlementIntent: validSettlementIntent,
+    });
+    expect(result.ok).toBe(true);
+  });
+
+  it("accepts bundle with optional public keys", () => {
+    const result = validateWithSchema(artifactBundleSchema, {
+      ...validArtifactBundle,
+      sbaPublicKeyPem: "-----BEGIN PUBLIC KEY-----\n...",
+      spaPublicKeyPem: "-----BEGIN PUBLIC KEY-----\n...",
+    });
+    expect(result.ok).toBe(true);
+  });
+
+  it("rejects bundle missing required policyGrant", () => {
+    const { policyGrant: _, ...rest } = validArtifactBundle;
+    const result = validateWithSchema(artifactBundleSchema, rest);
+    expect(result.ok).toBe(false);
+  });
+
+  it("rejects bundle with invalid settlement rail", () => {
+    const result = validateWithSchema(artifactBundleSchema, {
+      ...validArtifactBundle,
+      settlement: { ...validArtifactBundle.settlement, rail: "bitcoin" },
     });
     expect(result.ok).toBe(false);
   });

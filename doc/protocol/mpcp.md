@@ -187,7 +187,44 @@ Each stage cryptographically binds the parameters for the following stage.
 
 ---
 
-# Protocol Artifacts
+## Implementer Checklist
+
+An implementation claiming MPCP compatibility MUST support the following capabilities.
+
+### Artifact Handling
+
+Implementations MUST be able to parse and validate the following artifacts:
+
+- PolicyGrant
+- SignedBudgetAuthorization (SBA)
+- SignedPaymentAuthorization (SPA)
+- SettlementIntent
+- IntentCommitment (optional)
+
+### Canonical JSON
+
+Implementations MUST produce identical hashes for the same artifact data.
+
+Requirements:
+
+- lexicographically sorted keys
+- no insignificant whitespace
+- UTF-8 encoding
+- omit `null` / `undefined` fields
+- monetary values encoded as strings
+
+### Hash Domain Separation
+
+Hashes MUST include the MPCP domain prefix.
+
+Example:
+
+```text
+SHA256("MPCP:SettlementIntent:1.0:" || canonical_json(settlementIntent))
+
+---
+
+## Protocol Artifacts
 
 The MPCP pipeline produces a series of structured artifacts. Each artifact constrains the next stage of the protocol and can be independently verified.
 
@@ -779,6 +816,10 @@ All artifacts SHOULD be represented as UTF-8 JSON documents using the canonical 
   "consensusTimestamp": "2026-03-08T14:00:05Z"
 }
 ```
+
+## Artifact Bundle
+
+An **artifact bundle** packages complete payment verification data (policyGrant, sba, spa, settlement, optional settlementIntent and ledgerAnchor) into a single JSON object for exchange between systems. See [ArtifactBundle.md](./ArtifactBundle.md) for the canonical format and schema.
 
 ---
 
