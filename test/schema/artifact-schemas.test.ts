@@ -80,7 +80,7 @@ describe("PolicyGrant schema", () => {
     if (result.ok) expect(result.data.grantId).toBe("grant_7ab3");
   });
 
-  it("accepts version as number 1", () => {
+  it("accepts version as number 1 (backward compat; protocol recommends '1.0' strings)", () => {
     const result = validateWithSchema(policyGrantSchema, {
       ...validPolicyGrant,
       version: 1,

@@ -46,6 +46,7 @@ export const assetSchema = z.discriminatedUnion("kind", [
 ]);
 export type Asset = z.infer<typeof assetSchema>;
 
+/** Protocol docs recommend semantic strings ("1.0"); numeric 1 accepted for backward compatibility. */
 export const mpcpVersionSchema = z.union([
   z.literal(1),
   z.string().regex(/^\d+\.\d+$/),
