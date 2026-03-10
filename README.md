@@ -194,6 +194,10 @@ These are used to bind authorizations to a specific settlement intent.
 
 Optional support for publishing intent hashes to distributed ledgers (public auditability, dispute protection). Currently provides a **mock anchor** for development and testing. Real ledger adapters (Hedera HCS, XRPL, EVM) are planned. See [Intent Anchoring](./doc/architecture/INTENT_ANCHORING.md).
 
+## Dispute Verification (optional)
+
+`verifyDisputedSettlement` validates disputed settlements using the full MPCP chain plus optional ledger anchor. See [Dispute Verification](./doc/architecture/DISPUTE_VERIFICATION.md).
+
 ---
 
 ## Verification Engine
