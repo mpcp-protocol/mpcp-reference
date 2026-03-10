@@ -64,4 +64,11 @@ describe("computeSettlementIntentHash", () => {
     const intent = { rail: "xrpl", amount: "1000" };
     expect(computeIntentHash(intent)).toBe(computeSettlementIntentHash(intent));
   });
+
+  it("strips intentHash from intent before hashing (never trust intent.intentHash)", () => {
+    const intent = { rail: "xrpl", amount: "1000", destination: "rDest" };
+    const hashWithout = computeSettlementIntentHash(intent);
+    const intentWithFakeHash = { ...intent, intentHash: "a".repeat(64) };
+    expect(computeSettlementIntentHash(intentWithFakeHash)).toBe(hashWithout);
+  });
 });

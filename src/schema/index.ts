@@ -5,5 +5,6 @@ export * from "./signedBudgetAuthorization.js";
 export * from "./paymentAuthorization.js";
 export * from "./settlementIntent.js";
 export * from "./fleetPolicyAuthorization.js";
+export * from "./verifySchemas.js";
 export { validateWithSchema } from "./validate.js";
 export type { ValidateResult } from "./validate.js";

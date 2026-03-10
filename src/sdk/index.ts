@@ -15,7 +15,6 @@ export {
 export {
   createSignedPaymentAuthorization,
   verifySignedPaymentAuthorizationForSettlement,
-  verifySignedPaymentAuthorizationForSettlement as verifySettlement,
 } from "../protocol/spa.js";
 
 export { canonicalJson } from "../canonical/canonicalJson.js";
