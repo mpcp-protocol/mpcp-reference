@@ -7,3 +7,4 @@ dist/
 diff.tmp
 examples/parking-session/guardrails-demo-bundle.json
 examples/parking-session/guardrails-demo-tampered.json
+examples/fleet-payment/fleet-demo-bundle.json
