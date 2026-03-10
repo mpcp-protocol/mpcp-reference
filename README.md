@@ -190,6 +190,10 @@ Components include:
 
 These are used to bind authorizations to a specific settlement intent.
 
+## Intent Anchoring (optional)
+
+Optional support for publishing intent hashes to distributed ledgers (public auditability, dispute protection). Currently provides a **mock anchor** for development and testing. Real ledger adapters (Hedera HCS, XRPL, EVM) are planned. See [Intent Anchoring](./doc/architecture/INTENT_ANCHORING.md).
+
 ---
 
 ## Verification Engine
@@ -330,7 +334,7 @@ Planned additions:
 - HTTP service layer
 - persistent replay protection storage
 - intent attestation layer
-- Hedera HCS anchoring
+- real ledger anchoring (Hedera HCS, XRPL, EVM) — mock anchor available now
 - multi‑application support
 
 ---
