@@ -1,10 +1,14 @@
-import { describe, expect, it } from "vitest";
+import crypto from "node:crypto";
+import { afterEach, describe, expect, it } from "vitest";
 import {
   createPolicyGrant,
   createBudgetAuthorization,
+  createSignedBudgetAuthorization,
+  createSignedPaymentAuthorization,
   createSettlementIntent,
   computeSettlementIntentHash,
   verifyPolicyGrant,
+  verifySettlement,
 } from "../../src/sdk/index.js";
 
 describe("createPolicyGrant", () => {
@@ -115,5 +119,110 @@ describe("createSettlementIntent", () => {
     });
     const hash = computeSettlementIntentHash(intent);
     expect(hash).toMatch(/^[a-f0-9]{64}$/);
+  });
+});
+
+describe("SDK artifact integration", () => {
+  const SBA_ENV = {
+    privateKey: process.env.MPCP_SBA_SIGNING_PRIVATE_KEY_PEM,
+    publicKey: process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM,
+    keyId: process.env.MPCP_SBA_SIGNING_KEY_ID,
+  };
+  const SPA_ENV = {
+    privateKey: process.env.MPCP_SPA_SIGNING_PRIVATE_KEY_PEM,
+    publicKey: process.env.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM,
+    keyId: process.env.MPCP_SPA_SIGNING_KEY_ID,
+  };
+
+  afterEach(() => {
+    process.env.MPCP_SBA_SIGNING_PRIVATE_KEY_PEM = SBA_ENV.privateKey;
+    process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM = SBA_ENV.publicKey;
+    process.env.MPCP_SBA_SIGNING_KEY_ID = SBA_ENV.keyId;
+    process.env.MPCP_SPA_SIGNING_PRIVATE_KEY_PEM = SPA_ENV.privateKey;
+    process.env.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM = SPA_ENV.publicKey;
+    process.env.MPCP_SPA_SIGNING_KEY_ID = SPA_ENV.keyId;
+  });
+
+  function setupKeys() {
+    const sbaKeys = crypto.generateKeyPairSync("ed25519");
+    const spaKeys = crypto.generateKeyPairSync("ed25519");
+    process.env.MPCP_SBA_SIGNING_PRIVATE_KEY_PEM = sbaKeys.privateKey.export({ type: "pkcs8", format: "pem" }).toString();
+    process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM = sbaKeys.publicKey.export({ type: "spki", format: "pem" }).toString();
+    process.env.MPCP_SBA_SIGNING_KEY_ID = "mpcp-sba-signing-key-1";
+    process.env.MPCP_SPA_SIGNING_PRIVATE_KEY_PEM = spaKeys.privateKey.export({ type: "pkcs8", format: "pem" }).toString();
+    process.env.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM = spaKeys.publicKey.export({ type: "spki", format: "pem" }).toString();
+    process.env.MPCP_SPA_SIGNING_KEY_ID = "mpcp-spa-signing-key-1";
+  }
+
+  it("createPolicyGrant + createSignedBudgetAuthorization + createSignedPaymentAuthorization integrate with verifySettlement", () => {
+    setupKeys();
+    const expiresAt = new Date(Date.now() + 60_000).toISOString();
+    const nowISO = new Date(Date.now() - 1000).toISOString();
+
+    const policyGrant = createPolicyGrant({
+      policyHash: "a1b2c3",
+      allowedRails: ["xrpl"],
+      allowedAssets: [{ kind: "IOU", currency: "RLUSD", issuer: "rIssuer" }],
+      expiresAt,
+    });
+
+    const signedBudgetAuth = createSignedBudgetAuthorization({
+      sessionId: "11111111-1111-4111-8111-111111111111",
+      vehicleId: "1234567",
+      policyHash: "a1b2c3",
+      currency: "USD",
+      maxAmountMinor: "3000",
+      allowedRails: ["xrpl"],
+      allowedAssets: [{ kind: "IOU", currency: "RLUSD", issuer: "rIssuer" }],
+      destinationAllowlist: ["rDestination"],
+      expiresAt,
+    });
+    expect(signedBudgetAuth).not.toBeNull();
+
+    const paymentPolicyDecision = {
+      decisionId: "dec-1",
+      policyHash: "a1b2c3",
+      action: "ALLOW" as const,
+      reasons: ["OK"],
+      expiresAtISO: expiresAt,
+      rail: "xrpl" as const,
+      asset: { kind: "IOU" as const, currency: "RLUSD", issuer: "rIssuer" },
+      priceFiat: { amountMinor: "2500", currency: "USD" },
+      chosen: { rail: "xrpl" as const, quoteId: "q1" },
+      settlementQuotes: [
+        {
+          quoteId: "q1",
+          rail: "xrpl" as const,
+          amount: { amount: "19440000", decimals: 6 },
+          destination: "rDestination",
+          expiresAt,
+          asset: { kind: "IOU" as const, currency: "RLUSD", issuer: "rIssuer" },
+        },
+      ],
+    };
+
+    const signedPaymentAuth = createSignedPaymentAuthorization(
+      "11111111-1111-4111-8111-111111111111",
+      paymentPolicyDecision,
+    );
+    expect(signedPaymentAuth).not.toBeNull();
+
+    const settlement = {
+      amount: "19440000",
+      rail: "xrpl" as const,
+      asset: { kind: "IOU" as const, currency: "RLUSD", issuer: "rIssuer" },
+      destination: "rDestination",
+      nowISO,
+    };
+
+    const result = verifySettlement({
+      policyGrant,
+      signedBudgetAuthorization: signedBudgetAuth!,
+      signedPaymentAuthorization: signedPaymentAuth!,
+      settlement,
+      paymentPolicyDecision,
+      decisionId: "dec-1",
+    });
+    expect(result).toEqual({ valid: true });
   });
 });

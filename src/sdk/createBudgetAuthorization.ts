@@ -54,9 +54,9 @@ export function createBudgetAuthorization(input: CreateBudgetAuthorizationInput)
     minorUnit: input.minorUnit ?? 2,
     budgetScope: input.budgetScope ?? "SESSION",
     maxAmountMinor: input.maxAmountMinor,
-    allowedRails: input.allowedRails,
-    allowedAssets: input.allowedAssets,
-    destinationAllowlist: input.destinationAllowlist,
+    allowedRails: input.allowedRails ?? [],
+    allowedAssets: input.allowedAssets ?? [],
+    destinationAllowlist: input.destinationAllowlist ?? [],
     expiresAt: input.expiresAt,
   };
 }

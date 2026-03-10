@@ -21,6 +21,6 @@ export function createPolicyGrant(input: CreatePolicyGrantInput): PolicyGrantLik
     policyHash: input.policyHash,
     expiresAt: input.expiresAt,
     allowedRails: input.allowedRails,
-    allowedAssets: input.allowedAssets,
+    allowedAssets: input.allowedAssets ?? [],
   };
 }
