@@ -44,7 +44,7 @@ const { runVerify } = await import("../../dist/cli/verify.js");
 
 const EXPIRY = "2030-12-31T23:59:59Z";
 const SETTLEMENT_NOW = "2026-01-15T12:00:00Z";
-const policyHash = "a1b2c3d4e5f6";
+const policyHash = "a".repeat(64);
 
 function log(msg) {
   console.log(msg);

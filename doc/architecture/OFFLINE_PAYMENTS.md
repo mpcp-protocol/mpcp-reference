@@ -41,7 +41,7 @@ The vehicle stores this chain onboard. When connectivity is restored, it can ref
 
 4. Vehicle signs **SignedPaymentAuthorization (SPA)** locally.
 
-5. Parking system verifies the MPCP artifact chain **locally** (PolicyGrant → SBA → SPA → SettlementIntent).
+5. Parking system verifies the MPCP artifact chain **locally** (PolicyGrant → SignedBudgetAuthorization → SignedPaymentAuthorization → SettlementIntent).
 
 6. Payment succeeds. Gate opens. **No central backend contacted.**
 
