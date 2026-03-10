@@ -20,5 +20,10 @@ export {
   verifySettlementWithReport,
   verifySettlementWithReportSafe,
 } from "./verifySettlement.js";
+export {
+  verifyDisputedSettlement,
+  type DisputeVerificationInput,
+  type DisputeVerificationResult,
+} from "./verifyDisputedSettlement.js";
 export { runVerificationPipeline } from "./verifyPipeline.js";
 export type { VerificationPipelineOutput } from "./verifyPipeline.js";
