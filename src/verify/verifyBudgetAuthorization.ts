@@ -29,25 +29,25 @@ export function verifyBudgetAuthorization(
   if (!sbaResult.success) {
     const first = sbaResult.error.errors[0];
     const path = first?.path?.length ? first.path.join(".") + ": " : "";
-    return { valid: false, reason: `invalid_artifact: ${path}${first?.message ?? sbaResult.error.message}` };
+    return { valid: false, reason: `invalid_artifact: ${path}${first?.message ?? sbaResult.error.message}`, artifact: "signedBudgetAuthorization" };
   }
   const grantResult = policyGrantForVerificationSchema.safeParse(grant);
   if (!grantResult.success) {
     const first = grantResult.error.errors[0];
     const path = first?.path?.length ? first.path.join(".") + ": " : "";
-    return { valid: false, reason: `invalid_artifact: ${path}${first?.message ?? grantResult.error.message}` };
+    return { valid: false, reason: `invalid_artifact: ${path}${first?.message ?? grantResult.error.message}`, artifact: "policyGrant" };
   }
   const envelopeParsed = sbaResult.data;
   const grantParsed = grantResult.data;
 
   // 3. Artifact linkage (SBA → grant)
   if (envelopeParsed.authorization.policyHash !== grantParsed.policyHash) {
-    return { valid: false, reason: "budget_policy_hash_mismatch" };
+    return { valid: false, reason: "budget_policy_hash_mismatch", artifact: "signedBudgetAuthorization" };
   }
   const grantRails = new Set(grantParsed.allowedRails);
   for (const rail of envelopeParsed.authorization.allowedRails) {
     if (!grantRails.has(rail)) {
-      return { valid: false, reason: "budget_rail_not_in_grant" };
+      return { valid: false, reason: "budget_rail_not_in_grant", artifact: "signedBudgetAuthorization" };
     }
   }
 
@@ -61,6 +61,6 @@ export function verifyBudgetAuthorization(
     decision,
     nowMs: options?.nowMs,
   });
-  if (!result.ok) return { valid: false, reason: result.reason };
+  if (!result.ok) return { valid: false, reason: result.reason, artifact: "signedBudgetAuthorization" };
   return { valid: true };
 }

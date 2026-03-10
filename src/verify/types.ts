@@ -18,7 +18,7 @@ export interface PolicyGrantLike {
 /** Shared verification result for all verifiers. Use with CLI and callers. */
 export type VerificationResult =
   | { valid: true }
-  | { valid: false; reason: string };
+  | { valid: false; reason: string; artifact?: string };
 
 /**
  * Fixed verification order applied across all verifiers:

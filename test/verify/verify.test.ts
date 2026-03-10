@@ -100,7 +100,7 @@ describe("verifyPolicyGrant", () => {
 
   it("fails when grant expired", () => {
     const expired = { ...baseGrant, expiresAt: pastExpiry };
-    expect(verifyPolicyGrant(expired)).toEqual({ valid: false, reason: "policy_grant_expired" });
+    expect(verifyPolicyGrant(expired)).toMatchObject({ valid: false, reason: "policy_grant_expired", artifact: "policyGrant" });
   });
 
   it("fails when grant missing expiry", () => {
@@ -119,6 +119,7 @@ describe("verifyPolicyGrant", () => {
     const malformed = { policyHash: "not-hex!", allowedRails: ["xrpl"] };
     const result = verifyPolicyGrant(malformed);
     expect(result.valid).toBe(false);
+    expect(result).toMatchObject({ valid: false, artifact: "policyGrant" });
     expect(result.valid === false && result.reason).toMatch(/invalid_artifact/);
   });
 });
@@ -145,6 +146,7 @@ describe("verifyBudgetAuthorization", () => {
   it("rejects malformed SBA with invalid_artifact", () => {
     const result = verifyBudgetAuthorization({ authorization: {} }, baseGrant, baseDecision);
     expect(result.valid).toBe(false);
+    expect(result).toMatchObject({ valid: false, artifact: "signedBudgetAuthorization" });
     expect(result.valid === false && result.reason).toMatch(/invalid_artifact/);
   });
 
@@ -163,7 +165,7 @@ describe("verifyBudgetAuthorization", () => {
     });
     expect(sba).not.toBeNull();
     const result = verifyBudgetAuthorization(sba!, baseGrant, baseDecision);
-    expect(result).toEqual({ valid: false, reason: "budget_policy_hash_mismatch" });
+    expect(result).toMatchObject({ valid: false, reason: "budget_policy_hash_mismatch", artifact: "signedBudgetAuthorization" });
   });
 });
 
@@ -223,7 +225,7 @@ describe("verifyPaymentAuthorization", () => {
       baseDecision,
       baseSettlement,
     );
-    expect(result).toEqual({ valid: false, reason: "payment_auth_session_mismatch" });
+    expect(result).toMatchObject({ valid: false, reason: "payment_auth_session_mismatch", artifact: "signedPaymentAuthorization" });
   });
 });
 
@@ -275,7 +277,7 @@ describe("verifySettlementIntent", () => {
     expect(spa).not.toBeNull();
     const wrongIntent = { rail: "xrpl", amount: "99999999", destination: "rDest" };
     const result = verifySettlementIntent(spa!, wrongIntent);
-    expect(result).toEqual({ valid: false, reason: "intent_hash_mismatch" });
+    expect(result).toMatchObject({ valid: false, reason: "intent_hash_mismatch", artifact: "settlementIntent" });
   });
 
   it("rejects modified intent even when attacker forges intentHash field (verifier recomputes)", () => {
@@ -298,7 +300,7 @@ describe("verifySettlementIntent", () => {
       intentHash: spa!.authorization.intentHash,
     };
     const result = verifySettlementIntent(spa!, tamperedIntent);
-    expect(result).toEqual({ valid: false, reason: "intent_hash_mismatch" });
+    expect(result).toMatchObject({ valid: false, reason: "intent_hash_mismatch", artifact: "settlementIntent" });
   });
 });
 
@@ -401,7 +403,7 @@ describe("verifySettlement", () => {
       decisionId: "dec-1",
       // settlementIntent omitted
     });
-    expect(result).toEqual({ valid: false, reason: "intent_required" });
+    expect(result).toMatchObject({ valid: false, reason: "intent_required", artifact: "signedPaymentAuthorization" });
   });
 
   it("fails when grant expired", () => {
@@ -432,6 +434,6 @@ describe("verifySettlement", () => {
       decisionId: "dec-1",
       nowMs: Date.now(),
     });
-    expect(result).toEqual({ valid: false, reason: "policy_grant_expired" });
+    expect(result).toMatchObject({ valid: false, reason: "policy_grant_expired", artifact: "policyGrant" });
   });
 });

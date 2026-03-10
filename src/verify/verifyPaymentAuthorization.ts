@@ -43,19 +43,19 @@ export function verifyPaymentAuthorization(
   if (!spaResult.success) {
     const first = spaResult.error.errors[0];
     const path = first?.path?.length ? first.path.join(".") + ": " : "";
-    return { valid: false, reason: `invalid_artifact: ${path}${first?.message ?? spaResult.error.message}` };
+    return { valid: false, reason: `invalid_artifact: ${path}${first?.message ?? spaResult.error.message}`, artifact: "signedPaymentAuthorization" };
   }
   const sbaResult = signedBudgetAuthorizationSchema.safeParse(sba);
   if (!sbaResult.success) {
     const first = sbaResult.error.errors[0];
     const path = first?.path?.length ? first.path.join(".") + ": " : "";
-    return { valid: false, reason: `invalid_artifact: ${path}${first?.message ?? sbaResult.error.message}` };
+    return { valid: false, reason: `invalid_artifact: ${path}${first?.message ?? sbaResult.error.message}`, artifact: "signedBudgetAuthorization" };
   }
   const grantResult = policyGrantForVerificationSchema.safeParse(grant);
   if (!grantResult.success) {
     const first = grantResult.error.errors[0];
     const path = first?.path?.length ? first.path.join(".") + ": " : "";
-    return { valid: false, reason: `invalid_artifact: ${path}${first?.message ?? grantResult.error.message}` };
+    return { valid: false, reason: `invalid_artifact: ${path}${first?.message ?? grantResult.error.message}`, artifact: "policyGrant" };
   }
   const envelopeParsed = spaResult.data;
   const sbaParsed = sbaResult.data;
@@ -64,43 +64,43 @@ export function verifyPaymentAuthorization(
   // 2. Hash validation (intentHash)
   if (envelopeParsed.authorization.intentHash) {
     if (!options?.settlementIntent) {
-      return { valid: false, reason: "intent_required" };
+      return { valid: false, reason: "intent_required", artifact: "signedPaymentAuthorization" };
     }
     const intentResult = settlementIntentForVerificationSchema.safeParse(options.settlementIntent);
     if (!intentResult.success) {
       const first = intentResult.error.errors[0];
       const path = first?.path?.length ? first.path.join(".") + ": " : "";
-      return { valid: false, reason: `invalid_artifact: ${path}${first?.message ?? intentResult.error.message}` };
+      return { valid: false, reason: `invalid_artifact: ${path}${first?.message ?? intentResult.error.message}`, artifact: "settlementIntent" };
     }
     const computed = computeSettlementIntentHash(intentResult.data);
     if (computed !== envelopeParsed.authorization.intentHash) {
-      return { valid: false, reason: "intent_hash_mismatch" };
+      return { valid: false, reason: "intent_hash_mismatch", artifact: "settlementIntent" };
     }
   }
 
   // 3. Artifact linkage (SPA → SBA)
   if (envelopeParsed.authorization.sessionId !== sbaParsed.authorization.sessionId) {
-    return { valid: false, reason: "payment_auth_session_mismatch" };
+    return { valid: false, reason: "payment_auth_session_mismatch", artifact: "signedPaymentAuthorization" };
   }
   if (envelopeParsed.authorization.policyHash !== sbaParsed.authorization.policyHash) {
-    return { valid: false, reason: "payment_auth_policy_hash_mismatch" };
+    return { valid: false, reason: "payment_auth_policy_hash_mismatch", artifact: "signedPaymentAuthorization" };
   }
 
   // 4. Budget limits (SPA params within SBA allowlists)
   const auth = envelopeParsed.authorization;
   if (!sbaParsed.authorization.allowedRails.includes(auth.rail as "xrpl" | "evm" | "stripe" | "hosted")) {
-    return { valid: false, reason: "payment_auth_rail_not_in_budget" };
+    return { valid: false, reason: "payment_auth_rail_not_in_budget", artifact: "signedPaymentAuthorization" };
   }
   if (
     sbaParsed.authorization.allowedAssets.length > 0 &&
     auth.asset &&
     !sbaParsed.authorization.allowedAssets.some((a: unknown) => assetMatches(a, auth.asset))
   ) {
-    return { valid: false, reason: "payment_auth_asset_not_in_budget" };
+    return { valid: false, reason: "payment_auth_asset_not_in_budget", artifact: "signedPaymentAuthorization" };
   }
   const destAllowlist = sbaParsed.authorization.destinationAllowlist;
   if (destAllowlist != null && destAllowlist.length > 0 && auth.destination && !destAllowlist.includes(auth.destination)) {
-    return { valid: false, reason: "payment_auth_destination_not_in_budget" };
+    return { valid: false, reason: "payment_auth_destination_not_in_budget", artifact: "signedPaymentAuthorization" };
   }
 
   // 5. Policy constraints (grant, SBA, SPA signature/expiry, settlement match)
@@ -128,7 +128,7 @@ export function verifyPaymentAuthorization(
         : spaVerify.reason === "expired"
           ? "payment_auth_expired"
           : "payment_auth_mismatch";
-    return { valid: false, reason };
+    return { valid: false, reason, artifact: "signedPaymentAuthorization" };
   }
 
   return { valid: true };

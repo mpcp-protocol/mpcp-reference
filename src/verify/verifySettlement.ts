@@ -16,7 +16,7 @@ function parseArtifact(
   if (result.success) return { valid: true };
   const first = (result as { error: { errors: Array<{ path?: string[]; message?: string }> } }).error.errors[0];
   const path = first?.path?.length ? first.path.join(".") + ": " : "";
-  return { valid: false, reason: `invalid_artifact: ${name} ${path}${first?.message ?? (result as { error: { message: string } }).error.message}` };
+  return { valid: false, reason: `invalid_artifact: ${name} ${path}${first?.message ?? (result as { error: { message: string } }).error.message}`, artifact: name };
 }
 
 /**
@@ -47,7 +47,7 @@ export function verifySettlement(
     ctx.signedPaymentAuthorization.authorization.intentHash &&
     !ctx.settlementIntent
   ) {
-    return { valid: false, reason: "intent_required" };
+    return { valid: false, reason: "intent_required", artifact: "signedPaymentAuthorization" };
   }
 
   const grantResult = verifyPolicyGrant(ctx.policyGrant, {
@@ -75,7 +75,7 @@ export function verifySettlement(
     );
     if (!intentResult.valid) return intentResult;
   } else if (ctx.signedPaymentAuthorization.authorization.intentHash) {
-    return { valid: false, reason: "intent_required" };
+    return { valid: false, reason: "intent_required", artifact: "signedPaymentAuthorization" };
   }
 
   return { valid: true };

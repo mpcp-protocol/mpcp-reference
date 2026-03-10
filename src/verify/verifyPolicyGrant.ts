@@ -19,21 +19,21 @@ export function verifyPolicyGrant(
   if (!parsed.success) {
     const first = parsed.error.errors[0];
     const path = first?.path?.length ? first.path.join(".") + ": " : "";
-    return { valid: false, reason: `invalid_artifact: ${path}${first?.message ?? parsed.error.message}` };
+    return { valid: false, reason: `invalid_artifact: ${path}${first?.message ?? parsed.error.message}`, artifact: "policyGrant" };
   }
   const g = parsed.data;
   // 5. Policy constraints (expiry)
   const nowMs = typeof options?.nowMs === "number" ? options.nowMs : Date.now();
   const expiresAt = g.expiresAt ?? g.expiresAtISO;
   if (!expiresAt) {
-    return { valid: false, reason: "policy_grant_missing_expiry" };
+    return { valid: false, reason: "policy_grant_missing_expiry", artifact: "policyGrant" };
   }
   const expiryMs = Date.parse(expiresAt);
   if (!Number.isFinite(expiryMs)) {
-    return { valid: false, reason: "policy_grant_invalid_expiry" };
+    return { valid: false, reason: "policy_grant_invalid_expiry", artifact: "policyGrant" };
   }
   if (expiryMs <= nowMs) {
-    return { valid: false, reason: "policy_grant_expired" };
+    return { valid: false, reason: "policy_grant_expired", artifact: "policyGrant" };
   }
   return { valid: true };
 }
