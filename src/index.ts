@@ -1,3 +1,4 @@
+export * from "./anchor/index.js";
 export * from "./policy-core/index.js";
 export * from "./protocol/types.js";
 export * from "./protocol/spa.js";
