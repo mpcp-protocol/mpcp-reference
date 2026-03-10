@@ -218,10 +218,10 @@ Requirements:
 
 Hashes MUST include the MPCP domain prefix.
 
-Example:
+Example (SettlementIntent uses a canonical payload — subset of fields, not the full artifact; see [SettlementIntentHash.md](./SettlementIntentHash.md)):
 
 ```text
-SHA256("MPCP:SettlementIntent:1.0:" || canonical_json(settlementIntent))
+SHA256("MPCP:SettlementIntent:1.0:" || canonical_json(canonicalPayload))
 ```
 
 ---
@@ -230,7 +230,7 @@ SHA256("MPCP:SettlementIntent:1.0:" || canonical_json(settlementIntent))
 
 The MPCP pipeline produces a series of structured artifacts. Each artifact constrains the next stage of the protocol and can be independently verified.
 
-## PolicyGrant
+### PolicyGrant
 
 The **PolicyGrant** represents the admission of a machine into a controlled payment context.
 
@@ -344,7 +344,7 @@ An **IntentCommitment** represents the hashed commitment of the settlement inten
 Example:
 
 ```text
-commitment = SHA256("MPCP:SettlementIntent:1.0:" || canonical_json(settlementIntent))
+commitment = SHA256("MPCP:SettlementIntent:1.0:" || canonical_json(canonicalPayload))
 ```
 
 IntentCommitment represents the canonical MPCP artifact used when publishing commitments to an external attestation system such as the Intent Attestation Layer (IAL).
@@ -387,8 +387,10 @@ IntentCommitment (hash of SettlementIntent)
 - if present, `SPA.intentHash` MUST equal:
 
 ```text
-SHA256("MPCP:SettlementIntent:1.0:" || canonical_json(SettlementIntent))
+SHA256("MPCP:SettlementIntent:1.0:" || canonical_json(canonicalPayload))
 ```
+
+  (canonicalPayload = subset of intent fields defining settlement semantics; see [SettlementIntentHash.md](./SettlementIntentHash.md))
 
 **SettlementIntent → IntentCommitment**
 
@@ -466,10 +468,10 @@ If any constraint fails → **reject settlement**.
 
 ### Step 4 — Verify Intent Binding (Optional)
 
-If the SPA contains an `intentHash`, the verifier must reconstruct the canonical settlement intent and compare hashes.
+If the SPA contains an `intentHash`, the verifier must reconstruct the canonical payload (subset of intent fields) and compare hashes.
 
 ```text
-computedHash = SHA256("MPCP:SettlementIntent:1.0:" || canonical_json(settlementIntent))
+computedHash = SHA256("MPCP:SettlementIntent:1.0:" || canonical_json(canonicalPayload))
 ```
 
 Verification rule:
@@ -546,10 +548,10 @@ Example:
 MPCP:SettlementIntent:1.0:{"amount":"19440000","destination":"rDest...","rail":"xrpl"}
 ```
 
-Hash computation therefore becomes:
+Hash computation therefore becomes (canonicalPayload = subset of intent fields; see [SettlementIntentHash.md](./SettlementIntentHash.md)):
 
 ```text
-intentHash = SHA256("MPCP:SettlementIntent:1.0:" || canonical_json(settlementIntent))
+intentHash = SHA256("MPCP:SettlementIntent:1.0:" || canonical_json(canonicalPayload))
 ```
 
 This ensures:
@@ -592,10 +594,10 @@ Canonical form:
 {"amount":"19440000","destination":"rDest...","rail":"xrpl"}
 ```
 
-Hash computation:
+Hash computation (canonicalPayload excludes metadata such as createdAt):
 
 ```text
-intentHash = SHA256("MPCP:SettlementIntent:1.0:" || canonical_json(settlementIntent))
+intentHash = SHA256("MPCP:SettlementIntent:1.0:" || canonical_json(canonicalPayload))
 ```
 
 ---
@@ -868,8 +870,8 @@ function verifySettlement(grant, sba, spa, settlementTx):
     verifySettlementFields(spa, settlementTx)
 
     if spa.intentHash is present:
-        settlementIntent = canonicalizeSettlementIntent(settlementTx)
-        computedHash = sha256("MPCP:SettlementIntent:1.0:" || canonical_json(settlementIntent))
+        canonicalPayload = extractCanonicalPayload(settlementTx)  # subset of fields, not full artifact
+        computedHash = sha256("MPCP:SettlementIntent:1.0:" || canonical_json(canonicalPayload))
         assert computedHash == spa.intentHash
 
     assert decisionIdNotConsumed(spa.decisionId)
