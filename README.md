@@ -21,6 +21,13 @@ This document defines the MPCP artifacts, verification rules, canonical hashing,
 
 For compatibility and versioning policy (what is stable, how 1.0/1.1/2.0 evolve), see [Compatibility and Versioning](./doc/architecture/COMPATIBILITY_AND_VERSIONING.md).
 
+## Documentation Layout
+
+This repository contains two documentation layers:
+
+- **doc/** — Protocol specification and architecture documents (normative)
+- **docs/** — Developer documentation site (guides, examples, reference)
+
 ---
 
 # Quick Start
