@@ -79,7 +79,7 @@ Supported rails: `mock`, `hedera-hcs`.
 
 ## See Also
 
-- [REFERENCE_SERVICE_API](../../doc/architecture/REFERENCE_SERVICE_API.md)
+- [REFERENCE_SERVICE_API](../doc/architecture/REFERENCE_SERVICE_API.md)
 - [SDK Reference](sdk.md)
 - [Fleet Payments](../guides/fleet-payments.md)
 - [Dispute Resolution](../guides/dispute-resolution.md)

@@ -53,6 +53,6 @@ Verification uses the Hedera mirror node to fetch the message and confirm intent
 
 ## See Also
 
-- [Intent Anchoring (architecture)](../../doc/architecture/INTENT_ANCHORING.md)
+- [Intent Anchoring (architecture)](../doc/architecture/INTENT_ANCHORING.md)
 - [Dispute Resolution](../guides/dispute-resolution.md)
 - [Reference: Service API](../reference/service-api.md) — `anchorIntent`

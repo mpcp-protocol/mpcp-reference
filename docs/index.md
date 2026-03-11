@@ -94,7 +94,7 @@ MPCP allows machines, service providers, and verification systems to independent
 
 ## Specification
 
-The full protocol specification is in the [MPCP specification](../doc/protocol/mpcp.md). The [reference implementation](https://github.com/naory/mpcp-service) is available on GitHub.
+The full protocol specification is in the [MPCP specification](doc/protocol/mpcp.md). The [reference implementation](https://github.com/naory/mpcp-service) is available on GitHub.
 
 ## Start Building
 

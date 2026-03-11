@@ -72,6 +72,6 @@ mpcp policy-summary profiles/parking.json --profile parking
 
 ## See Also
 
-- [Fleet Operator Tooling](../../doc/architecture/FLEET_OPERATOR_TOOLING.md)
-- [Reference Profiles](../../doc/architecture/REFERENCE_PROFILES.md)
+- [Fleet Operator Tooling](../doc/architecture/FLEET_OPERATOR_TOOLING.md)
+- [Reference Profiles](../doc/architecture/REFERENCE_PROFILES.md)
 - [Protocol: Verification](../protocol/verification.md)

@@ -91,4 +91,4 @@ MPCP exists because:
 2. **Wallet popups don’t scale**—approval must move upstream to session and budget.
 3. **Policy → Budget → Payment → Verification** is the right architecture—separation of concerns, verifiable chain, settlement‑agnostic policy.
 
-For the protocol specification and implementation, see the [Machine Payment Control Protocol Specification](./protocol/mpcp.md) and the [MPCP Service README](../README.md).
+For the protocol specification and implementation, see the [Machine Payment Control Protocol Specification](./protocol/mpcp.md) and the [MPCP Service README](https://github.com/naory/mpcp-service#readme).

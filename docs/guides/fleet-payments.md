@@ -84,11 +84,11 @@ MPCP supports **offline payment** when the vehicle has no network:
 3. Infrastructure verifies chain locally (no network)
 4. When connectivity returns, settlement is reconciled
 
-See [Offline Payments](../../doc/architecture/OFFLINE_PAYMENTS.md).
+See [Offline Payments](../doc/architecture/OFFLINE_PAYMENTS.md).
 
 ## Reference Profiles
 
-Use [reference profiles](../../doc/architecture/REFERENCE_PROFILES.md) for common deployment patterns:
+Use [reference profiles](../doc/architecture/REFERENCE_PROFILES.md) for common deployment patterns:
 
 - **Fleet Offline** — Pre-auth budgets, offline payment
 - **Parking** — Meter/gate, short sessions
@@ -111,6 +111,6 @@ npx mpcp verify examples/fleet-payment/fleet-demo-bundle.json --explain
 ## See Also
 
 - [Examples: Fleet](../examples/fleet.md)
-- [Reference Profiles](../../doc/architecture/REFERENCE_PROFILES.md)
-- [Offline Payments](../../doc/architecture/OFFLINE_PAYMENTS.md)
+- [Reference Profiles](../doc/architecture/REFERENCE_PROFILES.md)
+- [Offline Payments](../doc/architecture/OFFLINE_PAYMENTS.md)
 - [Reference: Service API](../reference/service-api.md)

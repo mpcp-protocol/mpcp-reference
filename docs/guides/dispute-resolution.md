@@ -69,6 +69,6 @@ const anchor = await anchorIntent(intentHash, { rail: "hedera-hcs" });
 ## See Also
 
 - [Protocol: Anchoring](../protocol/anchoring.md)
-- [Intent Anchoring](../../doc/architecture/INTENT_ANCHORING.md)
-- [Dispute Verification](../../doc/architecture/DISPUTE_VERIFICATION.md)
+- [Intent Anchoring](../doc/architecture/INTENT_ANCHORING.md)
+- [Dispute Verification](../doc/architecture/DISPUTE_VERIFICATION.md)
 - [Reference: Service API](../reference/service-api.md)

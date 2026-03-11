@@ -80,4 +80,4 @@ Uses `examples/fleet-simulator/fleet-policy.json` and `simulate.mjs`.
 
 - [Fleet Payments](../guides/fleet-payments.md)
 - [Parking Example](parking.md)
-- [Reference Profiles](../../doc/architecture/REFERENCE_PROFILES.md)
+- [Reference Profiles](../doc/architecture/REFERENCE_PROFILES.md)
