@@ -1,0 +1,44 @@
+{
+  "version": "1.0",
+  "description": "Golden MPCP protocol test vectors for interoperability and regression testing",
+  "vectors": [
+    {
+      "id": "valid-settlement",
+      "file": "valid-settlement.json",
+      "expect": "valid",
+      "description": "Valid settlement with intent hash"
+    },
+    {
+      "id": "expired-grant",
+      "file": "expired-grant.json",
+      "expect": "invalid",
+      "reason": "policy_grant_expired",
+      "artifact": "policyGrant",
+      "description": "Policy grant expired"
+    },
+    {
+      "id": "budget-exceeded",
+      "file": "budget-exceeded.json",
+      "expect": "invalid",
+      "reason": "budget_exceeded",
+      "artifact": "signedBudgetAuthorization",
+      "description": "Payment decision exceeds budget"
+    },
+    {
+      "id": "intent-hash-mismatch",
+      "file": "intent-hash-mismatch.json",
+      "expect": "invalid",
+      "reason": "intent_hash_mismatch",
+      "artifact": "settlementIntent",
+      "description": "Settlement intent hash does not match SPA"
+    },
+    {
+      "id": "settlement-mismatch",
+      "file": "settlement-mismatch.json",
+      "expect": "invalid",
+      "reason": "payment_auth_mismatch",
+      "artifact": "signedPaymentAuthorization",
+      "description": "Settlement amount does not match SPA"
+    }
+  ]
+}

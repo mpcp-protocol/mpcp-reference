@@ -836,6 +836,42 @@ Implemented: `docs/` with overview (what-is-mpcp, problem, comparison-with-agent
 
 ⸻
 
+### PR18A — Protocol Chain Hero Diagram
+
+Add a canonical **MPCP Authorization Chain diagram** to the documentation homepage and architecture section.
+
+Diagram structure:
+
+PolicyGrant  
+→ SignedBudgetAuthorization  
+→ SignedPaymentAuthorization  
+→ Settlement
+
+Each layer visually represents how MPCP **progressively constrains machine spending authority**.
+
+Recommended labeling:
+
+• PolicyGrant — defines where and how a machine may pay  
+• SignedBudgetAuthorization — enforces session spending limits  
+• SignedPaymentAuthorization — authorizes a specific payment  
+• Settlement — records what actually happened
+
+Purpose:
+
+• give developers an immediate mental model of MPCP  
+• visually communicate the protocol’s constrained authorization chain  
+• establish a recognizable visual identity for MPCP documentation
+
+Deliverables:
+
+• SVG diagram included in docs/diagrams/  
+• diagram embedded on the docs homepage  
+• diagram referenced in protocol overview pages
+
+This diagram becomes the **primary visual explanation of the MPCP protocol** and should appear early in the documentation to help new readers understand the authorization model quickly.
+
+⸻
+
 PR19 — Documentation Site Deployment ✓
 
 Deploy the docs site so it is publicly accessible (e.g., GitHub Pages). Implemented: `mkdocs.yml`, `docs-requirements.txt`, `.github/workflows/deploy-docs.yml`. Enable GitHub Pages (Settings → Pages → Source: GitHub Actions) to publish.
@@ -844,6 +880,24 @@ Purpose:
 	•	make docs discoverable
 	•	provide a canonical URL for the protocol site
 	•	complete the "publishable" goal of PR18
+
+⸻
+
+PR20 — Golden Protocol Vectors ✓
+
+Freeze a set of canonical MPCP test vectors for interoperability and regression testing. Implemented: `vectors/` (manifest.json, valid-settlement.json, expired-grant.json, budget-exceeded.json, intent-hash-mismatch.json, settlement-mismatch.json), `test/vectors/goldenVectors.test.ts`.
+
+Vectors:
+	•	valid settlement (with intent hash)
+	•	expired grant
+	•	budget exceeded
+	•	intent hash mismatch
+	•	settlement mismatch (payment auth)
+
+Purpose:
+	•	let other implementations validate compatibility
+	•	prevent regressions
+	•	create a real interoperability target
 
 ⸻
 

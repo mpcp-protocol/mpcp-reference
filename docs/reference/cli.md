@@ -41,6 +41,7 @@ mpcp verify <settlement-file> [options]
 
 ```bash
 mpcp verify examples/parking-session/settlement-bundle.json
+mpcp verify vectors/valid-settlement.json
 mpcp verify settlement.json --explain
 mpcp verify settlement.json --append-log audit.jsonl
 ```
@@ -67,6 +68,20 @@ mpcp policy-summary <policy-file> [--profile <name>]
 mpcp policy-summary examples/fleet-simulator/fleet-policy.json
 mpcp policy-summary profiles/parking.json --profile parking
 ```
+
+---
+
+## Golden Protocol Vectors
+
+Golden test vectors are in `vectors/` for interoperability and regression testing:
+
+- `vectors/valid-settlement.json` — valid settlement with intent hash
+- `vectors/expired-grant.json` — expired policy grant
+- `vectors/budget-exceeded.json` — payment exceeds budget
+- `vectors/intent-hash-mismatch.json` — intent hash mismatch
+- `vectors/settlement-mismatch.json` — settlement amount mismatch
+
+`npm test` runs the golden vector suite. Other implementations can verify compatibility by running their verifier against these vectors.
 
 ---
 
