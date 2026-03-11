@@ -18,7 +18,7 @@ This document defines the formal compatibility policy for MPCP. It tells impleme
 
 ### Version Field
 
-All MPCP artifacts SHOULD include a semantic version string in the `version` field (e.g. `"1.0"`). The version identifies the protocol semantics used when producing the artifact.
+All MPCP artifacts MUST include a semantic version string in the `version` field (e.g. `"1.0"`), unless explicitly documented otherwise. The version identifies the protocol semantics used when producing the artifact.
 
 ### Format
 
