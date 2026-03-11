@@ -767,6 +767,7 @@ PR15 — Reference Profiles ✓
 Define named MPCP deployment profiles. Implemented: `doc/architecture/REFERENCE_PROFILES.md`, `profiles/` (fleet-offline, parking, charging, hosted-rail), `policy-summary --profile <name>` validation.
 
 Examples:
+	•	XRPL Stablecoin Profile
 	•	Fleet Offline Profile
 	•	Parking Profile
 	•	Charging Profile
@@ -836,42 +837,6 @@ Implemented: `docs/` with overview (what-is-mpcp, problem, comparison-with-agent
 
 ⸻
 
-### PR18A — Protocol Chain Hero Diagram
-
-Add a canonical **MPCP Authorization Chain diagram** to the documentation homepage and architecture section.
-
-Diagram structure:
-
-PolicyGrant  
-→ SignedBudgetAuthorization  
-→ SignedPaymentAuthorization  
-→ Settlement
-
-Each layer visually represents how MPCP **progressively constrains machine spending authority**.
-
-Recommended labeling:
-
-• PolicyGrant — defines where and how a machine may pay  
-• SignedBudgetAuthorization — enforces session spending limits  
-• SignedPaymentAuthorization — authorizes a specific payment  
-• Settlement — records what actually happened
-
-Purpose:
-
-• give developers an immediate mental model of MPCP  
-• visually communicate the protocol’s constrained authorization chain  
-• establish a recognizable visual identity for MPCP documentation
-
-Deliverables:
-
-• SVG diagram included in docs/diagrams/  
-• diagram embedded on the docs homepage  
-• diagram referenced in protocol overview pages
-
-This diagram becomes the **primary visual explanation of the MPCP protocol** and should appear early in the documentation to help new readers understand the authorization model quickly.
-
-⸻
-
 PR19 — Documentation Site Deployment ✓
 
 Deploy the docs site so it is publicly accessible (e.g., GitHub Pages). Implemented: `mkdocs.yml`, `docs-requirements.txt`, `.github/workflows/deploy-docs.yml`. Enable GitHub Pages (Settings → Pages → Source: GitHub Actions) to publish.
@@ -883,23 +848,158 @@ Purpose:
 
 ⸻
 
-PR20 — Golden Protocol Vectors ✓
+---
 
-Freeze a set of canonical MPCP test vectors for interoperability and regression testing. Implemented: `vectors/` (manifest.json, valid-settlement.json, expired-grant.json, budget-exceeded.json, intent-hash-mismatch.json, settlement-mismatch.json), `test/vectors/goldenVectors.test.ts`.
+# Phase 6 — Adoption Acceleration
 
-Vectors:
-	•	valid settlement (with intent hash)
-	•	expired grant
-	•	budget exceeded
-	•	intent hash mismatch
-	•	settlement mismatch (payment auth)
+Goal: Turn MPCP from a published protocol into something that is easy to evaluate, explain, and adopt across machine-wallet, fleet, and payment-rail ecosystems.
 
-Purpose:
-	•	let other implementations validate compatibility
-	•	prevent regressions
-	•	create a real interoperability target
+This phase focuses on visual communication, real-world deployment profiles, and ecosystem positioning so that MPCP can be understood and adopted by external developers, mobility operators, and payment infrastructure teams.
 
 ⸻
+
+PR20a — Protocol Chain Hero Diagram
+
+Add a canonical **MPCP Authorization Chain** diagram to the documentation homepage and architecture section.
+
+Diagram structure:
+	•	PolicyGrant
+	•	SignedBudgetAuthorization
+	•	SignedPaymentAuthorization
+	•	Settlement
+
+Each layer visually represents how MPCP progressively constrains machine spending authority.
+
+Purpose:
+	•	give developers an immediate mental model of MPCP
+	•	visually communicate the constrained authorization chain
+	•	establish a recognizable visual identity for MPCP documentation
+
+Deliverables:
+	•	SVG diagram in `docs/diagrams/`
+	•	homepage embed
+	•	references from overview / protocol pages
+
+⸻
+
+PR21 — Payment Profiles Expansion
+
+Expand reference profiles so MPCP is immediately usable for real payment ecosystems.
+
+Initial focus:
+	•	XRPL Stablecoin Profile
+	•	RLUSD / issued-asset payment constraints
+	•	wallet and verifier expectations for stablecoin settlement
+
+Future candidates:
+	•	Stellar stablecoin profile
+	•	Hedera stablecoin profile
+	•	EVM stablecoin settlement profile
+
+Purpose:
+	•	make MPCP concrete for real settlement rails
+	•	reduce ambiguity for implementers
+	•	provide a clear starting profile for stablecoin-based machine payments
+
+Deliverables:
+	•	profile document(s)
+	•	example bundle(s)
+	•	verification guidance for each supported profile
+
+⸻
+
+PR22 — Layer-1 Evaluation for Payment Profiles
+
+Research which layer-1 and payment ecosystem should be prioritized next for MPCP deployment profiles beyond XRPL.
+
+Candidate ecosystems:
+	•	XRPL
+	•	Hedera
+	•	Stellar
+	•	EVM stablecoin rails
+
+Evaluation criteria:
+	•	stablecoin support and issuer ecosystem
+	•	payment UX and settlement finality
+	•	fees and predictability
+	•	compliance / allowlist features
+	•	offline and verifier friendliness
+	•	developer tooling and integration simplicity
+
+Purpose:
+	•	identify the strongest next ecosystem for MPCP adoption
+	•	justify profile prioritization with explicit criteria
+	•	position MPCP clearly relative to existing payment stacks
+
+Deliverables:
+	•	research document comparing candidate ecosystems
+	•	recommended next profile target
+	•	short rationale for why that ecosystem best fits MPCP
+
+⸻
+
+PR23 — Machine Wallet Guardrails
+
+Document and demonstrate how MPCP acts as a **machine wallet guardrail layer**.
+
+Concept:
+A machine wallet should not send funds unless payment requests satisfy:
+	•	PolicyGrant constraints
+	•	SignedBudgetAuthorization session limits
+	•	SignedPaymentAuthorization approval rules
+
+Purpose:
+	•	show MPCP as a practical machine-wallet security model
+	•	highlight bounded authorization and spend limits
+	•	make the protocol attractive to fleet and robotics teams
+
+Deliverables:
+	•	doc / guide describing the guardrail model
+	•	wallet integration example
+	•	threat-model notes for overspend and misuse prevention
+
+⸻
+
+PR24 — Automated Fleet Payment Demo
+
+Create a visual end-to-end demonstration of a real MPCP-controlled fleet payment.
+
+Example flow:
+	•	vehicle arrives at charger / parking facility
+	•	service requests payment
+	•	fleet policy engine issues / validates artifacts
+	•	vehicle signs payment authorization
+	•	settlement executes
+	•	verifier confirms the chain
+
+Purpose:
+	•	show a complete real-world machine payment flow
+	•	provide a compelling demo for developers, partners, and mobility teams
+	•	make MPCP instantly understandable in one scenario
+
+Deliverables:
+	•	runnable demo
+	•	visual walkthrough
+	•	companion documentation and screenshots
+
+⸻
+
+PR25 — MPCP Conformance Badge
+
+Define a lightweight conformance process for external implementations.
+
+Concept:
+Implementations that pass MPCP golden vectors and required verification checks may claim compatibility.
+
+Purpose:
+	•	enable ecosystem credibility
+	•	encourage compatible third-party implementations
+	•	create a simple interoperability signal
+
+Deliverables:
+	•	conformance criteria
+	•	basic badge / claim format
+	•	documentation for how external implementations validate compatibility
 
 
 # Expected Outcome
