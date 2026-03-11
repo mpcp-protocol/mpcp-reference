@@ -9,6 +9,8 @@ import { computeSettlementIntentHash } from "../hash/index.js";
 import type { SettlementVerificationContext } from "./types.js";
 import { verifySettlement } from "./verifySettlement.js";
 
+const HEDERA_REQUIRES_ASYNC = "hedera_hcs_requires_async_verification";
+
 export interface DisputeVerificationInput {
   /** Full MPCP verification context (settlement + artifacts). */
   context: SettlementVerificationContext;
@@ -76,10 +78,10 @@ export function verifyDisputedSettlement(
       if (ledgerAnchor.intentHash === intentHash) return { verified: true };
       return { verified: false, reason: "intent_hash_mismatch" };
     }
-    // No intentHash in anchor: use verifyDisputedSettlementAsync to verify via mirror node
+    // No intentHash in anchor: verifyDisputedSettlementAsync will verify via mirror node
     return {
       verified: false,
-      reason: "hedera_hcs_requires_async_verification: use verifyDisputedSettlementAsync",
+      reason: `${HEDERA_REQUIRES_ASYNC}: use verifyDisputedSettlementAsync`,
     };
   }
 
@@ -91,14 +93,24 @@ export function verifyDisputedSettlement(
 
 /**
  * Verify a disputed settlement (async). Supports hedera-hcs verification via mirror node.
+ * When anchor has topicId+sequenceNumber but no intentHash, verifies against mirror node.
  */
 export async function verifyDisputedSettlementAsync(
   input: DisputeVerificationInput,
 ): Promise<DisputeVerificationResult> {
   const syncResult = verifyDisputedSettlement(input);
-  if (!syncResult.verified) return syncResult;
 
   const { context, ledgerAnchor } = input;
+  const isHederaNeedingMirror =
+    ledgerAnchor?.rail === "hedera-hcs" &&
+    !ledgerAnchor.intentHash &&
+    syncResult.verified === false &&
+    syncResult.reason?.startsWith(HEDERA_REQUIRES_ASYNC);
+
+  if (!syncResult.verified && !isHederaNeedingMirror) {
+    return syncResult;
+  }
+
   if (!ledgerAnchor || ledgerAnchor.rail !== "hedera-hcs") {
     return syncResult;
   }

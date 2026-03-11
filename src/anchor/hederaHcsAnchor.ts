@@ -75,7 +75,8 @@ export async function hederaHcsAnchorIntentHash(
   const receipt = await txResponse.getReceipt(client);
 
   const sequenceNumber = receipt.topicSequenceNumber?.toString();
-  const consensusTimestamp = receipt.consensusTimestamp;
+  const consensusTs = receipt.consensusTimestamp;
+  const anchoredAtIso = consensusTs ? new Date(consensusTs.toDate()).toISOString() : undefined;
 
   client.close();
 
@@ -83,9 +84,10 @@ export async function hederaHcsAnchorIntentHash(
     rail: "hedera-hcs",
     topicId: topicIdStr,
     sequenceNumber: sequenceNumber ?? undefined,
-    txHash: consensusTimestamp?.seconds?.toString() ?? undefined,
+    reference: sequenceNumber ? `${topicIdStr}:${sequenceNumber}` : undefined,
+    consensusTimestamp: anchoredAtIso,
     intentHash,
-    anchoredAt: consensusTimestamp ? new Date(consensusTimestamp.toDate()).toISOString() : undefined,
+    anchoredAt: anchoredAtIso,
   };
 }
 

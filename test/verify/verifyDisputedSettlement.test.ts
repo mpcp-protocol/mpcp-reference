@@ -1,8 +1,11 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { afterEach, describe, it, expect } from "vitest";
-import { verifyDisputedSettlement } from "../../src/verify/verifyDisputedSettlement.js";
+import { afterEach, describe, it, expect, vi } from "vitest";
+import {
+  verifyDisputedSettlement,
+  verifyDisputedSettlementAsync,
+} from "../../src/verify/verifyDisputedSettlement.js";
 import { mockAnchorIntentHash } from "../../src/anchor/mockAnchor.js";
 import { computeSettlementIntentHash } from "../../src/hash/index.js";
 import { bundleToContext, isSettlementBundle } from "../../src/cli/bundle.js";
@@ -146,5 +149,35 @@ describe("verifyDisputedSettlement", () => {
     });
     expect(result.verified).toBe(false);
     expect(result.reason).toContain("anchor_rail_not_supported");
+  });
+
+  it("verifyDisputedSettlementAsync verifies hedera-hcs anchor without intentHash via mirror", async () => {
+    const bundle = loadBundleAndInjectKeys();
+    const ctx = bundleToContext(bundle);
+    const intent = ctx.settlementIntent;
+    if (!intent) throw new Error("Bundle missing settlementIntent");
+    const intentHash = computeSettlementIntentHash(intent);
+    const messageB64 = Buffer.from(
+      JSON.stringify({ intentHash, version: "1.0" }),
+      "utf-8",
+    ).toString("base64");
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ message: messageB64 }),
+      }),
+    );
+
+    try {
+      const result = await verifyDisputedSettlementAsync({
+        context: ctx,
+        ledgerAnchor: { rail: "hedera-hcs", topicId: "0.0.123", sequenceNumber: "1" },
+      });
+      expect(result.verified).toBe(true);
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 });

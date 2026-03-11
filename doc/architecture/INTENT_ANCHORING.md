@@ -41,10 +41,13 @@ const hederaResult = await hederaHcsAnchorIntentHash(intentHash, { rail: "hedera
 ```typescript
 interface AnchorResult {
   rail: AnchorRail;
-  txHash?: string;      // XRPL, EVM; Hedera consensus timestamp
-  topicId?: string;    // Hedera HCS
-  sequenceNumber?: string;
-  anchoredAt?: string; // ISO 8601
+  txHash?: string;           // XRPL, EVM transaction hash
+  reference?: string;        // Rail-neutral reference (e.g. topicId:sequenceNumber)
+  consensusTimestamp?: string; // Hedera HCS (ISO 8601)
+  topicId?: string;          // Hedera HCS
+  sequenceNumber?: string;   // Hedera HCS
+  intentHash?: string;        // For verification
+  anchoredAt?: string;       // ISO 8601
 }
 ```
 

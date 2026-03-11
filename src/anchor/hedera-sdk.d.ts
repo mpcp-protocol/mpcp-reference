@@ -1,6 +1,7 @@
 /**
- * Type declaration for optional @hashgraph/sdk.
- * When the package is not installed, this allows the project to build.
+ * Minimal type declaration for optional @hashgraph/sdk.
+ * Used when the package is not installed so the project can build.
+ * API shape may differ across @hashgraph/sdk versions; update as needed.
  */
 declare module "@hashgraph/sdk" {
   export class Client {
