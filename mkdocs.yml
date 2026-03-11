@@ -9,6 +9,10 @@ edit_uri: edit/main/docs/
 plugins:
   - search
 
+extra:
+  homepage: true
+  protocol_version: "MPCP 1.0"
+
 theme:
   name: material
   logo: assets/logo.svg
