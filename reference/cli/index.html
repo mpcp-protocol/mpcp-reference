@@ -1181,6 +1181,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#golden-protocol-vectors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Golden Protocol Vectors
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#see-also" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1450,6 +1461,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#golden-protocol-vectors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Golden Protocol Vectors
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#see-also" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1529,6 +1551,7 @@ npx<span class="w"> </span>mpcp<span class="w"> </span>--help
 </ul>
 <h3 id="examples">Examples</h3>
 <div class="highlight"><pre><span></span><code>mpcp<span class="w"> </span>verify<span class="w"> </span>examples/parking-session/settlement-bundle.json
+mpcp<span class="w"> </span>verify<span class="w"> </span>vectors/valid-settlement.json
 mpcp<span class="w"> </span>verify<span class="w"> </span>settlement.json<span class="w"> </span>--explain
 mpcp<span class="w"> </span>verify<span class="w"> </span>settlement.json<span class="w"> </span>--append-log<span class="w"> </span>audit.jsonl
 </code></pre></div>
@@ -1556,6 +1579,17 @@ mpcp<span class="w"> </span>verify<span class="w"> </span>settlement.json<span c
 <div class="highlight"><pre><span></span><code>mpcp<span class="w"> </span>policy-summary<span class="w"> </span>examples/fleet-simulator/fleet-policy.json
 mpcp<span class="w"> </span>policy-summary<span class="w"> </span>profiles/parking.json<span class="w"> </span>--profile<span class="w"> </span>parking
 </code></pre></div>
+<hr />
+<h2 id="golden-protocol-vectors">Golden Protocol Vectors</h2>
+<p>Golden test vectors are in <code>vectors/</code> for interoperability and regression testing:</p>
+<ul>
+<li><code>vectors/valid-settlement.json</code> — valid settlement with intent hash</li>
+<li><code>vectors/expired-grant.json</code> — expired policy grant</li>
+<li><code>vectors/budget-exceeded.json</code> — payment exceeds budget</li>
+<li><code>vectors/intent-hash-mismatch.json</code> — intent hash mismatch</li>
+<li><code>vectors/settlement-mismatch.json</code> — settlement amount mismatch</li>
+</ul>
+<p><code>npm test</code> runs the golden vector suite. Other implementations can verify compatibility by running their verifier against these vectors.</p>
 <hr />
 <h2 id="see-also">See Also</h2>
 <ul>

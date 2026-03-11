@@ -1807,12 +1807,48 @@ This PR would define a lightweight service facade, like:
     •   partner friendliness</p>
 <p>Implemented: <code>docs/</code> with overview (what-is-mpcp, problem, comparison-with-agent-protocols), protocol (artifacts, hashing, verification, anchoring), guides (build-a-machine-wallet, fleet-payments, dispute-resolution), examples (parking, charging, fleet), reference (sdk, service-api, cli). Comparison doc explains how MPCP differs from x402, AP2.</p>
 <p>⸻</p>
+<h3 id="pr18a-protocol-chain-hero-diagram">PR18A — Protocol Chain Hero Diagram</h3>
+<p>Add a canonical <strong>MPCP Authorization Chain diagram</strong> to the documentation homepage and architecture section.</p>
+<p>Diagram structure:</p>
+<p>PolicyGrant<br />
+→ SignedBudgetAuthorization<br />
+→ SignedPaymentAuthorization<br />
+→ Settlement</p>
+<p>Each layer visually represents how MPCP <strong>progressively constrains machine spending authority</strong>.</p>
+<p>Recommended labeling:</p>
+<p>• PolicyGrant — defines where and how a machine may pay<br />
+• SignedBudgetAuthorization — enforces session spending limits<br />
+• SignedPaymentAuthorization — authorizes a specific payment<br />
+• Settlement — records what actually happened</p>
+<p>Purpose:</p>
+<p>• give developers an immediate mental model of MPCP<br />
+• visually communicate the protocol’s constrained authorization chain<br />
+• establish a recognizable visual identity for MPCP documentation</p>
+<p>Deliverables:</p>
+<p>• SVG diagram included in docs/diagrams/<br />
+• diagram embedded on the docs homepage<br />
+• diagram referenced in protocol overview pages</p>
+<p>This diagram becomes the <strong>primary visual explanation of the MPCP protocol</strong> and should appear early in the documentation to help new readers understand the authorization model quickly.</p>
+<p>⸻</p>
 <p>PR19 — Documentation Site Deployment ✓</p>
 <p>Deploy the docs site so it is publicly accessible (e.g., GitHub Pages). Implemented: <code>mkdocs.yml</code>, <code>docs-requirements.txt</code>, <code>.github/workflows/deploy-docs.yml</code>. Enable GitHub Pages (Settings → Pages → Source: GitHub Actions) to publish.</p>
 <p>Purpose:
     •   make docs discoverable
     •   provide a canonical URL for the protocol site
     •   complete the "publishable" goal of PR18</p>
+<p>⸻</p>
+<p>PR20 — Golden Protocol Vectors ✓</p>
+<p>Freeze a set of canonical MPCP test vectors for interoperability and regression testing. Implemented: <code>vectors/</code> (manifest.json, valid-settlement.json, expired-grant.json, budget-exceeded.json, intent-hash-mismatch.json, settlement-mismatch.json), <code>test/vectors/goldenVectors.test.ts</code>.</p>
+<p>Vectors:
+    •   valid settlement (with intent hash)
+    •   expired grant
+    •   budget exceeded
+    •   intent hash mismatch
+    •   settlement mismatch (payment auth)</p>
+<p>Purpose:
+    •   let other implementations validate compatibility
+    •   prevent regressions
+    •   create a real interoperability target</p>
 <p>⸻</p>
 <h1 id="expected-outcome">Expected Outcome</h1>
 <p>After completion of this roadmap MPCP will provide:</p>
