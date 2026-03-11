@@ -13,6 +13,8 @@ For the rationale behind the protocol, see:
 
 For the full documentation site (overview, guides, examples, reference), see **[docs/](./docs/)**. When [GitHub Pages](https://docs.github.com/en/pages) is enabled, the site is published automatically from `main`.
 
+**To enable the docs site:** go to **Settings → Pages** → Source: **Deploy from a branch** → Branch: **gh-pages** → Save. The workflow pushes the built site to `gh-pages` on each push to `main`.
+
 For the full protocol specification, see:
 
 [Machine Payment Control Protocol Specification](./doc/protocol/mpcp.md)
