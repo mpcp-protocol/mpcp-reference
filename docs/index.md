@@ -10,13 +10,12 @@ Autonomous vehicles, AI agents, and machines increasingly pay for real-world ser
 
 A machine payment is accepted only if the recipient can verify a chain of signed artifacts:
 
-**[PolicyGrant](protocol/PolicyGrant.md) → [SignedBudgetAuthorization](protocol/SignedBudgetAuthorization.md) → [SignedPaymentAuthorization](protocol/SignedPaymentAuthorization.md) → [SettlementIntent](protocol/SettlementIntent.md) → Settlement**
+**[Fleet Policy](architecture/authorization-chain.md) → [PolicyGrant](protocol/PolicyGrant.md) → [SignedBudgetAuthorization](protocol/SignedBudgetAuthorization.md) → [SignedPaymentAuthorization](protocol/SignedPaymentAuthorization.md) → [SettlementIntent](protocol/SettlementIntent.md) → Settlement**
 
 Each step narrows what the machine is allowed to do.
 
 → [See the full reference flow](architecture/reference-flow.md)
 
-Each step narrows what the machine is allowed to do.
 
 MPCP is not a settlement rail — it is the authorization layer above settlement.
 
@@ -46,20 +45,15 @@ MPCP defines a sequence of artifacts that authorize and verify a machine payment
 
 ```
 Fleet Policy
-     │
-     ▼
+↓
 PolicyGrant
-     │
-     ▼
+↓
 SignedBudgetAuthorization
-     │
-     ▼
+↓
 SignedPaymentAuthorization
-     │
-     ▼
+↓
 SettlementIntent
-     │
-     ▼
+↓
 Settlement
 ```
 

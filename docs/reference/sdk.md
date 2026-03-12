@@ -140,4 +140,4 @@ const { valid, checks } = verifySettlementDetailed(context);
 
 - [Service API](service-api.md) — Higher-level facade
 - [Build a Machine Wallet](../guides/build-a-machine-wallet.md)
-- [Protocol: Artifacts](../protocol/artifacts.md)
+- [Protocol: Artifacts](protocol/artifacts.md)

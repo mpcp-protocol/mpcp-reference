@@ -6,15 +6,15 @@ MPCP artifacts flow through a defined lifecycle from policy evaluation to settle
 
 ```
 Fleet Policy
-    ↓
+↓
 PolicyGrant
-    ↓
-SignedBudgetAuthorization (SBA)
-    ↓
-SignedPaymentAuthorization (SPA)
-    ↓
+↓
+SignedBudgetAuthorization
+↓
+SignedPaymentAuthorization
+↓
 SettlementIntent
-    ↓
+↓
 Settlement
 ```
 
@@ -52,4 +52,4 @@ Artifacts may be stored in:
 ## See Also
 
 - [Reference Flow](reference-flow.md) — End-to-end EV charging scenario with timeline
-- [Protocol specs](../protocol/mpcp.md) — Full artifact specifications
+- [Protocol specs](protocol/mpcp.md) — Full artifact specifications

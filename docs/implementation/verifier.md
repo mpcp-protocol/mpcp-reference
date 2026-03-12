@@ -49,6 +49,6 @@ See [Dispute Resolution](../guides/dispute-resolution.md) for the guide.
 ## See Also
 
 - [MPCP Reference Flow](../architecture/reference-flow.md) — End-to-end verification in EV charging
-- [Protocol: Artifacts](../protocol/artifacts.md)
-- [Protocol: Hashing](../protocol/hashing.md)
+- [Protocol: Artifacts](protocol/artifacts.md)
+- [Protocol: Hashing](protocol/hashing.md)
 - [Reference: CLI](../reference/cli.md) — `mpcp verify` command

@@ -40,4 +40,4 @@ MPCP does **not**:
 
 - [Problem Statement](problem-statement.md) — Why existing payment systems fail for machines
 - [Comparison with Agent Protocols](comparison-with-agent-protocols.md) — How MPCP differs from x402, AP2, and others
-- [Protocol: Artifacts](../protocol/artifacts.md) — The authorization chain in detail
+- [Protocol: Artifacts](protocol/artifacts.md) — The authorization chain in detail

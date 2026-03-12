@@ -4,20 +4,15 @@ The **authorization chain** is the core visual model for MPCP. Each step produce
 
 ```
 Fleet Policy
-     │
-     ▼
+↓
 PolicyGrant
-     │
-     ▼
+↓
 SignedBudgetAuthorization
-     │
-     ▼
+↓
 SignedPaymentAuthorization
-     │
-     ▼
+↓
 SettlementIntent
-     │
-     ▼
+↓
 Settlement
 ```
 
@@ -41,4 +36,4 @@ Approval moves **upstream**. The human or policy administrator grants a **sessio
 - [System Model](system-model.md) — How the chain fits in the overall architecture
 - [Artifact Lifecycle](artifact-lifecycle.md) — When each artifact is created
 - [Reference Flow](reference-flow.md) — Full EV charging walkthrough
-- [Protocol: Artifacts](../protocol/artifacts.md) — Detailed artifact specs
+- [Protocol: Artifacts](protocol/artifacts.md) — Detailed artifact specs
