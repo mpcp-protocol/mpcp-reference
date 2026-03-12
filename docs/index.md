@@ -12,7 +12,7 @@ MPCP provides a **cryptographically verifiable authorization chain** for these p
 
 - **Understand the Problem**  
   Why existing payment APIs are not designed for autonomous machines.  
-  → [Read the problem](overview/problem.md)
+  → [Read the problem](overview/problem-statement.md)
 
 - **Learn the Protocol**  
   See the MPCP authorization chain and how it works.  
@@ -94,7 +94,7 @@ MPCP allows machines, service providers, and verification systems to independent
 
 ## Specification
 
-The full protocol specification is in the [MPCP specification](doc/protocol/mpcp.md). The [reference implementation](https://github.com/naory/mpcp-service) is available on GitHub.
+The full protocol specification is in the [MPCP specification](protocol/mpcp.md). The [reference implementation](https://github.com/naory/mpcp-service) is available on GitHub.
 
 ## Start Building
 
