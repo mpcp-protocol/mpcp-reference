@@ -27,11 +27,15 @@ Narration:
 ## Scene 3 — Introducing MPCP
 Visual stack:
 
+Fleet Policy
+↓
 PolicyGrant
 ↓
-BudgetAuthorization
+SignedBudgetAuthorization (SBA)
 ↓
-PaymentAuthorization
+SignedPaymentAuthorization (SPA)
+↓
+SettlementIntent
 ↓
 Settlement
 
@@ -46,8 +50,8 @@ Narration:
 Visual sequence:
 1. Autonomous vehicle enters parking garage
 2. PolicyGrant appears
-3. BudgetAuthorization appears
-4. PaymentAuthorization triggers
+3. SignedBudgetAuthorization (SBA) appears
+4. SignedPaymentAuthorization (SPA) triggers
 5. Settlement confirmation
 
 Narration:
@@ -130,7 +134,7 @@ Protocol comparison diagram
 "clean animated diagram showing protocols MCP A2A ACP communicating between agents and tools, arrows moving between nodes, modern developer diagram style"
 
 ## Prompt 3 — MPCP Authorization Chain
-"layered protocol diagram animation PolicyGrant BudgetAuthorization PaymentAuthorization Settlement blocks stacking vertically with glowing arrows"
+"layered protocol diagram animation PolicyGrant SignedBudgetAuthorization SignedPaymentAuthorization SettlementIntent Settlement blocks stacking vertically with glowing arrows"
 
 ## Prompt 4 — Autonomous Parking Payment
 "autonomous car entering smart parking garage, digital authorization layers appearing around vehicle, futuristic payment confirmation animation"
@@ -153,9 +157,11 @@ Icons
 - blockchain ledger
 
 Protocol blocks
+- Fleet Policy
 - PolicyGrant
-- BudgetAuthorization
-- PaymentAuthorization
+- SignedBudgetAuthorization (SBA)
+- SignedPaymentAuthorization (SPA)
+- SettlementIntent
 - Settlement
 
 Animation style

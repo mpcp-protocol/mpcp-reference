@@ -29,8 +29,6 @@ Fleet operators must ensure that vehicles only spend funds **within fleet‑defi
 
 FPA enables this capability by allowing fleets to issue **signed policy artifacts** that constrain all MPCP spending decisions.
 
-> **Optional extension:** FleetPolicyAuthorization (FPA) is an optional MPCP artifact used by fleet operators to express higher-level fleet governance constraints. Base MPCP flows do not require FPA.
-
 ---
 
 # 2. Problem Statement

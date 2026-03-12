@@ -89,4 +89,4 @@ Golden test vectors are in `vectors/` for interoperability and regression testin
 
 - [Fleet Operator Tooling](../doc/architecture/FLEET_OPERATOR_TOOLING.md)
 - [Reference Profiles](../doc/architecture/REFERENCE_PROFILES.md)
-- [Protocol: Verification](../protocol/verification.md)
+- [Protocol: Verification](protocol/verification.md)

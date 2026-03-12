@@ -138,6 +138,6 @@ const { valid, checks } = verifySettlementDetailed(context);
 
 ## See Also
 
-- [Service API](service-api.md) — Higher-level facade
+- [MPCP Reference Flow](../architecture/reference-flow.md) — End-to-end flow with SDK usage
+- [Service API](../reference/service-api.md) — Higher-level facade
 - [Build a Machine Wallet](../guides/build-a-machine-wallet.md)
-- [Protocol: Artifacts](protocol/artifacts.md)

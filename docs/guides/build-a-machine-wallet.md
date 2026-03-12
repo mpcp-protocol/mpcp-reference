@@ -129,5 +129,5 @@ npm run example:guardrails
 ## See Also
 
 - [Examples: Parking](../examples/parking.md)
-- [Protocol: Artifacts](../protocol/artifacts.md)
+- [Protocol: Artifacts](protocol/artifacts.md)
 - [Reference: SDK](../reference/sdk.md)

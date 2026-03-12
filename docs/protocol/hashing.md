@@ -59,6 +59,6 @@ Metadata (e.g., `createdAt`) is excluded from the hash.
 
 ## See Also
 
-- [SettlementIntentHash spec](../doc/protocol/SettlementIntentHash.md)
+- [SettlementIntentHash spec](SettlementIntentHash.md)
 - [Verification](verification.md)
 - [Anchoring](anchoring.md)

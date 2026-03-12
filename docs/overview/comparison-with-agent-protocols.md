@@ -75,4 +75,4 @@ Consider AP2 when:
 
 - [What is MPCP?](what-is-mpcp.md)
 - [The Problem](problem.md)
-- [Protocol: Artifacts](../protocol/artifacts.md)
+- [Protocol: Artifacts](protocol/artifacts.md)
