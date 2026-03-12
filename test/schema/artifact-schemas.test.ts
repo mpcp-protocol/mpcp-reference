@@ -9,7 +9,7 @@ import {
   fleetPolicyAuthorizationSchema,
   artifactBundleSchema,
   validateWithSchema,
-} from "../../src/schema/index.js";
+} from "../../src/protocol/schema/index.js";
 
 const validPolicyGrant = {
   version: "1.0",

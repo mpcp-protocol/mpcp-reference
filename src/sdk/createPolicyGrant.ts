@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import type { PolicyGrantLike } from "../verify/types.js";
+import type { PolicyGrantLike } from "../verifier/types.js";
 
 export interface CreatePolicyGrantInput {
   policyHash: string;

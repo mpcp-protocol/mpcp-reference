@@ -7,7 +7,7 @@ import {
   anchorIntent,
 } from "../../src/service/index.js";
 import { createPolicyGrant } from "../../src/sdk/createPolicyGrant.js";
-import type { SettlementVerificationContext } from "../../src/verify/types.js";
+import type { SettlementVerificationContext } from "../../src/verifier/types.js";
 
 describe("service API", () => {
   describe("issueBudget", () => {

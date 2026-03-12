@@ -8,7 +8,7 @@ EV connects to a charging station. The station requests payment authorization. T
 
 ## Profile
 
-The [Charging reference profile](../doc/architecture/REFERENCE_PROFILES.md#charging-profile) defines:
+The [Charging reference profile](../implementation/reference-profiles.md#charging-profile) defines:
 
 - **Rails** — xrpl, evm
 - **Offline** — Yes (pre-authorized budgets)
@@ -56,5 +56,5 @@ Then modify the generated artifacts for charging parameters, or use the fleet si
 ## See Also
 
 - [Parking Example](parking.md)
-- [Fleet Payments](../guides/fleet-payments.md)
-- [Reference Profiles](../doc/architecture/REFERENCE_PROFILES.md)
+- [Fleet Payments (spec)](https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/guides/fleet-payments.md)
+- [Reference Profiles](../implementation/reference-profiles.md)

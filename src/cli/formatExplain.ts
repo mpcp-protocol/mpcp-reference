@@ -1,4 +1,4 @@
-import type { DetailedVerificationReport } from "../verify/types.js";
+import type { DetailedVerificationReport } from "../verifier/types.js";
 
 const CHECK = "✔";
 const CROSS = "✗";

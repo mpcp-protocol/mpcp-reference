@@ -139,5 +139,5 @@ const { valid, checks } = verifySettlementDetailed(context);
 ## See Also
 
 - [Service API](service-api.md) — Higher-level facade
-- [Build a Machine Wallet](../guides/build-a-machine-wallet.md)
-- [Protocol: Artifacts](../protocol/artifacts.md)
+- [Build a Machine Wallet](https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/guides/build-a-machine-wallet.md)
+- [Protocol: Artifacts](https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/protocol/artifacts.md)

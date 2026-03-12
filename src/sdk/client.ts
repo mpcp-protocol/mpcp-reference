@@ -8,7 +8,7 @@ import type {
   SettlementResult,
 } from "../policy-core/types.js";
 
-import type { VerificationResult } from "../verify/types.js";
+import type { VerificationResult } from "../verifier/types.js";
 export type { VerificationResult };
 
 /** Rail-specific settlement intent. Use Record<string, unknown> for custom shapes. */

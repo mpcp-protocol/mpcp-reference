@@ -44,11 +44,11 @@ The `context` includes policyGrant, signedBudgetAuthorization, signedPaymentAuth
 
 When a settlement is disputed, `verifyDisputedSettlement` runs full chain verification plus optional ledger anchor verification. If the intent was anchored (e.g., to Hedera HCS), the anchor can be checked against the expected intentHash.
 
-See [Dispute Resolution](../guides/dispute-resolution.md) for the guide.
+See [Dispute Resolution](https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/guides/dispute-resolution.md) for the guide.
 
 ## See Also
 
-- [MPCP Reference Flow](../architecture/reference-flow.md) — End-to-end verification in EV charging
-- [Protocol: Artifacts](../protocol/artifacts.md)
-- [Protocol: Hashing](../protocol/hashing.md)
+- [MPCP Reference Flow](https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/architecture/reference-flow.md) — End-to-end verification in EV charging
+- [Protocol: Artifacts](https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/protocol/artifacts.md)
+- [Protocol: Hashing](https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/protocol/hashing.md)
 - [Reference: CLI](../reference/cli.md) — `mpcp verify` command

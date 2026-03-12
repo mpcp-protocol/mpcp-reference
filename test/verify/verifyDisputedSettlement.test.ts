@@ -5,13 +5,13 @@ import { afterEach, describe, it, expect, vi } from "vitest";
 import {
   verifyDisputedSettlement,
   verifyDisputedSettlementAsync,
-} from "../../src/verify/verifyDisputedSettlement.js";
+} from "../../src/verifier/verifyDisputedSettlement.js";
 import { mockAnchorIntentHash } from "../../src/anchor/mockAnchor.js";
 import { computeSettlementIntentHash } from "../../src/hash/index.js";
 import { bundleToContext, isSettlementBundle } from "../../src/cli/bundle.js";
 
 const __dirname = join(fileURLToPath(import.meta.url), "../..");
-const BUNDLE_PATH = join(__dirname, "../examples/parking-session/settlement-bundle.json");
+const BUNDLE_PATH = join(__dirname, "../examples/parking/settlement-bundle.json");
 
 const SAVED_ENV: Record<string, string | undefined> = {};
 

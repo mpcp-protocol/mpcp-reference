@@ -3,7 +3,7 @@
  * Internal identifiers (artifact-style) → human-readable display.
  */
 
-import type { VerificationReport, VerificationStep } from "../verify/types.js";
+import type { VerificationReport, VerificationStep } from "../verifier/types.js";
 
 const CHECK = "✔";
 const CROSS = "✗";

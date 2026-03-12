@@ -33,13 +33,13 @@ export type {
   SettlementIntent,
 } from "./createSettlementIntent.js";
 
-export { canonicalJson } from "../canonical/canonicalJson.js";
+export { canonicalJson } from "../hash/index.js";
 export {
   computeSettlementIntentHash,
   computeIntentHash,
 } from "../hash/index.js";
 
-export { verifyPolicyGrant } from "../verify/verifyPolicyGrant.js";
+export { verifyPolicyGrant } from "../verifier/verifyPolicyGrant.js";
 export {
   verifySettlement,
   verifySettlementWithReport,
@@ -47,4 +47,4 @@ export {
   verifySettlementSafe,
   verifySettlementWithReportSafe,
   verifySettlementDetailedSafe,
-} from "../verify/verifySettlement.js";
+} from "../verifier/verifySettlement.js";

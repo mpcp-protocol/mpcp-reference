@@ -4,10 +4,10 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
 import { isSettlementBundle, bundleToContext } from "../../src/cli/bundle.js";
-import { verifySettlement } from "../../src/verify/index.js";
+import { verifySettlement } from "../../src/verifier/index.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const VECTORS_DIR = join(__dirname, "../../vectors");
+const VECTORS_DIR = __dirname;
 
 interface VectorManifestEntry {
   id: string;

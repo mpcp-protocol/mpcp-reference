@@ -26,14 +26,14 @@ import {
 import {
   createSignedPaymentAuthorization,
 } from "../../src/protocol/spa.js";
-import type { PolicyGrantLike } from "../../src/verify/types.js";
+import type { PolicyGrantLike } from "../../src/verifier/types.js";
 import {
   verifyPolicyGrant,
   verifyBudgetAuthorization,
   verifyPaymentAuthorization,
   verifySettlementIntent,
   verifySettlement,
-} from "../../src/verify/index.js";
+} from "../../src/verifier/index.js";
 
 const SBA_ENV = {
   privateKey: process.env.MPCP_SBA_SIGNING_PRIVATE_KEY_PEM,

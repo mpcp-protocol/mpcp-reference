@@ -48,7 +48,7 @@ npm run example:fleet
 Or:
 
 ```bash
-node examples/fleet-payment/demo-fleet.mjs
+node examples/machine-commerce/demo-fleet.mjs
 ```
 
 ## Output
@@ -56,7 +56,7 @@ node examples/fleet-payment/demo-fleet.mjs
 Produces `fleet-demo-bundle.json`, a self-contained MPCP artifact bundle:
 
 ```bash
-npx mpcp verify examples/fleet-payment/fleet-demo-bundle.json --explain
+npx mpcp verify examples/machine-commerce/fleet-demo-bundle.json --explain
 ```
 
 ## Fleet Simulator
@@ -67,7 +67,7 @@ Simulate multiple vehicles and sessions:
 npm run example:simulate
 ```
 
-Uses `examples/fleet-simulator/fleet-policy.json` and `simulate.mjs`.
+Uses `examples/machine-commerce/fleet-policy.json` and `simulate.mjs`.
 
 ## Key Behaviors
 
@@ -78,6 +78,6 @@ Uses `examples/fleet-simulator/fleet-policy.json` and `simulate.mjs`.
 
 ## See Also
 
-- [Fleet Payments](../guides/fleet-payments.md)
+- [Fleet Payments (spec)](https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/guides/fleet-payments.md)
 - [Parking Example](parking.md)
-- [Reference Profiles](../doc/architecture/REFERENCE_PROFILES.md)
+- [Reference Profiles](../implementation/reference-profiles.md)

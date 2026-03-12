@@ -7,18 +7,18 @@
 import type {
   PolicyGrantLike,
   SettlementVerificationContext,
-} from "../verify/types.js";
-import type { DisputeVerificationInput, DisputeVerificationResult } from "../verify/verifyDisputedSettlement.js";
+} from "../verifier/types.js";
+import type { DisputeVerificationInput, DisputeVerificationResult } from "../verifier/verifyDisputedSettlement.js";
 import type { Asset, Rail } from "../policy-core/types.js";
 import type { SignedSessionBudgetAuthorization } from "../protocol/sba.js";
 import type { AnchorOptions, AnchorResult } from "../anchor/types.js";
 
 import { createSignedSessionBudgetAuthorization } from "../protocol/sba.js";
-import { verifySettlement } from "../verify/verifySettlement.js";
+import { verifySettlement } from "../verifier/verifySettlement.js";
 import {
   verifyDisputedSettlement,
   verifyDisputedSettlementAsync,
-} from "../verify/verifyDisputedSettlement.js";
+} from "../verifier/verifyDisputedSettlement.js";
 import { mockAnchorIntentHash } from "../anchor/mockAnchor.js";
 import { hederaHcsAnchorIntentHash } from "../anchor/hederaHcsAnchor.js";
 

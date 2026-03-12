@@ -16,6 +16,8 @@ export interface CreateSettlementIntentInput {
   destination?: string;
   asset?: Asset;
   referenceId?: string;
+  /** Optional. Defaults to new Date().toISOString(). Use fixed value for deterministic examples. */
+  createdAt?: string;
 }
 
 /**
@@ -30,7 +32,7 @@ export function createSettlementIntent(input: CreateSettlementIntentInput): Sett
     version: "1.0",
     rail: input.rail,
     amount: input.amount,
-    createdAt: new Date().toISOString(),
+    createdAt: input.createdAt ?? new Date().toISOString(),
     ...(input.destination ? { destination: input.destination } : {}),
     ...(input.asset ? { asset: input.asset } : {}),
     ...(input.referenceId ? { referenceId: input.referenceId } : {}),

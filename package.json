@@ -20,6 +20,10 @@
       "types": "./dist/schema/index.d.ts",
       "default": "./dist/schema/index.js"
     },
+    "./protocol/schema": {
+      "types": "./dist/protocol/schema/index.d.ts",
+      "default": "./dist/protocol/schema/index.js"
+    },
     "./service": {
       "types": "./dist/service/index.d.ts",
       "default": "./dist/service/index.js"
@@ -31,11 +35,12 @@
     "test": "vitest run",
     "mpcp": "node dist/cli/index.js",
     "demo:verify": "node scripts/demo-verify.mjs",
-    "example:parking": "node examples/parking-session/generate.mjs",
-    "example:guardrails": "node examples/parking-session/demo-guardrails.mjs",
-    "example:fleet": "node examples/fleet-payment/demo-fleet.mjs",
-    "example:simulate": "node examples/fleet-simulator/simulate.mjs",
-    "example:offline": "node examples/parking-session/demo-offline.mjs"
+    "example:parking": "node examples/parking/generate.mjs",
+    "example:guardrails": "node examples/parking/demo-guardrails.mjs",
+    "example:ev-charging": "node examples/ev-charging/generate.mjs",
+    "example:machine-commerce": "node examples/machine-commerce/demo-fleet.mjs",
+    "example:simulate": "node examples/machine-commerce/simulate.mjs",
+    "example:offline": "node examples/parking/demo-offline.mjs"
   },
   "dependencies": {
     "zod": "^3.25.76"

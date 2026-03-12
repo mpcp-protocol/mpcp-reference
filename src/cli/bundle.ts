@@ -4,8 +4,8 @@ import type {
 } from "../policy-core/types.js";
 import type { SignedSessionBudgetAuthorization } from "../protocol/sba.js";
 import type { SignedPaymentAuthorization } from "../protocol/spa.js";
-import type { PolicyGrantLike } from "../verify/types.js";
-import type { SettlementVerificationContext } from "../verify/types.js";
+import type { PolicyGrantLike } from "../verifier/types.js";
+import type { SettlementVerificationContext } from "../verifier/types.js";
 
 /**
  * JSON artifact bundle format for CLI verification.

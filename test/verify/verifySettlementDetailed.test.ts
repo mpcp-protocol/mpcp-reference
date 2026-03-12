@@ -3,11 +3,11 @@ import { afterEach, describe, expect, it } from "vitest";
 import type { PaymentPolicyDecision, SettlementResult } from "../../src/policy-core/types.js";
 import { createSignedSessionBudgetAuthorization } from "../../src/protocol/sba.js";
 import { createSignedPaymentAuthorization } from "../../src/protocol/spa.js";
-import type { PolicyGrantLike } from "../../src/verify/types.js";
+import type { PolicyGrantLike } from "../../src/verifier/types.js";
 import {
   verifySettlementDetailed,
   verifySettlementDetailedSafe,
-} from "../../src/verify/index.js";
+} from "../../src/verifier/index.js";
 
 function setupBothKeys() {
   const sbaKeys = crypto.generateKeyPairSync("ed25519");

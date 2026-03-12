@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { formatVerificationReport } from "../../src/cli/formatReport.js";
-import type { VerificationReport } from "../../src/verify/types.js";
+import type { VerificationReport } from "../../src/verifier/types.js";
 
 describe("formatVerificationReport", () => {
   it("formats success with full chain in display order", () => {

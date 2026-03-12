@@ -6,7 +6,7 @@ import { join } from "node:path";
 import type { PaymentPolicyDecision, SettlementResult } from "../../src/policy-core/types.js";
 import { createSignedSessionBudgetAuthorization } from "../../src/protocol/sba.js";
 import { createSignedPaymentAuthorization } from "../../src/protocol/spa.js";
-import type { PolicyGrantLike } from "../../src/verify/types.js";
+import type { PolicyGrantLike } from "../../src/verifier/types.js";
 import { runVerify } from "../../src/cli/verify.js";
 
 function setupBothKeys() {

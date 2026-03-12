@@ -79,7 +79,7 @@ Supported rails: `mock`, `hedera-hcs`.
 
 ## See Also
 
-- [REFERENCE_SERVICE_API](../doc/architecture/REFERENCE_SERVICE_API.md)
+- [Fleet Payments](../implementation/offline-payments.md)
 - [SDK Reference](sdk.md)
-- [Fleet Payments](../guides/fleet-payments.md)
-- [Dispute Resolution](../guides/dispute-resolution.md)
+- [Fleet Payments](https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/guides/fleet-payments.md)
+- [Dispute Resolution](https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/guides/dispute-resolution.md)

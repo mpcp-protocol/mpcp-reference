@@ -1,5 +1,5 @@
-import { canonicalJson } from "../canonical/canonicalJson.js";
-import { sha256Hex } from "../canonical/hash.js";
+import { canonicalJson } from "./canonicalJson.js";
+import { sha256Hex } from "./sha256.js";
 
 const MPCP_INTENT_HASH_DOMAIN = "MPCP:SettlementIntent:1.0:";
 

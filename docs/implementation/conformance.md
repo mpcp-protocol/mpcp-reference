@@ -13,7 +13,7 @@ MPCP implementations can be verified for conformance to the protocol specificati
 
 ## Verification Vectors
 
-The reference implementation includes golden vectors in `vectors/` for conformance testing:
+The reference implementation includes golden vectors in `test/vectors/` for conformance testing:
 
 - `valid-settlement.json` — Full valid chain, must pass
 - `expired-grant.json` — Expired PolicyGrant, must fail
@@ -25,7 +25,7 @@ Run the conformance tests:
 
 ```bash
 npm test
-npx mpcp verify vectors/valid-settlement.json --explain
+npx mpcp verify test/vectors/valid-settlement.json --explain
 ```
 
 ## Self-Assessment
@@ -40,6 +40,6 @@ Implementers should verify:
 
 ## See Also
 
-- [MPCP Reference Flow](../architecture/reference-flow.md) — Canonical flow for EV charging
+- [MPCP Reference Flow](https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/architecture/reference-flow.md) — Canonical flow for EV charging
 - [Verifier](verifier.md) — Verification pipeline
-- [Protocol: mpcp](../protocol/mpcp.md) — Full specification
+- [Protocol: mpcp](https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/protocol/mpcp.md) — Full specification

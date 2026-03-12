@@ -3,8 +3,8 @@ import {
   computeSettlementIntentHash,
   computeIntentHash,
 } from "../../src/hash/index.js";
-import { canonicalJson } from "../../src/canonical/canonicalJson.js";
-import { sha256Hex } from "../../src/canonical/hash.js";
+import { canonicalJson } from "../../src/hash/canonicalJson.js";
+import { sha256Hex } from "../../src/hash/sha256.js";
 
 describe("computeSettlementIntentHash", () => {
   it("uses domain-separated hashing (MPCP:SettlementIntent:1.0: prefix)", () => {

@@ -1,10 +1,10 @@
 import { appendFileSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import type { SettlementVerificationContext } from "../verify/types.js";
+import type { SettlementVerificationContext } from "../verifier/types.js";
 import {
   verifySettlementDetailedSafe,
   verifySettlementWithReportSafe,
-} from "../verify/index.js";
+} from "../verifier/index.js";
 import { formatVerificationReport } from "./formatReport.js";
 import { formatExplainOutput } from "./formatExplain.js";
 import { isSettlementBundle, bundleToContext } from "./bundle.js";

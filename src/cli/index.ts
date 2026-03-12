@@ -29,10 +29,10 @@ Accepts:
   - JSON artifact bundle: settlement, intent, spa, sba, policyGrant
 
 Examples:
-  mpcp verify examples/parking-session/settlement-bundle.json
+  mpcp verify examples/parking/settlement-bundle.json
   mpcp verify settlement.json --explain
   mpcp verify settlement.json --append-log audit.jsonl
-  mpcp policy-summary examples/fleet-simulator/fleet-policy.json
+  mpcp policy-summary examples/machine-commerce/fleet-policy.json
   mpcp policy-summary profiles/parking.json --profile parking
 `;
 

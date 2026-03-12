@@ -1,6 +1,6 @@
-# MkDocs config for MPCP docs site (PR19)
-site_name: MPCP
-site_description: Machine Payment Control Protocol
+# MkDocs config for MPCP Reference Implementation
+site_name: MPCP Reference
+site_description: Reference implementation of the Machine Payment Control Protocol
 site_url: https://mpcp-protocol.github.io/mpcp-reference/
 repo_url: https://github.com/mpcp-protocol/mpcp-reference
 repo_name: mpcp-reference
@@ -10,8 +10,8 @@ plugins:
   - search
 
 extra:
-  homepage: true
   protocol_version: "MPCP 1.0"
+  spec_repo: "https://github.com/mpcp-protocol/mpcp-spec"
 
 theme:
   name: material
@@ -33,53 +33,23 @@ theme:
 nav:
   - Home: index.md
   - Quickstart: quickstart.md
-  - Overview:
-    - What is MPCP?: overview/what-is-mpcp.md
-    - Problem Statement: overview/problem-statement.md
-    - Design Goals: overview/design-goals.md
-    - Comparison with Agent Protocols: overview/comparison-with-agent-protocols.md
-  - Architecture:
-    - Authorization Chain: architecture/authorization-chain.md
-    - System Model: architecture/system-model.md
-    - Actors: architecture/actors.md
-    - Artifact Lifecycle: architecture/artifact-lifecycle.md
-    - Reference Flow: architecture/reference-flow.md
-    - Implementation Roadmap: doc/architecture/MPCP_IMPLEMENTATION_ROADMAP.md
-  - Protocol:
-    - MPCP Spec: protocol/mpcp.md
-    - Artifacts Overview: protocol/artifacts.md
-    - PolicyGrant: protocol/PolicyGrant.md
-    - SignedBudgetAuthorization: protocol/SignedBudgetAuthorization.md
-    - SignedPaymentAuthorization: protocol/SignedPaymentAuthorization.md
-    - SettlementIntent: protocol/SettlementIntent.md
-    - SettlementIntentHash: protocol/SettlementIntentHash.md
-    - FleetPolicyAuthorization: protocol/FleetPolicyAuthorization.md
-    - ArtifactBundle: protocol/ArtifactBundle.md
-    - Hashing: protocol/hashing.md
-    - Verification: protocol/verification.md
-    - Anchoring: protocol/anchoring.md
-  - Scenarios:
-    - EV Charging: scenarios/ev-charging.md
-    - Parking: scenarios/parking.md
-    - Machine Commerce: scenarios/machine-commerce.md
   - Implementation:
-    - Verifier: implementation/verifier.md
     - SDK: implementation/sdk.md
+    - Verifier: implementation/verifier.md
     - Conformance: implementation/conformance.md
-  - Guides:
-    - Build a Machine Wallet: guides/build-a-machine-wallet.md
-    - Fleet Payments: guides/fleet-payments.md
-    - Dispute Resolution: guides/dispute-resolution.md
-  - Examples:
-    - Parking: examples/parking.md
-    - Charging: examples/charging.md
-    - Fleet: examples/fleet.md
+    - Reference Profiles: implementation/reference-profiles.md
+    - Offline Payments: implementation/offline-payments.md
+    - Fleet Operator Tooling: implementation/fleet-operator-tooling.md
+    - Intent Anchoring: implementation/intent-anchoring.md
+    - Dispute Verification: implementation/dispute-verification.md
   - Reference:
     - SDK: reference/sdk.md
     - Service API: reference/service-api.md
     - CLI: reference/cli.md
-  - Diagrams:
-    - Diagrams: diagrams/README.md
+  - Examples:
+    - Parking: examples/parking.md
+    - Charging: examples/charging.md
+    - Fleet: examples/fleet.md
   - Animation Pack: animation/MPCP_ANIMATION_PACK.md
 
 markdown_extensions:

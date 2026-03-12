@@ -138,6 +138,6 @@ const { valid, checks } = verifySettlementDetailed(context);
 
 ## See Also
 
-- [MPCP Reference Flow](../architecture/reference-flow.md) — End-to-end flow with SDK usage
+- [MPCP Reference Flow](https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/architecture/reference-flow.md) — End-to-end flow with SDK usage
 - [Service API](../reference/service-api.md) — Higher-level facade
-- [Build a Machine Wallet](../guides/build-a-machine-wallet.md)
+- [Build a Machine Wallet](https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/guides/build-a-machine-wallet.md)

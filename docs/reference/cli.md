@@ -40,8 +40,8 @@ mpcp verify <settlement-file> [options]
 ### Examples
 
 ```bash
-mpcp verify examples/parking-session/settlement-bundle.json
-mpcp verify vectors/valid-settlement.json
+mpcp verify examples/parking/settlement-bundle.json
+mpcp verify test/vectors/valid-settlement.json
 mpcp verify settlement.json --explain
 mpcp verify settlement.json --append-log audit.jsonl
 ```
@@ -65,7 +65,7 @@ mpcp policy-summary <policy-file> [--profile <name>]
 ### Examples
 
 ```bash
-mpcp policy-summary examples/fleet-simulator/fleet-policy.json
+mpcp policy-summary examples/machine-commerce/fleet-policy.json
 mpcp policy-summary profiles/parking.json --profile parking
 ```
 
@@ -73,13 +73,13 @@ mpcp policy-summary profiles/parking.json --profile parking
 
 ## Golden Protocol Vectors
 
-Golden test vectors are in `vectors/` for interoperability and regression testing:
+Golden test vectors are in `test/vectors/` for interoperability and regression testing:
 
-- `vectors/valid-settlement.json` — valid settlement with intent hash
-- `vectors/expired-grant.json` — expired policy grant
-- `vectors/budget-exceeded.json` — payment exceeds budget
-- `vectors/intent-hash-mismatch.json` — intent hash mismatch
-- `vectors/settlement-mismatch.json` — settlement amount mismatch
+- `test/vectors/valid-settlement.json` — valid settlement with intent hash
+- `test/vectors/expired-grant.json` — expired policy grant
+- `test/vectors/budget-exceeded.json` — payment exceeds budget
+- `test/vectors/intent-hash-mismatch.json` — intent hash mismatch
+- `test/vectors/settlement-mismatch.json` — settlement amount mismatch
 
 `npm test` runs the golden vector suite. Other implementations can verify compatibility by running their verifier against these vectors.
 
@@ -87,6 +87,6 @@ Golden test vectors are in `vectors/` for interoperability and regression testin
 
 ## See Also
 
-- [Fleet Operator Tooling](../doc/architecture/FLEET_OPERATOR_TOOLING.md)
-- [Reference Profiles](../doc/architecture/REFERENCE_PROFILES.md)
-- [Protocol: Verification](../protocol/verification.md)
+- [Fleet Operator Tooling](../implementation/fleet-operator-tooling.md)
+- [Reference Profiles](../implementation/reference-profiles.md)
+- [Protocol: Verification](https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/protocol/verification.md)
