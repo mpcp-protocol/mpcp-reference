@@ -1,247 +1,247 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://naory.github.io/mpcp-service/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/quickstart/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/quickstart/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/animation/MPCP_ANIMATION_PACK/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/animation/MPCP_ANIMATION_PACK/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/architecture/actors/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/architecture/actors/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/architecture/artifact-lifecycle/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/architecture/artifact-lifecycle/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/architecture/authorization-chain/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/architecture/authorization-chain/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/architecture/reference-flow/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/architecture/reference-flow/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/architecture/system-model/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/architecture/system-model/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/diagrams/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/diagrams/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/doc/INTENT_ATTESTATION_LAYER/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/doc/INTENT_ATTESTATION_LAYER/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/doc/SDK_MINIMAL_PLAN/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/doc/SDK_MINIMAL_PLAN/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/doc/Why_MPCP/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/doc/Why_MPCP/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/doc/architecture/COMPATIBILITY_AND_VERSIONING/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/doc/architecture/COMPATIBILITY_AND_VERSIONING/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/doc/architecture/DISPUTE_VERIFICATION/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/doc/architecture/DISPUTE_VERIFICATION/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/doc/architecture/FLEET_OPERATOR_TOOLING/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/doc/architecture/FLEET_OPERATOR_TOOLING/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/doc/architecture/INTENT_ANCHORING/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/doc/architecture/INTENT_ANCHORING/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/doc/architecture/MPCP_IMPLEMENTATION_ROADMAP/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/doc/architecture/MPCP_IMPLEMENTATION_ROADMAP/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/doc/architecture/OFFLINE_PAYMENTS/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/doc/architecture/OFFLINE_PAYMENTS/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/doc/architecture/REFERENCE_PROFILES/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/doc/architecture/REFERENCE_PROFILES/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/doc/architecture/REFERENCE_SERVICE_API/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/doc/architecture/REFERENCE_SERVICE_API/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/doc/protocol/ArtifactBundle/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/doc/protocol/ArtifactBundle/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/doc/protocol/FleetPolicyAuthorization/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/doc/protocol/FleetPolicyAuthorization/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/doc/protocol/PROTOCOL_OVERVIEW/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/doc/protocol/PROTOCOL_OVERVIEW/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/doc/protocol/PolicyGrant/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/doc/protocol/PolicyGrant/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/doc/protocol/SettlementIntent/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/doc/protocol/SettlementIntent/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/doc/protocol/SettlementIntentHash/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/doc/protocol/SettlementIntentHash/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/doc/protocol/SignedBudgetAuthorization/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/doc/protocol/SignedBudgetAuthorization/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/doc/protocol/SignedPaymentAuthorization/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/doc/protocol/SignedPaymentAuthorization/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/doc/protocol/mpcp/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/doc/protocol/mpcp/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/examples/charging/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/examples/charging/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/examples/fleet/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/examples/fleet/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/examples/parking/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/examples/parking/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/guides/build-a-machine-wallet/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/guides/build-a-machine-wallet/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/guides/dispute-resolution/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/guides/dispute-resolution/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/guides/fleet-payments/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/guides/fleet-payments/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/implementation/conformance/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/implementation/conformance/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/implementation/sdk/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/implementation/sdk/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/implementation/verifier/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/implementation/verifier/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/overview/comparison-with-agent-protocols/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/overview/comparison-with-agent-protocols/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/overview/design-goals/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/overview/design-goals/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/overview/problem-statement/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/overview/problem-statement/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/overview/problem/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/overview/problem/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/overview/what-is-mpcp/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/overview/what-is-mpcp/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/protocol/ArtifactBundle/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/protocol/ArtifactBundle/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/protocol/FleetPolicyAuthorization/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/protocol/FleetPolicyAuthorization/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/protocol/PolicyGrant/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/protocol/PolicyGrant/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/protocol/SettlementIntent/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/protocol/SettlementIntent/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/protocol/SettlementIntentHash/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/protocol/SettlementIntentHash/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/protocol/SignedBudgetAuthorization/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/protocol/SignedBudgetAuthorization/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/protocol/SignedPaymentAuthorization/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/protocol/SignedPaymentAuthorization/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/protocol/anchoring/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/protocol/anchoring/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/protocol/artifacts/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/protocol/artifacts/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/protocol/hashing/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/protocol/hashing/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/protocol/mpcp/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/protocol/mpcp/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/protocol/verification/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/protocol/verification/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/reference/cli/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/reference/cli/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/reference/sdk/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/reference/sdk/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/reference/service-api/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/reference/service-api/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/scenarios/ev-charging/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/scenarios/ev-charging/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/scenarios/machine-commerce/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/scenarios/machine-commerce/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
     <url>
-         <loc>https://naory.github.io/mpcp-service/scenarios/parking/</loc>
+         <loc>https://mpcp-protocol.github.io/mpcp-reference/scenarios/parking/</loc>
          <lastmod>2026-03-12</lastmod>
     </url>
 </urlset>
