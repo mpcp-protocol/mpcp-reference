@@ -1,4 +1,4 @@
-# XRPL Stablecoin Profile (PR21)
+# XRPL Stablecoin Profile
 
 MPCP reference profile for **XRPL issued assets** (IOUs / stablecoins). Makes MPCP concrete for real XRPL-based machine payments.
 

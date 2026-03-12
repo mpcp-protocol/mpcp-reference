@@ -10,7 +10,7 @@ Named deployment profiles for MPCP. Adopters choose a profile instead of inventi
 | Parking | Meter/gate, short sessions | xrpl | yes | optional |
 | Charging | EV charging, variable session length | xrpl, evm | yes | optional |
 | Hosted Rail | Backend-hosted, online approval | stripe, hosted | no | n/a |
-| XRPL Stablecoin | RLUSD / issued-asset payments (PR21) | xrpl | yes | optional |
+| XRPL Stablecoin | RLUSD / issued-asset machine payments | xrpl | yes | optional |
 
 ---
 
@@ -69,7 +69,7 @@ Named deployment profiles for MPCP. Adopters choose a profile instead of inventi
 
 ---
 
-## XRPL Stablecoin Profile (PR21)
+## XRPL Stablecoin Profile
 
 **Use case:** XRPL issued assets (IOUs / stablecoins such as RLUSD). Machine payments with explicit issuer and destination constraints.
 

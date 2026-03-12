@@ -1,4 +1,4 @@
-# XRPL Stablecoin Example (PR21)
+# XRPL Stablecoin Example
 
 Example bundle for the **XRPL Stablecoin Profile**. Demonstrates MPCP settlement with XRPL issued assets (RLUSD).
 
