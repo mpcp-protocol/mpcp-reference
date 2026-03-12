@@ -16,7 +16,7 @@
         <link rel="prev" href="../conformance/">
       
       
-        <link rel="next" href="../offline-payments/">
+        <link rel="next" href="../xrpl-stablecoin-profile/">
       
       
         
@@ -556,6 +556,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#xrpl-stablecoin-profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        XRPL Stablecoin Profile
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#usage" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -570,6 +581,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xrpl-stablecoin-profile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    XRPL Stablecoin Profile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -1093,6 +1132,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#xrpl-stablecoin-profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        XRPL Stablecoin Profile
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#usage" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1170,6 +1220,13 @@
 <td>no</td>
 <td>n/a</td>
 </tr>
+<tr>
+<td>XRPL Stablecoin</td>
+<td>RLUSD / issued-asset machine payments</td>
+<td>xrpl</td>
+<td>yes</td>
+<td>optional</td>
+</tr>
 </tbody>
 </table>
 <hr />
@@ -1207,9 +1264,20 @@
 - Rails: stripe, hosted</p>
 <p><strong>Example:</strong> <code>profiles/hosted-rail.json</code></p>
 <hr />
+<h2 id="xrpl-stablecoin-profile">XRPL Stablecoin Profile</h2>
+<p><strong>Use case:</strong> XRPL issued assets (IOUs / stablecoins such as RLUSD). Machine payments with explicit issuer and destination constraints.</p>
+<p><strong>Characteristics:</strong>
+- Rail: <code>xrpl</code> only
+- Asset: <code>kind: IOU</code>, <code>currency</code>, <code>issuer</code> — issuer must be validated by wallet/verifier
+- Wallet and verifier expectations for stablecoin settlement documented</p>
+<p><strong>Example:</strong> <code>profiles/xrpl-stablecoin.json</code></p>
+<p><strong>Full profile doc:</strong> <a href="../xrpl-stablecoin-profile/">XRPL Stablecoin Profile</a></p>
+<p><strong>Example bundle:</strong> <code>examples/xrpl-stablecoin/xrpl-stablecoin-bundle.json</code></p>
+<hr />
 <h2 id="usage">Usage</h2>
 <p>Profiles define expected policy shape. Use <code>mpcp policy-summary</code> with <code>--profile</code> to validate a policy against a reference profile.</p>
 <div class="highlight"><pre><span></span><code>mpcp<span class="w"> </span>policy-summary<span class="w"> </span>profiles/parking.json<span class="w"> </span>--profile<span class="w"> </span>parking
+mpcp<span class="w"> </span>policy-summary<span class="w"> </span>profiles/xrpl-stablecoin.json<span class="w"> </span>--profile<span class="w"> </span>xrpl-stablecoin
 mpcp<span class="w"> </span>policy-summary<span class="w"> </span>examples/fleet-simulator/fleet-policy.json<span class="w"> </span>--profile<span class="w"> </span>parking
 </code></pre></div>
 <p>Validation checks: <code>allowedRails</code> in the policy must be a subset of the profile’s allowed rails; if the policy declares <code>_profile</code>, it must match the profile name.</p>

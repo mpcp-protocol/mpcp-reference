@@ -10,31 +10,31 @@
       
       
       
-        <link rel="canonical" href="https://mpcp-protocol.github.io/mpcp-reference/quickstart/">
+        <link rel="canonical" href="https://mpcp-protocol.github.io/mpcp-reference/implementation/xrpl-stablecoin-profile/">
       
       
-        <link rel="prev" href="..">
+        <link rel="prev" href="../reference-profiles/">
       
       
-        <link rel="next" href="../implementation/sdk/">
+        <link rel="next" href="../offline-payments/">
       
       
         
       
       
-      <link rel="icon" href="../assets/favicon.svg">
+      <link rel="icon" href="../../assets/favicon.svg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
     
     
       
-        <title>Quickstart - MPCP Reference</title>
+        <title>XRPL Stablecoin Profile - MPCP Reference</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -53,7 +53,7 @@
       
     
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#mpcp-quickstart-5-minutes" class="md-skip">
+        <a href="#xrpl-stablecoin-profile" class="md-skip">
           Skip to content
         </a>
       
@@ -94,9 +94,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="MPCP Reference" class="md-header__button md-logo" aria-label="MPCP Reference" data-md-component="logo">
+    <a href="../.." title="MPCP Reference" class="md-header__button md-logo" aria-label="MPCP Reference" data-md-component="logo">
       
-  <img src="../assets/logo.svg" alt="logo">
+  <img src="../../assets/logo.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Quickstart
+              XRPL Stablecoin Profile
             
           </span>
         </div>
@@ -220,9 +220,9 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="MPCP Reference" class="md-nav__button md-logo" aria-label="MPCP Reference" data-md-component="logo">
+    <a href="../.." title="MPCP Reference" class="md-nav__button md-logo" aria-label="MPCP Reference" data-md-component="logo">
       
-  <img src="../assets/logo.svg" alt="logo">
+  <img src="../../assets/logo.svg" alt="logo">
 
     </a>
     MPCP Reference
@@ -249,7 +249,7 @@
   
   
     <li class="md-nav__item">
-      <a href=".." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -273,37 +273,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Quickstart
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../quickstart/" class="md-nav__link">
         
   
   
@@ -319,114 +292,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#prerequisites" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Prerequisites
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#1-clone-and-install" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. Clone and Install
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#2-build" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. Build
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#3-generate-the-artifact-chain" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. Generate the Artifact Chain
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#4-the-artifact-chain-produced" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. The Artifact Chain Produced
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#5-verify-the-bundle" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5. Verify the Bundle
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#6-policy-summary-optional" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6. Policy Summary (Optional)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#next-steps" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Next Steps
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -435,8 +300,10 @@
       
   
   
+    
   
   
+  
     
     
     
@@ -447,13 +314,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
@@ -474,7 +339,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -492,7 +357,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../implementation/sdk/" class="md-nav__link">
+      <a href="../sdk/" class="md-nav__link">
         
   
   
@@ -520,7 +385,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../implementation/verifier/" class="md-nav__link">
+      <a href="../verifier/" class="md-nav__link">
         
   
   
@@ -548,7 +413,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../implementation/conformance/" class="md-nav__link">
+      <a href="../conformance/" class="md-nav__link">
         
   
   
@@ -576,7 +441,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../implementation/reference-profiles/" class="md-nav__link">
+      <a href="../reference-profiles/" class="md-nav__link">
         
   
   
@@ -601,10 +466,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../implementation/xrpl-stablecoin-profile/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    XRPL Stablecoin Profile
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -620,6 +512,114 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#asset-constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Asset Constraints
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#policy-shape" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Policy Shape
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#wallet-expectations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Wallet Expectations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verifier-expectations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verifier Expectations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification-guidance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verification Guidance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-bundle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example Bundle
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#future-multi-issuer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Future: Multi-Issuer
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -632,7 +632,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../implementation/offline-payments/" class="md-nav__link">
+      <a href="../offline-payments/" class="md-nav__link">
         
   
   
@@ -660,7 +660,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../implementation/fleet-operator-tooling/" class="md-nav__link">
+      <a href="../fleet-operator-tooling/" class="md-nav__link">
         
   
   
@@ -688,7 +688,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../implementation/intent-anchoring/" class="md-nav__link">
+      <a href="../intent-anchoring/" class="md-nav__link">
         
   
   
@@ -716,7 +716,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../implementation/dispute-verification/" class="md-nav__link">
+      <a href="../dispute-verification/" class="md-nav__link">
         
   
   
@@ -805,7 +805,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/sdk/" class="md-nav__link">
+      <a href="../../reference/sdk/" class="md-nav__link">
         
   
   
@@ -833,7 +833,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/service-api/" class="md-nav__link">
+      <a href="../../reference/service-api/" class="md-nav__link">
         
   
   
@@ -861,7 +861,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/cli/" class="md-nav__link">
+      <a href="../../reference/cli/" class="md-nav__link">
         
   
   
@@ -950,7 +950,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../examples/parking/" class="md-nav__link">
+      <a href="../../examples/parking/" class="md-nav__link">
         
   
   
@@ -978,7 +978,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../examples/charging/" class="md-nav__link">
+      <a href="../../examples/charging/" class="md-nav__link">
         
   
   
@@ -1006,7 +1006,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../examples/fleet/" class="md-nav__link">
+      <a href="../../examples/fleet/" class="md-nav__link">
         
   
   
@@ -1041,7 +1041,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../animation/MPCP_ANIMATION_PACK/" class="md-nav__link">
+      <a href="../../animation/MPCP_ANIMATION_PACK/" class="md-nav__link">
         
   
   
@@ -1088,10 +1088,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#prerequisites" class="md-nav__link">
+  <a href="#overview" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Prerequisites
+        Overview
       
     </span>
   </a>
@@ -1099,10 +1099,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#1-clone-and-install" class="md-nav__link">
+  <a href="#asset-constraints" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. Clone and Install
+        Asset Constraints
       
     </span>
   </a>
@@ -1110,10 +1110,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-build" class="md-nav__link">
+  <a href="#policy-shape" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. Build
+        Policy Shape
       
     </span>
   </a>
@@ -1121,10 +1121,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-generate-the-artifact-chain" class="md-nav__link">
+  <a href="#wallet-expectations" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. Generate the Artifact Chain
+        Wallet Expectations
       
     </span>
   </a>
@@ -1132,10 +1132,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-the-artifact-chain-produced" class="md-nav__link">
+  <a href="#verifier-expectations" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4. The Artifact Chain Produced
+        Verifier Expectations
       
     </span>
   </a>
@@ -1143,10 +1143,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-verify-the-bundle" class="md-nav__link">
+  <a href="#verification-guidance" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5. Verify the Bundle
+        Verification Guidance
       
     </span>
   </a>
@@ -1154,10 +1154,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-policy-summary-optional" class="md-nav__link">
+  <a href="#example-bundle" class="md-nav__link">
     <span class="md-ellipsis">
       
-        6. Policy Summary (Optional)
+        Example Bundle
       
     </span>
   </a>
@@ -1165,10 +1165,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#next-steps" class="md-nav__link">
+  <a href="#future-multi-issuer" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Next Steps
+        Future: Multi-Issuer
       
     </span>
   </a>
@@ -1192,7 +1192,7 @@
 
 
   
-    <a href="https://github.com/mpcp-protocol/mpcp-reference/edit/main/docs/quickstart.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/mpcp-protocol/mpcp-reference/edit/main/docs/implementation/xrpl-stablecoin-profile.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1200,93 +1200,81 @@
   
 
 
-<h1 id="mpcp-quickstart-5-minutes">MPCP Quickstart (5 minutes)</h1>
-<p>Get the full MPCP artifact chain running locally in under 5 minutes.</p>
-<h2 id="prerequisites">Prerequisites</h2>
-<ul>
-<li>Node.js 18+</li>
-<li>npm</li>
-</ul>
-<h2 id="1-clone-and-install">1. Clone and Install</h2>
-<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/mpcp-protocol/mpcp-reference.git
-<span class="nb">cd</span><span class="w"> </span>mpcp-reference
-npm<span class="w"> </span>install
-</code></pre></div>
-<h2 id="2-build">2. Build</h2>
-<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>run<span class="w"> </span>build
-</code></pre></div>
-<h2 id="3-generate-the-artifact-chain">3. Generate the Artifact Chain</h2>
-<p>Run the parking session example. This creates ephemeral keys, generates the full MPCP chain, writes artifacts to disk, and runs verification.</p>
-<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>run<span class="w"> </span>example:parking
-</code></pre></div>
-<p>You should see verification pass (exit 0). The script writes artifacts to <code>examples/parking/</code>.</p>
-<h2 id="4-the-artifact-chain-produced">4. The Artifact Chain Produced</h2>
-<p>The example generates the MPCP authorization chain:</p>
+<h1 id="xrpl-stablecoin-profile">XRPL Stablecoin Profile</h1>
+<p>MPCP reference profile for <strong>XRPL issued assets</strong> (IOUs / stablecoins). Makes MPCP concrete for real XRPL-based machine payments.</p>
+<h2 id="overview">Overview</h2>
+<p>This profile defines how MPCP artifacts are used with XRPL issued currencies such as RLUSD or other stablecoins. It specifies payment constraints, wallet expectations, and verifier requirements for stablecoin settlement on XRPL.</p>
+<h2 id="asset-constraints">Asset Constraints</h2>
 <table>
 <thead>
 <tr>
-<th>File</th>
-<th>Artifact</th>
-<th>Description</th>
+<th>Field</th>
+<th>Constraint</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>policy-grant.json</td>
-<td>PolicyGrant</td>
-<td>Permission envelope (allowedRails, policyHash, expiresAt)</td>
+<td><code>kind</code></td>
+<td><code>IOU</code> (XRPL issued asset)</td>
 </tr>
 <tr>
-<td>budget-auth.json</td>
-<td>BudgetAuthorization</td>
-<td>Unsigned spending envelope</td>
+<td><code>currency</code></td>
+<td>3-character code (e.g. <code>RLUSD</code>, <code>USD</code>)</td>
 </tr>
 <tr>
-<td>signed-budget-auth.json</td>
-<td>SignedBudgetAuthorization (SBA)</td>
-<td>Signed budget; session max $30</td>
-</tr>
-<tr>
-<td>spa.json</td>
-<td>SignedPaymentAuthorization (SPA)</td>
-<td>Signed payment binding (amount, destination, intentHash)</td>
-</tr>
-<tr>
-<td>settlement-intent.json</td>
-<td>SettlementIntent</td>
-<td>Canonical intent for hashing</td>
-</tr>
-<tr>
-<td>settlement.json</td>
-<td>Settlement</td>
-<td>Executed settlement record</td>
-</tr>
-<tr>
-<td>settlement-bundle.json</td>
-<td>Bundle</td>
-<td>All artifacts combined for verification</td>
+<td><code>issuer</code></td>
+<td>XRPL account address (e.g. <code>rIssuer</code>)</td>
 </tr>
 </tbody>
 </table>
-<p>Chain flow: <strong>PolicyGrant → SBA → SPA → Settlement → Verification</strong></p>
-<h2 id="5-verify-the-bundle">5. Verify the Bundle</h2>
-<p>Verify the settlement bundle with the CLI:</p>
-<div class="highlight"><pre><span></span><code>npx<span class="w"> </span>mpcp<span class="w"> </span>verify<span class="w"> </span>examples/parking/settlement-bundle.json<span class="w"> </span>--explain
-</code></pre></div>
-<p>The <code>--explain</code> flag shows step-by-step diagnostics. The bundle is self-contained (includes public keys), so verification works without env vars.</p>
-<h2 id="6-policy-summary-optional">6. Policy Summary (Optional)</h2>
-<p>View fleet policy constraints:</p>
-<div class="highlight"><pre><span></span><code>npx<span class="w"> </span>mpcp<span class="w"> </span>policy-summary<span class="w"> </span>examples/machine-commerce/fleet-policy.json
-</code></pre></div>
-<p>Or validate against a reference profile:</p>
-<div class="highlight"><pre><span></span><code>npx<span class="w"> </span>mpcp<span class="w"> </span>policy-summary<span class="w"> </span>examples/machine-commerce/fleet-policy.json<span class="w"> </span>--profile<span class="w"> </span>parking
-</code></pre></div>
-<h2 id="next-steps">Next Steps</h2>
+<p><strong>Decimals:</strong> XRPL IOUs typically use 6 decimal places. Amounts in MPCP are expressed in the asset's smallest unit (e.g. <code>19440000</code> = 19.44 RLUSD).</p>
+<p><strong>Issuer validation:</strong> Wallets and verifiers MUST validate that the issuer in MPCP artifacts matches the trusted issuer for the currency. Do not accept arbitrary issuers.</p>
+<h2 id="policy-shape">Policy Shape</h2>
+<p>Policies using this profile must include:</p>
 <ul>
-<li><a href="https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/overview/what-is-mpcp.md">What is MPCP?</a> — Understand the protocol</li>
-<li><a href="https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/guides/build-a-machine-wallet.md">Build a Machine Wallet</a> — Integrate into your app</li>
-<li><a href="../examples/parking/">Parking Example</a> — Deep dive on the example flow</li>
+<li><code>allowedRails</code>: <code>["xrpl"]</code></li>
+<li><code>allowedAssets</code>: Array of <code>{ kind: "IOU", currency: string, issuer: string }</code></li>
+<li><code>destinationAllowlist</code> (in SBA): XRPL account addresses allowed as payment destinations</li>
+<li><code>maxAmountMinor</code>, <code>expiresAt</code> per standard MPCP</li>
 </ul>
+<h2 id="wallet-expectations">Wallet Expectations</h2>
+<p>A machine wallet implementing this profile MUST:</p>
+<ol>
+<li><strong>Validate issuer</strong> — Only sign SPAs for assets whose issuer is in the trusted set</li>
+<li><strong>Respect destination allowlist</strong> — SPA destination must be in the SBA's <code>destinationAllowlist</code></li>
+<li><strong>Amount precision</strong> — Use 6 decimals for RLUSD-style assets; amounts are in smallest units</li>
+<li><strong>Settlement intent</strong> — Produce a SettlementIntent with <code>rail: "xrpl"</code>, <code>asset</code>, <code>amount</code>, <code>destination</code> before signing SPA</li>
+</ol>
+<h2 id="verifier-expectations">Verifier Expectations</h2>
+<p>A verifier (e.g. parking meter, charging station) MUST:</p>
+<ol>
+<li><strong>Verify the chain</strong> — PolicyGrant → SBA → SPA → SettlementIntent → Settlement</li>
+<li><strong>Check asset consistency</strong> — Same <code>currency</code> and <code>issuer</code> across all artifacts</li>
+<li><strong>Validate destination</strong> — Settlement destination matches SPA and is in SBA allowlist</li>
+<li><strong>Validate amount</strong> — Settlement amount ≤ SPA amount ≤ SBA maxAmountMinor</li>
+<li><strong>Check issuer</strong> — Issuer is in the verifier's trusted issuer list for that currency</li>
+</ol>
+<h2 id="verification-guidance">Verification Guidance</h2>
+<p>Use <code>mpcp verify</code> on any artifact bundle:</p>
+<div class="highlight"><pre><span></span><code>mpcp<span class="w"> </span>verify<span class="w"> </span>examples/xrpl-stablecoin/xrpl-stablecoin-bundle.json
+mpcp<span class="w"> </span>verify<span class="w"> </span>examples/xrpl-stablecoin/xrpl-stablecoin-bundle.json<span class="w"> </span>--explain
+</code></pre></div>
+<p>For policy validation:</p>
+<div class="highlight"><pre><span></span><code>mpcp<span class="w"> </span>policy-summary<span class="w"> </span>profiles/xrpl-stablecoin.json<span class="w"> </span>--profile<span class="w"> </span>xrpl-stablecoin
+</code></pre></div>
+<p><strong>Verification checklist:</strong></p>
+<ul>
+<li>[ ] All artifacts present (policyGrant, sba, spa, settlementIntent, settlement)</li>
+<li>[ ] Signatures valid for SBA and SPA</li>
+<li>[ ] Intent hash in SPA matches canonical hash of SettlementIntent</li>
+<li>[ ] Asset (currency, issuer) consistent across chain</li>
+<li>[ ] Destination in SBA allowlist</li>
+<li>[ ] Amounts non-increasing: settlement ≤ SPA ≤ SBA max</li>
+</ul>
+<h2 id="example-bundle">Example Bundle</h2>
+<p>See <code>examples/xrpl-stablecoin/xrpl-stablecoin-bundle.json</code> for a complete, verifiable bundle conforming to this profile.</p>
+<h2 id="future-multi-issuer">Future: Multi-Issuer</h2>
+<p>This profile currently assumes a single trusted issuer per currency. Future versions may support multiple issuers (e.g. different RLUSD issuers) with explicit allowlists.</p>
 
 
 
@@ -1342,10 +1330,10 @@ npm<span class="w"> </span>install
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "search.share", "content.code.copy", "content.action.edit"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "search.share", "content.code.copy", "content.action.edit"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
