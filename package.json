@@ -20,6 +20,10 @@
       "types": "./dist/schema/index.d.ts",
       "default": "./dist/schema/index.js"
     },
+    "./protocol/schema": {
+      "types": "./dist/protocol/schema/index.d.ts",
+      "default": "./dist/protocol/schema/index.js"
+    },
     "./service": {
       "types": "./dist/service/index.d.ts",
       "default": "./dist/service/index.js"

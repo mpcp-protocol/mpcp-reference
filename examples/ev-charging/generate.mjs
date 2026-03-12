@@ -87,6 +87,7 @@ const intent = createSettlementIntent({
   amount: "25000000",
   destination: DESTINATION,
   asset: { kind: "IOU", currency: "RLUSD", issuer: "rIssuer" },
+  createdAt: SETTLEMENT_NOW,
 });
 
 const paymentPolicyDecision = {

@@ -33,7 +33,7 @@ export type {
   SettlementIntent,
 } from "./createSettlementIntent.js";
 
-export { canonicalJson } from "../hash/canonicalJson.js";
+export { canonicalJson } from "../hash/index.js";
 export {
   computeSettlementIntentHash,
   computeIntentHash,

@@ -119,6 +119,7 @@ const intent = createSettlementIntent({
   amount: paymentRequest.amountRail,
   destination: paymentRequest.destination,
   asset: paymentRequest.asset,
+  createdAt: SETTLEMENT_NOW,
 });
 const paymentPolicyDecision = {
   decisionId: "dec-fleet-1",
