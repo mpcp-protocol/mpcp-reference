@@ -41,6 +41,7 @@ nav:
       - Conformance: implementation/conformance.md
       - SDK: implementation/sdk.md
       - Offline Payments: implementation/offline-payments.md
+      - Machine Wallet Guardrails: implementation/machine-wallet-guardrails.md
       - Fleet Operator Tooling: implementation/fleet-operator-tooling.md
       - Intent Anchoring: implementation/intent-anchoring.md
       - Dispute Verification: implementation/dispute-verification.md
@@ -50,6 +51,7 @@ nav:
       - CLI: reference/cli.md
   - Examples:
       - Parking: examples/parking.md
+      - Machine Wallet Guardrails: examples/machine-wallet-guardrails.md
       - Charging: examples/charging.md
       - Fleet: examples/fleet.md
   - Animation Pack: animation/MPCP_ANIMATION_PACK.md
