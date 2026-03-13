@@ -1,0 +1,65 @@
+# Config for unified site deployment at mpcp-protocol.github.io/reference/
+# Use: mkdocs build -f mkdocs.unified.yml
+# Overrides: site_url, dark theme (slate), navigation.tabs, MPCP/Spec nav links
+site_name: MPCP Reference
+site_description: Reference implementation of the Machine Payment Control Protocol
+site_url: https://mpcp-protocol.github.io/reference/
+repo_url: https://github.com/mpcp-protocol/mpcp-reference
+repo_name: mpcp-reference
+edit_uri: edit/main/docs/
+
+plugins:
+  - search
+
+extra:
+  protocol_version: "MPCP 1.0"
+  spec_repo: "https://github.com/mpcp-protocol/mpcp-spec"
+
+theme:
+  name: material
+  logo: assets/logo.svg
+  favicon: assets/favicon.svg
+  palette:
+    - scheme: slate
+      primary: black
+      accent: blue
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.tabs
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.action.edit
+
+nav:
+  - MPCP: https://mpcp-protocol.github.io/
+  - Spec: https://mpcp-protocol.github.io/spec/
+  - Home: index.md
+  - Quickstart: quickstart.md
+  - Implementation:
+      - Profile Model: implementation/profile-model.md
+      - Reference Profiles: implementation/reference-profiles.md
+      - XRPL Stablecoin Profile: implementation/xrpl-stablecoin-profile.md
+      - Verifier: implementation/verifier.md
+      - Conformance: implementation/conformance.md
+      - SDK: implementation/sdk.md
+      - Offline Payments: implementation/offline-payments.md
+      - Fleet Operator Tooling: implementation/fleet-operator-tooling.md
+      - Intent Anchoring: implementation/intent-anchoring.md
+      - Dispute Verification: implementation/dispute-verification.md
+  - Reference:
+      - SDK: reference/sdk.md
+      - Service API: reference/service-api.md
+      - CLI: reference/cli.md
+  - Examples:
+      - Parking: examples/parking.md
+      - Charging: examples/charging.md
+      - Fleet: examples/fleet.md
+  - Animation Pack: animation/MPCP_ANIMATION_PACK.md
+
+markdown_extensions:
+  - attr_list
+  - md_in_html
+  - pymdownx.superfences
