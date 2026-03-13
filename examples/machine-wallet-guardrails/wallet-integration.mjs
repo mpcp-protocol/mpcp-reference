@@ -71,6 +71,7 @@ function checkGuardrails(policyGrant, sba, paymentRequest) {
   if (!sbaAssetMatch) {
     return { ok: false, reason: "asset not in budget authorization" };
   }
+
   const maxMinor = BigInt(sba.authorization.maxAmountMinor ?? "0");
   const reqMinor = BigInt(amount);
   if (reqMinor > maxMinor) {
