@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#intent-anchoring-pr10" class="md-skip">
+        <a href="#intent-anchoring" class="md-skip">
           Skip to content
         </a>
       
@@ -357,14 +357,70 @@
   
   
     <li class="md-nav__item">
-      <a href="../sdk/" class="md-nav__link">
+      <a href="../profile-model/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    SDK
+    Profile Model
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference-profiles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference Profiles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xrpl-stablecoin-profile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    XRPL Stablecoin Profile
   
 
     
@@ -441,42 +497,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference-profiles/" class="md-nav__link">
+      <a href="../sdk/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Reference Profiles
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../xrpl-stablecoin-profile/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    XRPL Stablecoin Profile
+    SDK
   
 
     
@@ -679,10 +707,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#hedera-hcs-adapter-pr14" class="md-nav__link">
+  <a href="#hedera-hcs-adapter" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Hedera HCS Adapter (PR14)
+        Hedera HCS Adapter
       
     </span>
   </a>
@@ -1143,10 +1171,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#hedera-hcs-adapter-pr14" class="md-nav__link">
+  <a href="#hedera-hcs-adapter" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Hedera HCS Adapter (PR14)
+        Hedera HCS Adapter
       
     </span>
   </a>
@@ -1178,9 +1206,9 @@
   
 
 
-<h1 id="intent-anchoring-pr10">Intent Anchoring (PR10)</h1>
+<h1 id="intent-anchoring">Intent Anchoring</h1>
 <p>Optional support for publishing intent hashes to distributed ledgers. Provides public auditability, dispute protection, and replay protection.</p>
-<p><strong>Mock anchor</strong> is included for development. <strong>Hedera HCS</strong> adapter is implemented (PR14). XRPL and EVM are future work.</p>
+<p><strong>Mock anchor</strong> is included for development. <strong>Hedera HCS</strong> adapter is implemented. XRPL and EVM are future work.</p>
 <h2 id="purpose">Purpose</h2>
 <ul>
 <li><strong>Public auditability</strong> — Intent hashes can be verified against a public record</li>
@@ -1243,7 +1271,7 @@
 <h2 id="integration">Integration</h2>
 <p>Anchoring is <strong>optional</strong>. MPCP verification does not require an anchor. Anchors are used for:</p>
 <ul>
-<li>Dispute resolution (PR11)</li>
+<li>Dispute resolution</li>
 <li>Audit trails</li>
 <li>Compliance and attestation</li>
 </ul>
@@ -1255,7 +1283,7 @@
 <li>Demos</li>
 </ul>
 <p><strong>Validation:</strong> Requires 64-char hex intentHash. Throws on invalid input. Only accepts <code>rail: "mock"</code> — passing other rails throws to avoid confusion with real ledger behavior.</p>
-<h2 id="hedera-hcs-adapter-pr14">Hedera HCS Adapter (PR14)</h2>
+<h2 id="hedera-hcs-adapter">Hedera HCS Adapter</h2>
 <p>The Hedera HCS adapter publishes intent hashes to a Hedera Consensus Service topic.</p>
 <p><strong>Requirements:</strong>
 - <code>npm install @hashgraph/sdk</code> (optional peer dependency; install when using Hedera HCS)
