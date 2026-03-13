@@ -33,12 +33,13 @@ theme:
 nav:
   - Home: index.md
   - Quickstart: quickstart.md
-  - Implementation:
-    - SDK: implementation/sdk.md
-    - Verifier: implementation/verifier.md
-    - Conformance: implementation/conformance.md
+  -   Implementation:
+    - Profile Model: implementation/profile-model.md
     - Reference Profiles: implementation/reference-profiles.md
     - XRPL Stablecoin Profile: implementation/xrpl-stablecoin-profile.md
+    - Verifier: implementation/verifier.md
+    - Conformance: implementation/conformance.md
+    - SDK: implementation/sdk.md
     - Offline Payments: implementation/offline-payments.md
     - Fleet Operator Tooling: implementation/fleet-operator-tooling.md
     - Intent Anchoring: implementation/intent-anchoring.md
