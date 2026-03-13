@@ -33,25 +33,25 @@ theme:
 nav:
   - Home: index.md
   - Quickstart: quickstart.md
-  -   Implementation:
-    - Profile Model: implementation/profile-model.md
-    - Reference Profiles: implementation/reference-profiles.md
-    - XRPL Stablecoin Profile: implementation/xrpl-stablecoin-profile.md
-    - Verifier: implementation/verifier.md
-    - Conformance: implementation/conformance.md
-    - SDK: implementation/sdk.md
-    - Offline Payments: implementation/offline-payments.md
-    - Fleet Operator Tooling: implementation/fleet-operator-tooling.md
-    - Intent Anchoring: implementation/intent-anchoring.md
-    - Dispute Verification: implementation/dispute-verification.md
+  - Implementation:
+      - Profile Model: implementation/profile-model.md
+      - Reference Profiles: implementation/reference-profiles.md
+      - XRPL Stablecoin Profile: implementation/xrpl-stablecoin-profile.md
+      - Verifier: implementation/verifier.md
+      - Conformance: implementation/conformance.md
+      - SDK: implementation/sdk.md
+      - Offline Payments: implementation/offline-payments.md
+      - Fleet Operator Tooling: implementation/fleet-operator-tooling.md
+      - Intent Anchoring: implementation/intent-anchoring.md
+      - Dispute Verification: implementation/dispute-verification.md
   - Reference:
-    - SDK: reference/sdk.md
-    - Service API: reference/service-api.md
-    - CLI: reference/cli.md
+      - SDK: reference/sdk.md
+      - Service API: reference/service-api.md
+      - CLI: reference/cli.md
   - Examples:
-    - Parking: examples/parking.md
-    - Charging: examples/charging.md
-    - Fleet: examples/fleet.md
+      - Parking: examples/parking.md
+      - Charging: examples/charging.md
+      - Fleet: examples/fleet.md
   - Animation Pack: animation/MPCP_ANIMATION_PACK.md
 
 markdown_extensions:
