@@ -27,8 +27,9 @@ export const fleetPolicyAuthorizationPayloadSchema = z.strictObject({
 
 export const fleetPolicyAuthorizationSchema = z.strictObject({
   authorization: fleetPolicyAuthorizationPayloadSchema,
+  issuer: z.string().optional(),
+  issuerKeyId: z.string(),
   signature: z.string(),
-  keyId: z.string(),
 });
 
 export type FleetPolicyAuthorizationPayload = z.infer<typeof fleetPolicyAuthorizationPayloadSchema>;

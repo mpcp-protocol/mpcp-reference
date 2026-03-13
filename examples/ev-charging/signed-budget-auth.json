@@ -26,5 +26,5 @@
     "expiresAt": "2030-12-31T23:59:59Z"
   },
   "signature": "WT0EExkYrd9KmjNtxR92YKfLOdpdLbgVAPuwZoP7+f+uioGz+N30kQICJAnIAB8mo8dacQz1otJZz17EfSCPCg==",
-  "keyId": "mpcp-sba-signing-key-1"
+  "issuerKeyId": "mpcp-sba-signing-key-1"
 }

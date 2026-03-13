@@ -18,5 +18,5 @@
     "expiresAt": "2030-12-31T23:59:59Z"
   },
   "signature": "VFi1xdnwhqB1diVwkd+XQOKP4CqZzWG2joScWEa2ZDGzDjOKMPSKRFEOdUQZfHtM2XDrY7vEHUeUOsyDHgKzCw==",
-  "keyId": "mpcp-spa-signing-key-1"
+  "issuerKeyId": "mpcp-spa-signing-key-1"
 }

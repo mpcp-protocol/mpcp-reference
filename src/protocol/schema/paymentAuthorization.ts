@@ -25,8 +25,9 @@ export const paymentAuthorizationSchema = z.strictObject({
 
 export const signedPaymentAuthorizationSchema = z.strictObject({
   authorization: paymentAuthorizationSchema,
+  issuer: z.string().optional(),
+  issuerKeyId: z.string(),
   signature: z.string(),
-  keyId: z.string(),
 });
 
 export type PaymentAuthorization = z.infer<typeof paymentAuthorizationSchema>;

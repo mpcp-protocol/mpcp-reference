@@ -179,8 +179,8 @@ describe("SignedBudgetAuthorization schema", () => {
   it("accepts valid envelope", () => {
     const result = validateWithSchema(signedBudgetAuthorizationSchema, {
       authorization: validBudgetAuthorization,
+      issuerKeyId: "mpcp-sba-signing-key-1",
       signature: "base64...",
-      keyId: "mpcp-sba-signing-key-1",
     });
     expect(result.ok).toBe(true);
   });
@@ -188,7 +188,7 @@ describe("SignedBudgetAuthorization schema", () => {
   it("rejects missing signature", () => {
     const result = validateWithSchema(signedBudgetAuthorizationSchema, {
       authorization: validBudgetAuthorization,
-      keyId: "key",
+      issuerKeyId: "key",
     });
     expect(result.ok).toBe(false);
   });
@@ -196,8 +196,8 @@ describe("SignedBudgetAuthorization schema", () => {
   it("rejects unexpected fields (strict)", () => {
     const result = validateWithSchema(signedBudgetAuthorizationSchema, {
       authorization: validBudgetAuthorization,
+      issuerKeyId: "key",
       signature: "base64...",
-      keyId: "key",
       unknown: true,
     });
     expect(result.ok).toBe(false);
@@ -239,8 +239,8 @@ describe("SignedPaymentAuthorization schema", () => {
   it("accepts valid envelope", () => {
     const result = validateWithSchema(signedPaymentAuthorizationSchema, {
       authorization: validPaymentAuthorization,
+      issuerKeyId: "mpcp-spa-signing-key-1",
       signature: "base64...",
-      keyId: "mpcp-spa-signing-key-1",
     });
     expect(result.ok).toBe(true);
   });
@@ -248,8 +248,8 @@ describe("SignedPaymentAuthorization schema", () => {
   it("rejects unexpected fields (strict)", () => {
     const result = validateWithSchema(signedPaymentAuthorizationSchema, {
       authorization: validPaymentAuthorization,
+      issuerKeyId: "key",
       signature: "base64...",
-      keyId: "key",
       unknownField: "invalid",
     });
     expect(result.ok).toBe(false);
@@ -291,8 +291,8 @@ describe("FleetPolicyAuthorization schema", () => {
   it("accepts valid FleetPolicyAuthorization", () => {
     const result = validateWithSchema(fleetPolicyAuthorizationSchema, {
       authorization: validFleetPolicyPayload,
+      issuerKeyId: "fleet-signing-key-1",
       signature: "base64...",
-      keyId: "fleet-signing-key-1",
     });
     expect(result.ok).toBe(true);
   });
@@ -300,8 +300,8 @@ describe("FleetPolicyAuthorization schema", () => {
   it("rejects unexpected fields in envelope (strict)", () => {
     const result = validateWithSchema(fleetPolicyAuthorizationSchema, {
       authorization: validFleetPolicyPayload,
+      issuerKeyId: "key",
       signature: "base64...",
-      keyId: "key",
       unwanted: true,
     });
     expect(result.ok).toBe(false);
@@ -310,8 +310,8 @@ describe("FleetPolicyAuthorization schema", () => {
   it("rejects unexpected fields in payload (strict)", () => {
     const result = validateWithSchema(fleetPolicyAuthorizationSchema, {
       authorization: { ...validFleetPolicyPayload, invalidPayloadField: "x" },
+      issuerKeyId: "key",
       signature: "base64...",
-      keyId: "key",
     });
     expect(result.ok).toBe(false);
   });
@@ -327,13 +327,13 @@ const validArtifactBundle = {
   },
   sba: {
     authorization: validBudgetAuthorization,
+    issuerKeyId: "mpcp-sba-signing-key-1",
     signature: "base64...",
-    keyId: "mpcp-sba-signing-key-1",
   },
   spa: {
     authorization: validPaymentAuthorization,
+    issuerKeyId: "mpcp-spa-signing-key-1",
     signature: "base64...",
-    keyId: "mpcp-spa-signing-key-1",
   },
   settlement: {
     amount: "19440000",

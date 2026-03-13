@@ -45,15 +45,15 @@ afterEach(() => {
 });
 
 function injectBundleKeys(bundle: Record<string, unknown>) {
-  const sba = bundle.sba as { keyId?: string } | undefined;
-  const spa = bundle.spa as { keyId?: string } | undefined;
+  const sba = bundle.sba as { issuerKeyId?: string } | undefined;
+  const spa = bundle.spa as { issuerKeyId?: string } | undefined;
   if (bundle.sbaPublicKeyPem && typeof bundle.sbaPublicKeyPem === "string") {
     process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM = bundle.sbaPublicKeyPem as string;
-    if (sba?.keyId) process.env.MPCP_SBA_SIGNING_KEY_ID = sba.keyId;
+    if (sba?.issuerKeyId) process.env.MPCP_SBA_SIGNING_KEY_ID = sba.issuerKeyId;
   }
   if (bundle.spaPublicKeyPem && typeof bundle.spaPublicKeyPem === "string") {
     process.env.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM = bundle.spaPublicKeyPem as string;
-    if (spa?.keyId) process.env.MPCP_SPA_SIGNING_KEY_ID = spa.keyId;
+    if (spa?.issuerKeyId) process.env.MPCP_SPA_SIGNING_KEY_ID = spa.issuerKeyId;
   }
 }
 

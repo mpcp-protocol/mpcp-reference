@@ -27,11 +27,11 @@ function loadBundleAndInjectKeys() {
   SAVED_ENV.MPCP_SPA_SIGNING_KEY_ID = process.env.MPCP_SPA_SIGNING_KEY_ID;
   if (data.sbaPublicKeyPem) {
     process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM = data.sbaPublicKeyPem;
-    process.env.MPCP_SBA_SIGNING_KEY_ID = (data as { sba: { keyId: string } }).sba.keyId;
+    process.env.MPCP_SBA_SIGNING_KEY_ID = (data as { sba: { issuerKeyId: string } }).sba.issuerKeyId;
   }
   if (data.spaPublicKeyPem) {
     process.env.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM = data.spaPublicKeyPem;
-    process.env.MPCP_SPA_SIGNING_KEY_ID = (data as { spa: { keyId: string } }).spa.keyId;
+    process.env.MPCP_SPA_SIGNING_KEY_ID = (data as { spa: { issuerKeyId: string } }).spa.issuerKeyId;
   }
   return data;
 }

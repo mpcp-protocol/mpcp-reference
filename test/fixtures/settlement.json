@@ -42,7 +42,7 @@
       "expiresAt": "2030-12-31T23:59:59Z"
     },
     "signature": "K4lftg4R8EnhBriA91fxudI1viM/x3LQHkTgFecFK7OW6iPOOhjq8Ds2TLxmVZz4KD0cS42u8ovPYanzgY5UDg==",
-    "keyId": "mpcp-sba-signing-key-1"
+    "issuerKeyId": "mpcp-sba-signing-key-1"
   },
   "signedPaymentAuthorization": {
     "authorization": {
@@ -64,7 +64,7 @@
       "expiresAt": "2030-12-31T23:59:59Z"
     },
     "signature": "SVpmJHwoJFyHsBuLoTDOpmaGNA0pHgUQgzqq3XjmF+7IMnwR2c4jAFU5Oig/WlS1/U/U0MOZwZEk7MLpJB0dBA==",
-    "keyId": "mpcp-spa-signing-key-1"
+    "issuerKeyId": "mpcp-spa-signing-key-1"
   },
   "settlement": {
     "amount": "19440000",

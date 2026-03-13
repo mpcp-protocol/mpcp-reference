@@ -41,7 +41,7 @@
       "expiresAt": "2030-12-31T23:59:59Z"
     },
     "signature": "IieBKYdf/Q52SU+AQtuCQTAR+say2jHrQz60ZUlSdmKS3K3BIwcS0e3WaYsfnHtdpzMH2W9MBr6DemTkbuhvDQ==",
-    "keyId": "mpcp-spa-signing-key-1"
+    "issuerKeyId": "mpcp-spa-signing-key-1"
   },
   "sba": {
     "authorization": {
@@ -70,7 +70,7 @@
       "expiresAt": "2030-12-31T23:59:59Z"
     },
     "signature": "Oo6kj3SNTViIsFI4KndCWDCxBirLMs/wB3Eu2PFR8BySdObgw1UPHNjE40fY6tu40MWp/hULUEvcPmJ9zhtMCA==",
-    "keyId": "mpcp-sba-signing-key-1"
+    "issuerKeyId": "mpcp-sba-signing-key-1"
   },
   "policyGrant": {
     "grantId": "a851605b-1c3e-470e-ae60-72e782d647da",

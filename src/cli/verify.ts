@@ -68,13 +68,13 @@ export function runVerify(
       saved.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM = process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM;
       saved.MPCP_SBA_SIGNING_KEY_ID = process.env.MPCP_SBA_SIGNING_KEY_ID;
       process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM = data.sbaPublicKeyPem;
-      process.env.MPCP_SBA_SIGNING_KEY_ID = data.sba.keyId;
+      process.env.MPCP_SBA_SIGNING_KEY_ID = data.sba.issuerKeyId;
     }
     if (data.spaPublicKeyPem) {
       saved.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM = process.env.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM;
       saved.MPCP_SPA_SIGNING_KEY_ID = process.env.MPCP_SPA_SIGNING_KEY_ID;
       process.env.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM = data.spaPublicKeyPem;
-      process.env.MPCP_SPA_SIGNING_KEY_ID = data.spa.keyId;
+      process.env.MPCP_SPA_SIGNING_KEY_ID = data.spa.issuerKeyId;
     }
   }
 

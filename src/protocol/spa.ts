@@ -19,8 +19,9 @@ export interface PaymentAuthorization {
 
 export interface SignedPaymentAuthorization {
   authorization: PaymentAuthorization;
+  issuer?: string;
+  issuerKeyId: string;
   signature: string;
-  keyId: string;
 }
 
 function getExpectedSigningKeyId(): string {
@@ -113,7 +114,7 @@ export function createSignedPaymentAuthorization(
   if (!authorization || !privateKey) return null;
 
   const signature = crypto.sign(null, hashAuthorization(authorization), privateKey).toString("base64");
-  return { authorization, signature, keyId: getExpectedSigningKeyId() };
+  return { authorization, issuerKeyId: getExpectedSigningKeyId(), signature };
 }
 
 export function verifySignedPaymentAuthorizationForSettlement(
@@ -122,7 +123,7 @@ export function verifySignedPaymentAuthorizationForSettlement(
   settlement: SettlementResult,
   options?: { nowISO?: string; nowMs?: number; settlementIntent?: unknown },
 ): { ok: true } | { ok: false; reason: "invalid_signature" | "expired" | "mismatch" } {
-  if (envelope.keyId !== getExpectedSigningKeyId()) return { ok: false, reason: "invalid_signature" };
+  if (envelope.issuerKeyId !== getExpectedSigningKeyId()) return { ok: false, reason: "invalid_signature" };
 
   const publicKey = parseVerificationPublicKey();
   if (!publicKey) return { ok: false, reason: "invalid_signature" };

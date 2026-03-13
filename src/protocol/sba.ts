@@ -24,8 +24,9 @@ export interface SessionBudgetAuthorization {
 
 export interface SignedSessionBudgetAuthorization {
   authorization: SessionBudgetAuthorization;
+  issuer?: string;
+  issuerKeyId: string;
   signature: string;
-  keyId: string;
 }
 
 function hashAuthorization(authorization: SessionBudgetAuthorization): Buffer {
@@ -99,8 +100,8 @@ export function createSignedSessionBudgetAuthorization(input: {
   const signature = crypto.sign(null, hashAuthorization(authorization), privateKey).toString("base64");
   return {
     authorization,
+    issuerKeyId: getExpectedKeyId(),
     signature,
-    keyId: getExpectedKeyId(),
   };
 }
 
@@ -108,7 +109,7 @@ export function verifySignedSessionBudgetAuthorizationForDecision(
   envelope: SignedSessionBudgetAuthorization,
   input: { sessionId: string; decision: PaymentPolicyDecision; nowMs?: number },
 ): { ok: true } | { ok: false; reason: "invalid_signature" | "expired" | "budget_exceeded" | "mismatch" } {
-  if (envelope.keyId !== getExpectedKeyId()) return { ok: false, reason: "invalid_signature" };
+  if (envelope.issuerKeyId !== getExpectedKeyId()) return { ok: false, reason: "invalid_signature" };
   const publicKey = parseVerificationPublicKey();
   if (!publicKey) return { ok: false, reason: "invalid_signature" };
 
