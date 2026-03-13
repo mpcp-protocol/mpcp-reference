@@ -37,6 +37,7 @@
     "demo:verify": "node scripts/demo-verify.mjs",
     "example:parking": "node examples/parking/generate.mjs",
     "example:guardrails": "node examples/parking/demo-guardrails.mjs",
+    "example:wallet-guardrails": "node examples/machine-wallet-guardrails/wallet-integration.mjs",
     "example:ev-charging": "node examples/ev-charging/generate.mjs",
     "example:machine-commerce": "node examples/machine-commerce/demo-fleet.mjs",
     "example:simulate": "node examples/machine-commerce/simulate.mjs",
