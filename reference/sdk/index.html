@@ -1372,7 +1372,7 @@
 <span class="kd">const</span><span class="w"> </span><span class="nx">budgetAuth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">createBudgetAuthorization</span><span class="p">({</span>
 <span class="w">  </span><span class="nx">grantId</span><span class="o">:</span><span class="w"> </span><span class="kt">grant.grantId</span><span class="p">,</span><span class="w">      </span><span class="c1">// from createPolicyGrant</span>
 <span class="w">  </span><span class="nx">sessionId</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;sess-123&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">vehicleId</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;veh-456&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">actorId</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;actor-001&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nx">policyHash</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;a1b2c3&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nx">currency</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;USD&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nx">maxAmountMinor</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;3000&quot;</span><span class="p">,</span>
@@ -1386,7 +1386,7 @@
 <span class="kd">const</span><span class="w"> </span><span class="nx">sba</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">createSignedBudgetAuthorization</span><span class="p">({</span>
 <span class="w">  </span><span class="nx">grantId</span><span class="o">:</span><span class="w"> </span><span class="kt">budgetAuth.grantId</span><span class="p">,</span>
 <span class="w">  </span><span class="nx">sessionId</span><span class="o">:</span><span class="w"> </span><span class="kt">budgetAuth.sessionId</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">vehicleId</span><span class="o">:</span><span class="w"> </span><span class="kt">budgetAuth.vehicleId</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">actorId</span><span class="o">:</span><span class="w"> </span><span class="kt">budgetAuth.actorId</span><span class="p">,</span>
 <span class="w">  </span><span class="nx">policyHash</span><span class="o">:</span><span class="w"> </span><span class="kt">budgetAuth.policyHash</span><span class="p">,</span>
 <span class="w">  </span><span class="nx">currency</span><span class="o">:</span><span class="w"> </span><span class="kt">budgetAuth.currency</span><span class="p">,</span>
 <span class="w">  </span><span class="nx">maxAmountMinor</span><span class="o">:</span><span class="w"> </span><span class="kt">budgetAuth.maxAmountMinor</span><span class="p">,</span>
