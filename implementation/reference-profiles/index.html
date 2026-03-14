@@ -1362,7 +1362,7 @@
 <p>Profiles define expected policy shape. Use <code>mpcp policy-summary</code> with <code>--profile</code> to validate a policy against a reference profile.</p>
 <div class="highlight"><pre><span></span><code>mpcp<span class="w"> </span>policy-summary<span class="w"> </span>profiles/parking.json<span class="w"> </span>--profile<span class="w"> </span>parking
 mpcp<span class="w"> </span>policy-summary<span class="w"> </span>profiles/xrpl-stablecoin.json<span class="w"> </span>--profile<span class="w"> </span>xrpl-stablecoin
-mpcp<span class="w"> </span>policy-summary<span class="w"> </span>examples/fleet-simulator/fleet-policy.json<span class="w"> </span>--profile<span class="w"> </span>parking
+mpcp<span class="w"> </span>policy-summary<span class="w"> </span>examples/machine-commerce/fleet-policy.json<span class="w"> </span>--profile<span class="w"> </span>parking
 </code></pre></div>
 <p>Validation checks: <code>allowedRails</code> in the policy must be a subset of the profile’s allowed rails; if the policy declares <code>_profile</code>, it must match the profile name.</p>
 

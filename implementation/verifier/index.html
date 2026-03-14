@@ -534,6 +534,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#key-resolution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Resolution
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Key Resolution">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#https-well-known-baseline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HTTPS Well-Known (Baseline)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#did-document-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DID Document (Optional)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inline-keys-self-contained-bundles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inline Keys (Self-Contained Bundles)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#dispute-verification" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1172,6 +1222,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#key-resolution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Resolution
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Key Resolution">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#https-well-known-baseline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HTTPS Well-Known (Baseline)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#did-document-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DID Document (Optional)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inline-keys-self-contained-bundles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inline Keys (Self-Contained Bundles)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#dispute-verification" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1276,6 +1376,34 @@
 <span class="p">}</span>
 </code></pre></div>
 <p>The <code>context</code> includes policyGrant, signedBudgetAuthorization, signedPaymentAuthorization, settlement, paymentPolicyDecision, decisionId, and optional settlementIntent.</p>
+<h2 id="key-resolution">Key Resolution</h2>
+<p>MPCP signatures include an <code>issuerKeyId</code> field that identifies which public key to use for verification. Verifiers resolve the key using one of two mechanisms.</p>
+<h3 id="https-well-known-baseline">HTTPS Well-Known (Baseline)</h3>
+<p>The issuer publishes their public keys at:</p>
+<div class="highlight"><pre><span></span><code>https://{issuerDomain}/.well-known/mpcp-keys.json
+</code></pre></div>
+<p>Format:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;keys&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;keyId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mpcp-sba-signing-key-1&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;publicKeyPem&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----\n&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;use&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sba&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;keyId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mpcp-spa-signing-key-1&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;publicKeyPem&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----\n&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;use&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;spa&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>The <code>issuerKeyId</code> in the signed envelope identifies which entry to use.</p>
+<h3 id="did-document-optional">DID Document (Optional)</h3>
+<p>For issuers using decentralized identifiers, keys may be resolved via a DID document. The <code>issuerKeyId</code> corresponds to a <code>verificationMethod</code> in the DID document. DID resolution is an optional enhancement over the HTTPS well-known baseline.</p>
+<h3 id="inline-keys-self-contained-bundles">Inline Keys (Self-Contained Bundles)</h3>
+<p>Settlement bundles for development and conformance testing may include <code>sbaPublicKeyPem</code> and <code>spaPublicKeyPem</code> directly. This avoids external resolution and makes bundles self-contained for <code>mpcp verify</code>.</p>
+<hr />
 <h2 id="dispute-verification">Dispute Verification</h2>
 <p>When a settlement is disputed, <code>verifyDisputedSettlement</code> runs full chain verification plus optional ledger anchor verification. If the intent was anchored (e.g., to Hedera HCS), the anchor can be checked against the expected intentHash.</p>
 <p>See <a href="https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/guides/dispute-resolution.md">Dispute Resolution</a> for the guide.</p>

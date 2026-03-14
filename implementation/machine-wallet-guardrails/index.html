@@ -663,6 +663,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#vehicle-wallet-roles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vehicle Wallet Roles
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Vehicle Wallet Roles">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#session-authority" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session Authority
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#payment-decision-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Payment Decision Service
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-two-roles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Two Roles?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#wallet-integration" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1317,6 +1367,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#vehicle-wallet-roles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vehicle Wallet Roles
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Vehicle Wallet Roles">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#session-authority" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session Authority
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#payment-decision-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Payment Decision Service
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-two-roles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Two Roles?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#wallet-integration" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1525,6 +1625,33 @@
 <li><strong>Intent hash</strong> — SPA binds to a canonical SettlementIntent</li>
 <li><strong>Tamper resistance</strong> — SettlementIntent and final settlement must match the signed authorization</li>
 </ul>
+<h2 id="vehicle-wallet-roles">Vehicle Wallet Roles</h2>
+<p>In an autonomous deployment, the vehicle wallet plays <strong>two distinct roles</strong> in the MPCP authorization pipeline.</p>
+<h3 id="session-authority">Session Authority</h3>
+<p>The wallet creates and signs the <strong>SignedBudgetAuthorization (SBA)</strong> before the session begins. This establishes the session-level spending envelope:</p>
+<ul>
+<li>Sets <code>maxAmountMinor</code> — the total spend ceiling for the session</li>
+<li>Sets <code>destinationAllowlist</code> — the permitted payees</li>
+<li>Binds to the PolicyGrant via <code>grantId</code></li>
+</ul>
+<p>The SBA is signed with the wallet's SBA key (<code>MPCP_SBA_SIGNING_PRIVATE_KEY_PEM</code>). Verifiers check this signature to confirm the budget was set by a trusted session authority.</p>
+<h3 id="payment-decision-service">Payment Decision Service</h3>
+<p>For each payment request within the session, the wallet evaluates the request against the loaded policy chain and, if approved, creates and signs a <strong>SignedPaymentAuthorization (SPA)</strong>:</p>
+<ul>
+<li>Assigns a unique <code>decisionId</code></li>
+<li>Commits to the specific amount, destination, and asset</li>
+<li>Computes and binds an <code>intentHash</code> to a canonical SettlementIntent</li>
+<li>Signs with the wallet's SPA key (<code>MPCP_SPA_SIGNING_PRIVATE_KEY_PEM</code>)</li>
+</ul>
+<p>This decision is made <strong>locally</strong> — no central approval API is contacted. The SPA is a cryptographic proof that the wallet approved this specific payment within the authorized budget.</p>
+<h3 id="why-two-roles">Why Two Roles?</h3>
+<p>Separating session authority from payment decisions allows fleet operators to:</p>
+<ul>
+<li>Pre-authorize a spending envelope (SBA) before the vehicle enters service</li>
+<li>Let the vehicle make individual payment decisions (SPA) locally within that envelope</li>
+<li>Give verifiers a complete, self-contained authorization chain to validate</li>
+</ul>
+<hr />
 <h2 id="wallet-integration">Wallet Integration</h2>
 <p>A machine wallet integrates MPCP by performing checks <em>before</em> signing an SPA.</p>
 <h3 id="decision-flow">Decision Flow</h3>

@@ -1308,6 +1308,7 @@
 
 <h1 id="sdk-reference">SDK Reference</h1>
 <p>The MPCP SDK provides lower-level artifact creation, hashing, and verification.</p>
+<p>For a narrative walkthrough showing how the artifacts connect end-to-end, see <a href="../../implementation/sdk/">SDK — Implementation Guide</a>.</p>
 <h2 id="install">Install</h2>
 <div class="highlight"><pre><span></span><code>npm<span class="w"> </span>install<span class="w"> </span>mpcp-service
 </code></pre></div>
@@ -1344,6 +1345,7 @@
 <span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;mpcp-service/sdk&quot;</span><span class="p">;</span>
 
 <span class="kd">const</span><span class="w"> </span><span class="nx">budgetAuth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">createBudgetAuthorization</span><span class="p">({</span>
+<span class="w">  </span><span class="nx">grantId</span><span class="o">:</span><span class="w"> </span><span class="kt">grant.grantId</span><span class="p">,</span><span class="w">      </span><span class="c1">// from createPolicyGrant</span>
 <span class="w">  </span><span class="nx">sessionId</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;sess-123&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nx">vehicleId</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;veh-456&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nx">policyHash</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;a1b2c3&quot;</span><span class="p">,</span>
@@ -1355,8 +1357,9 @@
 <span class="w">  </span><span class="nx">expiresAt</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;2030-12-31T23:59:59Z&quot;</span><span class="p">,</span>
 <span class="p">});</span>
 
-<span class="c1">// Signed (requires MPCP_SBA_SIGNING_PRIVATE_KEY_PEM)</span>
+<span class="c1">// Signed (requires MPCP_SBA_SIGNING_PRIVATE_KEY_PEM — returns null if not set)</span>
 <span class="kd">const</span><span class="w"> </span><span class="nx">sba</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">createSignedBudgetAuthorization</span><span class="p">({</span>
+<span class="w">  </span><span class="nx">grantId</span><span class="o">:</span><span class="w"> </span><span class="kt">budgetAuth.grantId</span><span class="p">,</span>
 <span class="w">  </span><span class="nx">sessionId</span><span class="o">:</span><span class="w"> </span><span class="kt">budgetAuth.sessionId</span><span class="p">,</span>
 <span class="w">  </span><span class="nx">vehicleId</span><span class="o">:</span><span class="w"> </span><span class="kt">budgetAuth.vehicleId</span><span class="p">,</span>
 <span class="w">  </span><span class="nx">policyHash</span><span class="o">:</span><span class="w"> </span><span class="kt">budgetAuth.policyHash</span><span class="p">,</span>
