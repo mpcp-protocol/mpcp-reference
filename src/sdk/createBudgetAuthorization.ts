@@ -7,7 +7,7 @@ export interface BudgetAuthorization {
   budgetId: string;
   grantId: string;
   sessionId: string;
-  vehicleId: string;
+  actorId: string;
   scopeId?: string;
   policyHash: string;
   currency: string;
@@ -22,7 +22,7 @@ export interface BudgetAuthorization {
 
 export interface CreateBudgetAuthorizationInput {
   sessionId: string;
-  vehicleId: string;
+  actorId: string;
   grantId: string;
   policyHash: string;
   currency: string;
@@ -50,7 +50,7 @@ export function createBudgetAuthorization(input: CreateBudgetAuthorizationInput)
     budgetId: input.budgetId ?? randomUUID(),
     grantId: input.grantId,
     sessionId: input.sessionId,
-    vehicleId: input.vehicleId,
+    actorId: input.actorId,
     ...(input.scopeId ? { scopeId: input.scopeId } : {}),
     policyHash: input.policyHash,
     currency: input.currency,

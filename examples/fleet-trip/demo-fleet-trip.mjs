@@ -164,7 +164,7 @@ separator();
 console.log("[Vehicle Wallet] Pre-loading SBA before trip starts");
 const budgetAuth = createBudgetAuthorization({
   sessionId: SESSION_ID,
-  vehicleId: VEHICLE_ID,
+  actorId: VEHICLE_ID,
   grantId: policyGrant.grantId,
   policyHash: POLICY_HASH,
   currency: "USD",
@@ -176,7 +176,7 @@ const budgetAuth = createBudgetAuthorization({
 });
 const signedBudgetAuth = createSignedBudgetAuthorization({
   sessionId: budgetAuth.sessionId,
-  vehicleId: budgetAuth.vehicleId,
+  actorId: budgetAuth.actorId,
   grantId: policyGrant.grantId,
   policyHash: budgetAuth.policyHash,
   currency: budgetAuth.currency,

@@ -2,7 +2,7 @@
   "version": "1.0",
   "fleetPolicyId": "fleet-parking-001",
   "fleetId": "parking-fleet-a",
-  "vehicleId": "vehicle-1234567",
+  "actorId": "vehicle-1234567",
   "scope": "SESSION",
   "currency": "USD",
   "minorUnit": 2,

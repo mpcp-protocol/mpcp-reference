@@ -113,7 +113,7 @@ export interface PolicyStack {
 
 export interface EntryPolicyContext {
   policy: Policy;
-  vehicleId?: string;
+  actorId?: string;
   lotId: string;
   operatorId?: string;
   nowISO: string;
@@ -136,7 +136,7 @@ export interface SessionPolicyGrant {
   };
   maxSpend?: { perTxMinor?: string; perSessionMinor?: string; perDayMinor?: string };
   expiresAtISO: string;
-  vehicleId?: string;
+  actorId?: string;
   lotId: string;
   operatorId?: string;
   reasons: PolicyReasonCode[];
@@ -145,7 +145,7 @@ export interface SessionPolicyGrant {
 
 export interface PaymentPolicyContext {
   policy: Policy;
-  vehicleId?: string;
+  actorId?: string;
   lotId: string;
   operatorId?: string;
   nowISO: string;

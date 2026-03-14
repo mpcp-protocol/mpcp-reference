@@ -87,7 +87,7 @@ const policyGrant = createPolicyGrant({
 });
 const budgetAuth = createBudgetAuthorization({
   sessionId: "22222222-2222-4222-8222-222222222222",
-  vehicleId: "veh-robotaxi-001",
+  actorId: "veh-robotaxi-001",
   grantId: policyGrant.grantId,
   policyHash,
   currency: "USD",
@@ -104,7 +104,7 @@ log("");
 log("[Vehicle Agent] Generating SettlementIntent and SPA");
 const signedBudgetAuth = createSignedBudgetAuthorization({
   sessionId: budgetAuth.sessionId,
-  vehicleId: budgetAuth.vehicleId,
+  actorId: budgetAuth.actorId,
   grantId: policyGrant.grantId,
   policyHash: budgetAuth.policyHash,
   currency: budgetAuth.currency,

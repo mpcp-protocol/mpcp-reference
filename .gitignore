@@ -1,6 +1,8 @@
 node_modules/
 dist/
 .pnpm-store/
+.venv-mkdocs/
+site/
 *.test.js
 *.test.d.ts
 .DS_Store

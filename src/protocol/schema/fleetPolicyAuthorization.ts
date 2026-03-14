@@ -13,7 +13,7 @@ export const fleetPolicyAuthorizationPayloadSchema = z.strictObject({
   version: mpcpVersionSchema,
   fleetPolicyId: z.string(),
   fleetId: z.string(),
-  vehicleId: z.string(),
+  actorId: z.string(),
   scope: fleetScopeSchema,
   currency: currencySchema,
   minorUnit: minorUnitSchema,

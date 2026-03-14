@@ -55,7 +55,7 @@ Human (DID)          → PolicyGrant → AI Agent        → SBA → SPA → Set
 {
   "budgetScope": "TRIP",
   "maxAmountMinor": "80000",
-  "vehicleId": "ai-trip-planner-v2"
+  "actorId": "ai-trip-planner-v2"
 }
 ```
 

@@ -58,7 +58,7 @@ const policyGrant = createPolicyGrant({
 
 const budgetAuth = createBudgetAuthorization({
   sessionId: "22222222-2222-4222-8222-222222222222",
-  vehicleId: "ev-7890",
+  actorId: "ev-7890",
   grantId: policyGrant.grantId,
   policyHash,
   currency: "USD",
@@ -71,7 +71,7 @@ const budgetAuth = createBudgetAuthorization({
 
 const signedBudgetAuth = createSignedBudgetAuthorization({
   sessionId: budgetAuth.sessionId,
-  vehicleId: budgetAuth.vehicleId,
+  actorId: budgetAuth.actorId,
   grantId: policyGrant.grantId,
   policyHash: budgetAuth.policyHash,
   currency: budgetAuth.currency,

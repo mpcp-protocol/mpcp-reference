@@ -76,7 +76,7 @@ log("2. Budget Authorization (session spending envelope)");
 log("   Guardrail: maxAmountMinor, destinationAllowlist, allowedRails, allowedAssets");
 const budgetAuth = createBudgetAuthorization({
   sessionId: "11111111-1111-4111-8111-111111111111",
-  vehicleId: "1234567",
+  actorId: "1234567",
   policyHash,
   currency: "USD",
   maxAmountMinor: "3000",
@@ -92,7 +92,7 @@ log("3. Signed Budget Authorization (SBA)");
 log("   Guardrail: cryptographically signed; tamper-resistant");
 const signedBudgetAuth = createSignedBudgetAuthorization({
   sessionId: budgetAuth.sessionId,
-  vehicleId: budgetAuth.vehicleId,
+  actorId: budgetAuth.actorId,
   policyHash: budgetAuth.policyHash,
   currency: budgetAuth.currency,
   maxAmountMinor: budgetAuth.maxAmountMinor,

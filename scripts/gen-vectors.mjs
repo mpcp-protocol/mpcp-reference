@@ -10,7 +10,7 @@ import { dirname, join } from "node:path";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const VECTORS_DIR = join(__dirname, "..", "test", "vectors");
 
-const { createSignedSessionBudgetAuthorization } = await import("../dist/protocol/sba.js");
+const { createSignedBudgetAuthorization: createSignedSessionBudgetAuthorization } = await import("../dist/sdk/index.js");
 const { createSignedPaymentAuthorization } = await import("../dist/protocol/spa.js");
 const { createSettlementIntent } = await import("../dist/sdk/createSettlementIntent.js");
 
@@ -76,7 +76,7 @@ const intent = createSettlementIntent({
 
 const sba = createSignedSessionBudgetAuthorization({
   sessionId: "11111111-1111-4111-8111-111111111111",
-  vehicleId: "1234567",
+  actorId: "1234567",
   grantId: GRANT_ID,
   policyHash: POLICY_HASH,
   currency: "USD",

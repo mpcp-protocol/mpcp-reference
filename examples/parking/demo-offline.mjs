@@ -67,7 +67,7 @@ const policyGrant = createPolicyGrant({
 });
 const budgetAuth = createBudgetAuthorization({
   sessionId: "33333333-3333-4333-8333-333333333333",
-  vehicleId: "veh-offline-001",
+  actorId: "veh-offline-001",
   policyHash,
   currency: "USD",
   maxAmountMinor: "3000",
@@ -78,7 +78,7 @@ const budgetAuth = createBudgetAuthorization({
 });
 const signedBudgetAuth = createSignedBudgetAuthorization({
   sessionId: budgetAuth.sessionId,
-  vehicleId: budgetAuth.vehicleId,
+  actorId: budgetAuth.actorId,
   policyHash: budgetAuth.policyHash,
   currency: budgetAuth.currency,
   maxAmountMinor: budgetAuth.maxAmountMinor,

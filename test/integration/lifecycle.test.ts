@@ -71,7 +71,7 @@ function makeGrant() {
 function makeBudgetAuth(grantId: string) {
   return createBudgetAuthorization({
     sessionId: "11111111-1111-4111-8111-111111111111",
-    vehicleId: "1234567",
+    actorId: "1234567",
     grantId,
     policyHash: POLICY_HASH,
     currency: "USD",
@@ -123,7 +123,7 @@ function buildLifecycle() {
   const budgetAuth = makeBudgetAuth(policyGrant.grantId);
   const signedBudgetAuth = createSignedBudgetAuthorization({
     sessionId: budgetAuth.sessionId,
-    vehicleId: budgetAuth.vehicleId,
+    actorId: budgetAuth.actorId,
     grantId: budgetAuth.grantId,
     policyHash: budgetAuth.policyHash,
     currency: budgetAuth.currency,

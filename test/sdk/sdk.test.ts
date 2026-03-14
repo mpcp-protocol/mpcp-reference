@@ -55,7 +55,7 @@ describe("createBudgetAuthorization", () => {
   it("creates unsigned budget authorization", () => {
     const auth = createBudgetAuthorization({
       sessionId: "11111111-1111-4111-8111-111111111111",
-      vehicleId: "v1",
+      actorId: "v1",
       grantId: "grant-1",
       policyHash: "a1b2c3d4e5f6",
       currency: "USD",
@@ -67,7 +67,7 @@ describe("createBudgetAuthorization", () => {
     });
     expect(auth.version).toBe("1.0");
     expect(auth.sessionId).toBe("11111111-1111-4111-8111-111111111111");
-    expect(auth.vehicleId).toBe("v1");
+    expect(auth.actorId).toBe("v1");
     expect(auth.policyHash).toBe("a1b2c3d4e5f6");
     expect(auth.maxAmountMinor).toBe("3000");
     expect(auth.budgetScope).toBe("SESSION");
@@ -78,7 +78,7 @@ describe("createBudgetAuthorization", () => {
   it("uses provided budgetId when given", () => {
     const auth = createBudgetAuthorization({
       sessionId: "s1",
-      vehicleId: "v1",
+      actorId: "v1",
       grantId: "grant-1",
       policyHash: "ph",
       currency: "USD",
@@ -170,7 +170,7 @@ describe("SDK artifact integration", () => {
 
     const signedBudgetAuth = createSignedBudgetAuthorization({
       sessionId: "11111111-1111-4111-8111-111111111111",
-      vehicleId: "1234567",
+      actorId: "1234567",
       grantId: policyGrant.grantId,
       policyHash: "a1b2c3d4e5f6",
       currency: "USD",

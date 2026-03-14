@@ -28,7 +28,7 @@ export interface IssueBudgetInput {
   /** Policy grant to derive constraints from */
   policyGrant: PolicyGrantLike;
   sessionId: string;
-  vehicleId: string;
+  actorId: string;
   maxAmountMinor: string;
   destinationAllowlist: string[];
   scopeId?: string;
@@ -46,7 +46,7 @@ export function issueBudget(input: IssueBudgetInput): SignedSessionBudgetAuthori
   const {
     policyGrant,
     sessionId,
-    vehicleId,
+    actorId,
     maxAmountMinor,
     destinationAllowlist,
     scopeId,
@@ -61,7 +61,7 @@ export function issueBudget(input: IssueBudgetInput): SignedSessionBudgetAuthori
 
   return createSignedSessionBudgetAuthorization({
     sessionId,
-    vehicleId,
+    actorId,
     scopeId,
     grantId: policyGrant.grantId,
     policyHash,

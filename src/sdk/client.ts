@@ -22,7 +22,7 @@ export interface MPCPClientConfig {
 export interface GrantRequest {
   policy: Policy;
   lotId: string;
-  vehicleId?: string;
+  actorId?: string;
   operatorId?: string;
   railsOffered: Rail[];
   assetsOffered: Asset[];
@@ -31,7 +31,7 @@ export interface GrantRequest {
 
 export interface BudgetRequest {
   sessionId: string;
-  vehicleId: string;
+  actorId: string;
   grantId: string;
   policyHash: string;
   maxAmountMinor: string;

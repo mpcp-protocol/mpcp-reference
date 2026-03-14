@@ -56,7 +56,7 @@ import {
 const budgetAuth = createBudgetAuthorization({
   grantId: grant.grantId,      // from createPolicyGrant
   sessionId: "sess-123",
-  vehicleId: "veh-456",
+  actorId: "actor-001",
   policyHash: "a1b2c3",
   currency: "USD",
   maxAmountMinor: "3000",
@@ -70,7 +70,7 @@ const budgetAuth = createBudgetAuthorization({
 const sba = createSignedBudgetAuthorization({
   grantId: budgetAuth.grantId,
   sessionId: budgetAuth.sessionId,
-  vehicleId: budgetAuth.vehicleId,
+  actorId: budgetAuth.actorId,
   policyHash: budgetAuth.policyHash,
   currency: budgetAuth.currency,
   maxAmountMinor: budgetAuth.maxAmountMinor,

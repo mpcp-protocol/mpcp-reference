@@ -17,10 +17,10 @@
   "signedBudgetAuthorization": {
     "authorization": {
       "version": "1.0",
-      "budgetId": "6ac673f4-6b18-4680-be0e-4e82585e4f1e",
+      "budgetId": "23e9c71d-61da-48da-a0cd-fa0fd8e6ecb5",
       "grantId": "grant-1",
       "sessionId": "11111111-1111-4111-8111-111111111111",
-      "vehicleId": "1234567",
+      "actorId": "1234567",
       "policyHash": "a1b2c3",
       "currency": "USD",
       "minorUnit": 2,
@@ -41,8 +41,8 @@
       ],
       "expiresAt": "2030-12-31T23:59:59Z"
     },
-    "signature": "K4lftg4R8EnhBriA91fxudI1viM/x3LQHkTgFecFK7OW6iPOOhjq8Ds2TLxmVZz4KD0cS42u8ovPYanzgY5UDg==",
-    "issuerKeyId": "mpcp-sba-signing-key-1"
+    "issuerKeyId": "mpcp-sba-signing-key-1",
+    "signature": "xVC1ZWqrp9cXh/AY4Thh/z9l1mgNicsbxCr4Ga61l+h/z4LXC0M3h+VyuzekbiEjdR9NfqLBjf0vQcnok7cBAw=="
   },
   "signedPaymentAuthorization": {
     "authorization": {
@@ -50,7 +50,7 @@
       "decisionId": "dec-1",
       "sessionId": "11111111-1111-4111-8111-111111111111",
       "policyHash": "a1b2c3",
-      "budgetId": "6ac673f4-6b18-4680-be0e-4e82585e4f1e",
+      "budgetId": "23e9c71d-61da-48da-a0cd-fa0fd8e6ecb5",
       "quoteId": "q1",
       "rail": "xrpl",
       "asset": {
@@ -61,10 +61,11 @@
       "amount": "19440000",
       "destination": "rDestination",
       "intentHash": "eddb77a1026d48a0aeaef558edfa2219c9cded431d7d4a6398654ff08d6589dc",
-      "expiresAt": "2030-12-31T23:59:59Z"
+      "expiresAt": "2030-12-31T23:59:59Z",
+      "nonce": "29863a70-5299-4e63-b812-082d0290e195"
     },
-    "signature": "SVpmJHwoJFyHsBuLoTDOpmaGNA0pHgUQgzqq3XjmF+7IMnwR2c4jAFU5Oig/WlS1/U/U0MOZwZEk7MLpJB0dBA==",
-    "issuerKeyId": "mpcp-spa-signing-key-1"
+    "issuerKeyId": "mpcp-spa-signing-key-1",
+    "signature": "Zd7vZ5rtwQjMV2HoyPozdtRJ2Cnzg5Q4GXWRYnzxnnqz+YdFvNI+kViUh06LjN91djChSj0XmXPJ9HOvBaiuCg=="
   },
   "settlement": {
     "amount": "19440000",

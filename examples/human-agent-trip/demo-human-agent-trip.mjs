@@ -212,7 +212,7 @@ separator();
 console.log("[AI Agent] Pre-loading SBA with TRIP scope");
 const budgetAuth = createBudgetAuthorization({
   sessionId: SESSION_ID,
-  vehicleId: AGENT_ID,
+  actorId: AGENT_ID,
   grantId: policyGrant.grantId,
   policyHash: POLICY_HASH,
   currency: "USD",
@@ -225,7 +225,7 @@ const budgetAuth = createBudgetAuthorization({
 });
 const signedBudgetAuth = createSignedBudgetAuthorization({
   sessionId: budgetAuth.sessionId,
-  vehicleId: budgetAuth.vehicleId,
+  actorId: budgetAuth.actorId,
   grantId: policyGrant.grantId,
   policyHash: budgetAuth.policyHash,
   currency: budgetAuth.currency,

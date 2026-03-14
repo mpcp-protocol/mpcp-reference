@@ -96,7 +96,7 @@ export function evaluateEntryPolicy(ctx: EntryPolicyContext): SessionPolicyGrant
     JSON.stringify({
       policy,
       lotId,
-      vehicleId: ctx.vehicleId,
+      actorId: ctx.actorId,
       allowedRails,
       allowedAssets,
       requireApproval,
@@ -120,7 +120,7 @@ export function evaluateEntryPolicy(ctx: EntryPolicyContext): SessionPolicyGrant
           }
         : undefined,
     expiresAtISO: isoPlusMinutes(60, new Date(nowISO)),
-    vehicleId: ctx.vehicleId,
+    actorId: ctx.actorId,
     lotId,
     operatorId: ctx.operatorId,
     reasons,
@@ -139,7 +139,7 @@ function denyEntry(ctx: EntryPolicyContext, reasons: PolicyReasonCode[]): Sessio
     allowedAssets: [],
     expiresAtISO: isoPlusMinutes(5, new Date(ctx.nowISO)),
     lotId: ctx.lotId,
-    vehicleId: ctx.vehicleId,
+    actorId: ctx.actorId,
     operatorId: ctx.operatorId,
     reasons,
   };
@@ -195,7 +195,7 @@ function hashPaymentDecisionPayload(
       policy: ctx.policy,
       lotId: ctx.lotId,
       operatorId: ctx.operatorId ?? null,
-      vehicleId: ctx.vehicleId ?? null,
+      actorId: ctx.actorId ?? null,
       sessionGrantId: ctx.sessionGrantId ?? null,
       action: input.action,
       rail: input.rail ?? null,

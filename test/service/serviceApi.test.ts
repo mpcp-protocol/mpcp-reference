@@ -20,7 +20,7 @@ describe("service API", () => {
       const sba = issueBudget({
         policyGrant,
         sessionId: "s1",
-        vehicleId: "v1",
+        actorId: "v1",
         maxAmountMinor: "3000",
         destinationAllowlist: ["rDest"],
       });
@@ -51,13 +51,13 @@ describe("service API", () => {
         const sba = issueBudget({
           policyGrant,
           sessionId: "s1",
-          vehicleId: "v1",
+          actorId: "v1",
           maxAmountMinor: "3000",
           destinationAllowlist: ["rDest"],
         });
         expect(sba).not.toBeNull();
         expect(sba!.authorization.sessionId).toBe("s1");
-        expect(sba!.authorization.vehicleId).toBe("v1");
+        expect(sba!.authorization.actorId).toBe("v1");
         expect(sba!.signature).toBeDefined();
       } finally {
         if (orig !== undefined) process.env.MPCP_SBA_SIGNING_PRIVATE_KEY_PEM = orig;

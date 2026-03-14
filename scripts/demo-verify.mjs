@@ -32,7 +32,7 @@ process.env.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM = spaKeys.publicKey
   .toString();
 process.env.MPCP_SPA_SIGNING_KEY_ID = "mpcp-spa-signing-key-1";
 
-const { createSignedSessionBudgetAuthorization } = await import("../dist/protocol/sba.js");
+const { createSignedBudgetAuthorization: createSignedSessionBudgetAuthorization } = await import("../dist/sdk/index.js");
 const { createSignedPaymentAuthorization } = await import("../dist/protocol/spa.js");
 const { runVerify } = await import("../dist/cli/verify.js");
 
@@ -81,7 +81,7 @@ const intent = {
 
 const sba = createSignedSessionBudgetAuthorization({
   sessionId: "11111111-1111-4111-8111-111111111111",
-  vehicleId: "1234567",
+  actorId: "1234567",
   policyHash: "a1b2c3",
   currency: "USD",
   maxAmountMinor: "3000",

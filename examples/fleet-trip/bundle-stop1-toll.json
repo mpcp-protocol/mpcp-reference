@@ -51,7 +51,7 @@
       "budgetId": "d26d4e94-dac4-4af6-81ad-7fd4080a2779",
       "grantId": "84fff5d0-8656-4b2d-ab82-15fa36427c38",
       "sessionId": "trip-20260314-EV001",
-      "vehicleId": "EV-001",
+      "actorId": "EV-001",
       "policyHash": "a1b2c3d4e5f6",
       "currency": "USD",
       "minorUnit": 2,

@@ -50,7 +50,7 @@
       "budgetId": "f36321d4-b5e2-449f-b0ad-e7a7917fa28c",
       "grantId": "902c3c94-22a6-485e-af72-c9623c285482",
       "sessionId": "22222222-2222-4222-8222-222222222222",
-      "vehicleId": "veh-robotaxi-001",
+      "actorId": "veh-robotaxi-001",
       "policyHash": "a1b2c3d4e5f6",
       "currency": "USD",
       "minorUnit": 2,

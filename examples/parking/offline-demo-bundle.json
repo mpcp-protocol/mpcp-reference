@@ -48,7 +48,7 @@
       "version": "1.0",
       "budgetId": "ad5df0b0-5c2b-4c5b-8a2d-fa2fd460a7f4",
       "sessionId": "33333333-3333-4333-8333-333333333333",
-      "vehicleId": "veh-offline-001",
+      "actorId": "veh-offline-001",
       "policyHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       "currency": "USD",
       "minorUnit": 2,

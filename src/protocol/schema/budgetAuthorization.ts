@@ -16,7 +16,7 @@ export const budgetAuthorizationSchema = z.strictObject({
   budgetId: z.string(),
   grantId: z.string(),
   sessionId: z.string(),
-  vehicleId: z.string(),
+  actorId: z.string(),
   scopeId: z.string().optional(),
   policyHash: policyHashSchema,
   currency: currencySchema,

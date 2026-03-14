@@ -30,7 +30,7 @@ describe("SBA createSignedSessionBudgetAuthorization + verifySignedSessionBudget
     setupKeys();
     const envelope = createSignedSessionBudgetAuthorization({
       sessionId: "11111111-1111-4111-8111-111111111111",
-      vehicleId: "1234567",
+      actorId: "1234567",
       grantId: "grant-ph-1",
       policyHash: "ph-1",
       currency: "USD",
@@ -72,7 +72,7 @@ describe("SBA createSignedSessionBudgetAuthorization + verifySignedSessionBudget
     setupKeys();
     const envelope = createSignedSessionBudgetAuthorization({
       sessionId: "11111111-1111-4111-8111-111111111111",
-      vehicleId: "1234567",
+      actorId: "1234567",
       grantId: "grant-ph-1",
       policyHash: "ph-1",
       currency: "USD",
@@ -111,7 +111,7 @@ describe("SBA createSignedSessionBudgetAuthorization + verifySignedSessionBudget
     setupKeys();
     const envelope = createSignedSessionBudgetAuthorization({
       sessionId: "11111111-1111-4111-8111-111111111111",
-      vehicleId: "1234567",
+      actorId: "1234567",
       grantId: "grant-ph-1",
       policyHash: "ph-1",
       currency: "USD",
@@ -151,7 +151,7 @@ describe("SBA createSignedSessionBudgetAuthorization + verifySignedSessionBudget
     setupKeys();
     const envelope = createSignedSessionBudgetAuthorization({
       sessionId: "11111111-1111-4111-8111-111111111111",
-      vehicleId: "1234567",
+      actorId: "1234567",
       grantId: "grant-ph-1",
       policyHash: "a1b2c3d4e5f6",
       currency: "USD",
@@ -196,7 +196,7 @@ describe("SBA createSignedSessionBudgetAuthorization + verifySignedSessionBudget
     setupKeys();
     const envelope = createSignedSessionBudgetAuthorization({
       sessionId: "11111111-1111-4111-8111-111111111111",
-      vehicleId: "1234567",
+      actorId: "1234567",
       grantId: "grant-ph-1",
       policyHash: "ph-1",
       currency: "USD",

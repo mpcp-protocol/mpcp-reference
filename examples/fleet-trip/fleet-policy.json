@@ -1,7 +1,7 @@
 {
   "version": "1.0",
   "fleetId": "fleet-robotaxi-west",
-  "vehicleId": "EV-001",
+  "actorId": "EV-001",
   "scope": "SESSION",
   "currency": "USD",
   "minorUnit": 2,

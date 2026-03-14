@@ -41,7 +41,7 @@ const {
 
 const sba = createSignedBudgetAuthorization({
   sessionId: "sim-session-001",
-  vehicleId: "sim-vehicle-001",
+  actorId: "sim-vehicle-001",
   policyHash,
   currency: "USD",
   maxAmountMinor: policy.maxSessionSpendMinor ?? String(policy.maxSessionSpend * 100),

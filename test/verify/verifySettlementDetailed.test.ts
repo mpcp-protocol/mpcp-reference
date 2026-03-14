@@ -89,7 +89,7 @@ describe("verifySettlementDetailed", () => {
     };
     const sba = createSignedSessionBudgetAuthorization({
       sessionId: "11111111-1111-4111-8111-111111111111",
-      vehicleId: "1234567",
+      actorId: "1234567",
       grantId: "grant-1",
       policyHash: "a1b2c3d4e5f6",
       currency: "USD",
@@ -129,7 +129,7 @@ describe("verifySettlementDetailed", () => {
     const tamperedIntent = { ...intent, amount: "99999999" };
     const sba = createSignedSessionBudgetAuthorization({
       sessionId: "11111111-1111-4111-8111-111111111111",
-      vehicleId: "1234567",
+      actorId: "1234567",
       grantId: "grant-1",
       policyHash: "a1b2c3d4e5f6",
       currency: "USD",
@@ -173,7 +173,7 @@ describe("verifySettlementDetailed", () => {
     setupBothKeys();
     const sba = createSignedSessionBudgetAuthorization({
       sessionId: "11111111-1111-4111-8111-111111111111",
-      vehicleId: "1234567",
+      actorId: "1234567",
       grantId: "grant-1",
       policyHash: "a1b2c3d4e5f6",
       currency: "USD",

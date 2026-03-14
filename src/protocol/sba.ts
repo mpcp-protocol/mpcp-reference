@@ -9,7 +9,7 @@ export interface SessionBudgetAuthorization {
   budgetId: string;
   grantId: string;
   sessionId: string;
-  vehicleId: string;
+  actorId: string;
   scopeId?: string;
   policyHash: string;
   currency: string;
@@ -63,7 +63,7 @@ function assetMatches(a: Asset, b: Asset): boolean {
 
 export function createSignedSessionBudgetAuthorization(input: {
   sessionId: string;
-  vehicleId: string;
+  actorId: string;
   scopeId?: string;
   grantId: string;
   policyHash: string;
@@ -84,7 +84,7 @@ export function createSignedSessionBudgetAuthorization(input: {
     budgetId: randomUUID(),
     grantId: input.grantId,
     sessionId: input.sessionId,
-    vehicleId: input.vehicleId,
+    actorId: input.actorId,
     ...(input.scopeId ? { scopeId: input.scopeId } : {}),
     policyHash: input.policyHash,
     currency: input.currency,
