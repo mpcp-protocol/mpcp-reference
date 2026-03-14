@@ -22,7 +22,7 @@ Issue a signed budget authorization from a policy grant.
 const sba = issueBudget({
   policyGrant,
   sessionId: "session-123",
-  actorId: "vehicle-456",
+  actorId: "actor-001",
   maxAmountMinor: "3000",
   destinationAllowlist: ["rParking", "rCharging"],
 });

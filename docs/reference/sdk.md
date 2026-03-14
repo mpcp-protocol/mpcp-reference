@@ -56,7 +56,7 @@ import {
 const budgetAuth = createBudgetAuthorization({
   grantId: grant.grantId,      // from createPolicyGrant
   sessionId: "sess-123",
-  actorId: "veh-456",
+  actorId: "actor-001",
   policyHash: "a1b2c3",
   currency: "USD",
   maxAmountMinor: "3000",

@@ -46,7 +46,7 @@ const grant = createPolicyGrant({
 const sba = createSignedBudgetAuthorization({
   grantId: grant.grantId,
   sessionId: "sess-123",
-  actorId: "veh-456",
+  actorId: "actor-001",
   policyHash: "a1b2c3",
   currency: "USD",
   maxAmountMinor: "3000",
@@ -93,7 +93,7 @@ const result = verifySettlement({
 // result.valid === true
 ```
 
-## Vehicle Wallet Roles
+## Actor Roles
 
 In an autonomous deployment, the wallet plays both roles in this lifecycle:
 

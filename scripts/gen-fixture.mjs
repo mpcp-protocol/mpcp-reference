@@ -10,7 +10,7 @@ import { dirname, join } from "node:path";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Load built modules (run npm run build first)
-const { createSignedSessionBudgetAuthorization } = await import("../dist/protocol/sba.js");
+const { createSignedBudgetAuthorization: createSignedSessionBudgetAuthorization } = await import("../dist/sdk/index.js");
 const { createSignedPaymentAuthorization } = await import("../dist/protocol/spa.js");
 
 const sbaKeys = crypto.generateKeyPairSync("ed25519");
