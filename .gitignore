@@ -5,7 +5,7 @@ dist/
 *.test.d.ts
 .DS_Store
 diff.tmp
-examples/parking-session/guardrails-demo-bundle.json
-examples/parking-session/guardrails-demo-tampered.json
+examples/parking/guardrails-demo-bundle.json
+examples/parking/guardrails-demo-tampered.json
 examples/fleet-payment/fleet-demo-bundle.json
-examples/parking-session/offline-demo-bundle.json
+examples/parking/offline-demo-bundle.json

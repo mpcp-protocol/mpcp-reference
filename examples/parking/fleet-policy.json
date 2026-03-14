@@ -8,7 +8,7 @@
   "minorUnit": 2,
   "maxAmountMinor": "5000",
   "allowedRails": ["xrpl"],
-  "allowedAssets": ["RLUSD"],
+  "allowedAssets": [{ "kind": "IOU", "currency": "RLUSD", "issuer": "rIssuer" }],
   "allowedOperators": ["operator-1"],
   "expiresAt": "2026-12-31T23:59:59.000Z"
 }

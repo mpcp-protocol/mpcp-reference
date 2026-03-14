@@ -2,6 +2,8 @@
 
 The MPCP SDK provides lower-level artifact creation, hashing, and verification.
 
+For a narrative walkthrough showing how the artifacts connect end-to-end, see [SDK — Implementation Guide](../implementation/sdk.md).
+
 ## Install
 
 ```bash
@@ -49,6 +51,7 @@ import {
 } from "mpcp-service/sdk";
 
 const budgetAuth = createBudgetAuthorization({
+  grantId: grant.grantId,      // from createPolicyGrant
   sessionId: "sess-123",
   vehicleId: "veh-456",
   policyHash: "a1b2c3",
@@ -60,8 +63,9 @@ const budgetAuth = createBudgetAuthorization({
   expiresAt: "2030-12-31T23:59:59Z",
 });
 
-// Signed (requires MPCP_SBA_SIGNING_PRIVATE_KEY_PEM)
+// Signed (requires MPCP_SBA_SIGNING_PRIVATE_KEY_PEM — returns null if not set)
 const sba = createSignedBudgetAuthorization({
+  grantId: budgetAuth.grantId,
   sessionId: budgetAuth.sessionId,
   vehicleId: budgetAuth.vehicleId,
   policyHash: budgetAuth.policyHash,

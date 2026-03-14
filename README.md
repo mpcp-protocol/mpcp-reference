@@ -9,26 +9,23 @@ The service is designed to sit between **application logic** (such as parking sy
 
 For the rationale behind the protocol, see:
 
-[Why MPCP Exists](./doc/Why_MPCP.md)
+[Why MPCP Exists](https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/overview/what-is-mpcp.md)
 
-For the full documentation site (overview, guides, examples, reference), see **[docs/](./docs/)**. When [GitHub Pages](https://docs.github.com/en/pages) is enabled, the site is published automatically from `main`.
-
-**To enable the docs site:** go to **Settings → Pages** → Source: **Deploy from a branch** → Branch: **gh-pages** → Save. The workflow pushes the built site to `gh-pages` on each push to `main`.
+For the full documentation site (overview, guides, examples, reference), see **[docs/](./docs/)**.
 
 For the full protocol specification, see:
 
-[Machine Payment Control Protocol Specification](./doc/protocol/mpcp.md)
+[Machine Payment Control Protocol Specification](https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/protocol/mpcp.md)
 
 This document defines the MPCP artifacts, verification rules, canonical hashing, replay protection, the authorization lifecycle, and the verification algorithm used by MPCP implementations.
 
-For compatibility and versioning policy (what is stable, how 1.0/1.1/2.0 evolve), see [Compatibility and Versioning](./doc/architecture/COMPATIBILITY_AND_VERSIONING.md).
-
 ## Documentation Layout
 
-This repository contains two documentation layers:
+This repository contains one documentation layer:
 
-- **doc/** — Protocol specification and architecture documents (normative)
-- **docs/** — Developer documentation site (guides, examples, reference)
+- **docs/** — Developer documentation site (guides, examples, reference, API)
+
+The canonical protocol specification lives in the [mpcp-spec](https://github.com/mpcp-protocol/mpcp-spec) repository.
 
 ---
 
@@ -205,20 +202,20 @@ These are used to bind authorizations to a specific settlement intent.
 
 ## Intent Anchoring (optional)
 
-Optional support for publishing intent hashes to distributed ledgers (public auditability, dispute protection). **Mock anchor** for development; **Hedera HCS** adapter for real anchoring. See [Intent Anchoring](./doc/architecture/INTENT_ANCHORING.md).
+Optional support for publishing intent hashes to distributed ledgers (public auditability, dispute protection). **Mock anchor** for development; **Hedera HCS** adapter for real anchoring. See [Intent Anchoring](./docs/implementation/intent-anchoring.md).
 
 ## Dispute Verification (optional)
 
-`verifyDisputedSettlement` validates disputed settlements using the full MPCP chain plus optional ledger anchor. See [Dispute Verification](./doc/architecture/DISPUTE_VERIFICATION.md).
+`verifyDisputedSettlement` validates disputed settlements using the full MPCP chain plus optional ledger anchor. See [Dispute Verification](./docs/implementation/dispute-verification.md).
 
 ## Reference Service API (optional)
 
-Backend-friendly facade: `issueBudget`, `verifySettlementService`, `verifyDispute` / `verifyDisputeAsync`, `anchorIntent`. See [REFERENCE_SERVICE_API](./doc/architecture/REFERENCE_SERVICE_API.md). Import from `mpcp-service/service`.
+Backend-friendly facade: `issueBudget`, `verifySettlementService`, `verifyDispute` / `verifyDisputeAsync`, `anchorIntent`. See [Reference Service API](./docs/reference/service-api.md). Import from `mpcp-service/service`.
 
 ## Fleet Operator Tooling (optional)
 
 - **Settlement verification logs** — `mpcp verify <file> --append-log audit.jsonl` appends verification results to a JSONL audit trail
-- **Fleet policy summary** — `mpcp policy-summary <policy.json>` prints policy constraints. Use `--profile <name>` for lightweight reference-profile validation [(parking, charging, fleet-offline, hosted-rail)](./doc/architecture/REFERENCE_PROFILES.md). See [Fleet Operator Tooling](./doc/architecture/FLEET_OPERATOR_TOOLING.md).
+- **Fleet policy summary** — `mpcp policy-summary <policy.json>` prints policy constraints. Use `--profile <name>` for lightweight reference-profile validation [(parking, charging, fleet-offline, hosted-rail)](./docs/implementation/reference-profiles.md). See [Fleet Operator Tooling](./docs/implementation/fleet-operator-tooling.md).
 
 ---
 
@@ -299,7 +296,7 @@ mpcp-service
  │   └── ...
  │
  ├── test
- ├── doc
+ ├── docs
  ├── package.json
  └── tsconfig.json
 ```

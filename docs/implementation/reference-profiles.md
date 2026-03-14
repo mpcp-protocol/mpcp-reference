@@ -93,7 +93,7 @@ Profiles define expected policy shape. Use `mpcp policy-summary` with `--profile
 ```bash
 mpcp policy-summary profiles/parking.json --profile parking
 mpcp policy-summary profiles/xrpl-stablecoin.json --profile xrpl-stablecoin
-mpcp policy-summary examples/fleet-simulator/fleet-policy.json --profile parking
+mpcp policy-summary examples/machine-commerce/fleet-policy.json --profile parking
 ```
 
 Validation checks: `allowedRails` in the policy must be a subset of the profile’s allowed rails; if the policy declares `_profile`, it must match the profile name.

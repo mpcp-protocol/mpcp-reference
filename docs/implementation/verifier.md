@@ -40,6 +40,49 @@ if (result.valid) {
 
 The `context` includes policyGrant, signedBudgetAuthorization, signedPaymentAuthorization, settlement, paymentPolicyDecision, decisionId, and optional settlementIntent.
 
+## Key Resolution
+
+MPCP signatures include an `issuerKeyId` field that identifies which public key to use for verification. Verifiers resolve the key using one of two mechanisms.
+
+### HTTPS Well-Known (Baseline)
+
+The issuer publishes their public keys at:
+
+```
+https://{issuerDomain}/.well-known/mpcp-keys.json
+```
+
+Format:
+
+```json
+{
+  "keys": [
+    {
+      "keyId": "mpcp-sba-signing-key-1",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----\n",
+      "use": "sba"
+    },
+    {
+      "keyId": "mpcp-spa-signing-key-1",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----\n",
+      "use": "spa"
+    }
+  ]
+}
+```
+
+The `issuerKeyId` in the signed envelope identifies which entry to use.
+
+### DID Document (Optional)
+
+For issuers using decentralized identifiers, keys may be resolved via a DID document. The `issuerKeyId` corresponds to a `verificationMethod` in the DID document. DID resolution is an optional enhancement over the HTTPS well-known baseline.
+
+### Inline Keys (Self-Contained Bundles)
+
+Settlement bundles for development and conformance testing may include `sbaPublicKeyPem` and `spaPublicKeyPem` directly. This avoids external resolution and makes bundles self-contained for `mpcp verify`.
+
+---
+
 ## Dispute Verification
 
 When a settlement is disputed, `verifyDisputedSettlement` runs full chain verification plus optional ledger anchor verification. If the intent was anchored (e.g., to Hedera HCS), the anchor can be checked against the expected intentHash.

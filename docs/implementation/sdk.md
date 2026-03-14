@@ -1,54 +1,50 @@
-# SDK Reference
+# SDK — Implementation Guide
 
-The MPCP SDK provides lower-level artifact creation, hashing, and verification.
+The MPCP SDK creates and verifies authorization artifacts. This guide shows how the artifacts fit together as a connected lifecycle.
 
-## Install
+For the full API reference (all function signatures, parameters, and env vars), see [SDK Reference](../reference/sdk.md).
 
-```bash
-npm install mpcp-service
+## Artifact Lifecycle
+
+MPCP authorization flows through three artifact types, each constraining the next:
+
+```
+PolicyGrant  →  SBA (session budget)  →  SPA (per-payment)  →  Settlement
 ```
 
-## Import
+Each artifact references the previous via shared fields:
+
+| Field | Carried by | Links to |
+|-------|-----------|----------|
+| `grantId` | SBA | `PolicyGrant.grantId` |
+| `sessionId` | SPA | `SBA.authorization.sessionId` |
+| `intentHash` | SPA | `computeSettlementIntentHash(intent)` |
+
+## Full Lifecycle Example
 
 ```typescript
 import {
   createPolicyGrant,
-  createBudgetAuthorization,
   createSignedBudgetAuthorization,
-  createSignedPaymentAuthorization,
   createSettlementIntent,
+  createSignedPaymentAuthorization,
   computeSettlementIntentHash,
-  computeIntentHash,
-  canonicalJson,
-  verifyPolicyGrant,
-  verifySettlement,
-  verifySettlementWithReport,
-  verifySettlementDetailed,
 } from "mpcp-service/sdk";
-```
 
-## Policy Grant
-
-```typescript
-import { createPolicyGrant } from "mpcp-service/sdk";
-
+// 1. PolicyGrant — fleet policy evaluation result
+//    Defines allowed rails, assets, and expiration for this session.
 const grant = createPolicyGrant({
   policyHash: "a1b2c3",
-  allowedRails: ["xrpl", "evm"],
+  allowedRails: ["xrpl"],
   allowedAssets: [{ kind: "IOU", currency: "RLUSD", issuer: "rIssuer" }],
   expiresAt: "2030-12-31T23:59:59Z",
 });
-```
 
-## Budget Authorization
-
-```typescript
-import {
-  createBudgetAuthorization,
-  createSignedBudgetAuthorization,
-} from "mpcp-service/sdk";
-
-const budgetAuth = createBudgetAuthorization({
+// 2. SBA — session spending envelope
+//    grantId binds this SBA to the PolicyGrant above.
+//    Returns null if MPCP_SBA_SIGNING_PRIVATE_KEY_PEM is not set.
+const sba = createSignedBudgetAuthorization({
+  grantId: grant.grantId,
   sessionId: "sess-123",
   vehicleId: "veh-456",
   policyHash: "a1b2c3",
@@ -60,29 +56,7 @@ const budgetAuth = createBudgetAuthorization({
   expiresAt: "2030-12-31T23:59:59Z",
 });
 
-// Signed (requires MPCP_SBA_SIGNING_PRIVATE_KEY_PEM)
-const sba = createSignedBudgetAuthorization({
-  sessionId: budgetAuth.sessionId,
-  vehicleId: budgetAuth.vehicleId,
-  policyHash: budgetAuth.policyHash,
-  currency: budgetAuth.currency,
-  maxAmountMinor: budgetAuth.maxAmountMinor,
-  allowedRails: budgetAuth.allowedRails,
-  allowedAssets: budgetAuth.allowedAssets,
-  destinationAllowlist: budgetAuth.destinationAllowlist,
-  expiresAt: budgetAuth.expiresAt,
-});
-```
-
-## Payment Authorization
-
-```typescript
-import {
-  createSignedPaymentAuthorization,
-  createSettlementIntent,
-  computeSettlementIntentHash,
-} from "mpcp-service/sdk";
-
+// 3. SettlementIntent — canonical representation of the payment
 const intent = createSettlementIntent({
   rail: "xrpl",
   amount: "1000",
@@ -90,6 +64,9 @@ const intent = createSettlementIntent({
   asset: { kind: "IOU", currency: "RLUSD", issuer: "rIssuer" },
 });
 
+// 4. SPA — per-payment authorization
+//    sessionId matches SBA. intentHash binds SPA to the specific settlement.
+//    Returns null if MPCP_SPA_SIGNING_PRIVATE_KEY_PEM is not set.
 const spa = createSignedPaymentAuthorization({
   decisionId: "dec-789",
   sessionId: "sess-123",
@@ -102,28 +79,28 @@ const spa = createSignedPaymentAuthorization({
   intentHash: computeSettlementIntentHash(intent),
   expiresAt: "2030-12-31T23:59:59Z",
 });
+
+// 5. Verify the settlement bundle
+import { verifySettlement } from "mpcp-service/sdk";
+
+const result = verifySettlement({
+  policyGrant: grant,
+  signedBudgetAuthorization: sba,
+  signedPaymentAuthorization: spa,
+  settlementIntent: intent,
+  settlement: { rail: "xrpl", amount: "1000", destination: "rParking", asset: intent.asset },
+});
+// result.valid === true
 ```
 
-Requires `MPCP_SPA_SIGNING_PRIVATE_KEY_PEM`.
+## Vehicle Wallet Roles
 
-## Hashing
+In an autonomous deployment, the wallet plays both roles in this lifecycle:
 
-```typescript
-import { computeSettlementIntentHash, computeIntentHash, canonicalJson } from "mpcp-service/sdk";
+- **Session authority** — signs the SBA, establishing the session budget
+- **Payment decision service** — evaluates each payment request and signs the SPA locally
 
-const intentHash = computeSettlementIntentHash(intent);
-const canonical = canonicalJson({ rail: "xrpl", amount: "1000", destination: "rDest" });
-```
-
-## Verification
-
-```typescript
-import { verifySettlement, verifySettlementWithReport, verifySettlementDetailed } from "mpcp-service/sdk";
-
-const result = verifySettlement(context);
-const { result, steps } = verifySettlementWithReport(context);
-const { valid, checks } = verifySettlementDetailed(context);
-```
+See [Machine Wallet Guardrails](machine-wallet-guardrails.md) for the full guardrail model, threat analysis, and integration checklist.
 
 ## Environment Variables
 
@@ -131,13 +108,14 @@ const { valid, checks } = verifySettlementDetailed(context);
 |----------|---------|
 | MPCP_SBA_SIGNING_PRIVATE_KEY_PEM | Private key for signing SBAs |
 | MPCP_SBA_SIGNING_PUBLIC_KEY_PEM | Public key for verifying SBAs |
-| MPCP_SBA_SIGNING_KEY_ID | Key identifier (default: mpcp-sba-signing-key-1) |
+| MPCP_SBA_SIGNING_KEY_ID | Key identifier (default: `mpcp-sba-signing-key-1`) |
 | MPCP_SPA_SIGNING_PRIVATE_KEY_PEM | Private key for signing SPAs |
 | MPCP_SPA_SIGNING_PUBLIC_KEY_PEM | Public key for verifying SPAs |
-| MPCP_SPA_SIGNING_KEY_ID | Key identifier (default: mpcp-spa-signing-key-1) |
+| MPCP_SPA_SIGNING_KEY_ID | Key identifier (default: `mpcp-spa-signing-key-1`) |
 
 ## See Also
 
+- [SDK Reference](../reference/sdk.md) — Full API reference
 - [MPCP Reference Flow](https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/architecture/reference-flow.md) — End-to-end flow with SDK usage
 - [Service API](../reference/service-api.md) — Higher-level facade
 - [Build a Machine Wallet](https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/guides/build-a-machine-wallet.md)

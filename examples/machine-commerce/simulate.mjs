@@ -6,7 +6,7 @@
  * payment decisions against it via verifySignedBudgetAuthorization.
  *
  * Run: npm run build && npm run example:simulate
- * Or:  node examples/fleet-simulator/simulate.mjs [policy.json] [scenarios.json]
+ * Or:  node examples/machine-commerce/simulate.mjs [policy.json] [scenarios.json]
  */
 import crypto from "node:crypto";
 import { readFileSync } from "node:fs";

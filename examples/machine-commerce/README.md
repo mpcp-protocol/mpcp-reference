@@ -44,7 +44,7 @@ npm run example:simulate
 With custom files:
 
 ```bash
-node examples/fleet-simulator/simulate.mjs path/to/policy.json path/to/scenarios.json
+node examples/machine-commerce/simulate.mjs path/to/policy.json path/to/scenarios.json
 ```
 
 ## Output

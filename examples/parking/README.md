@@ -44,7 +44,7 @@ The script:
 If you have already run generate and want to re-verify:
 
 ```bash
-npx mpcp verify examples/parking-session/settlement-bundle.json --explain
+npx mpcp verify examples/parking/settlement-bundle.json --explain
 ```
 
 The bundle is self-contained: it includes `sbaPublicKeyPem` and `spaPublicKeyPem`, so anyone can run `mpcp verify` on it without setting env vars or regenerating.
@@ -76,7 +76,7 @@ npm run example:guardrails
 Or:
 
 ```bash
-node examples/parking-session/demo-guardrails.mjs
+node examples/parking/demo-guardrails.mjs
 ```
 
 The script runs the full MPCP flow, prints a step-by-step narrative, writes `guardrails-demo-bundle.json`, runs verification, and demonstrates tamper detection by modifying the settlement amount and showing verification fails.
@@ -106,7 +106,7 @@ npm run example:offline
 Or:
 
 ```bash
-node examples/parking-session/demo-offline.mjs
+node examples/parking/demo-offline.mjs
 ```
 
-See [doc/architecture/OFFLINE_PAYMENTS.md](../../doc/architecture/OFFLINE_PAYMENTS.md) for full documentation.
+See [Offline Payments](../../docs/implementation/offline-payments.md) for full documentation.

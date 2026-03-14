@@ -35,6 +35,41 @@ MPCP provides three layers of enforcement before a machine can pay:
 - **Intent hash** — SPA binds to a canonical SettlementIntent
 - **Tamper resistance** — SettlementIntent and final settlement must match the signed authorization
 
+## Vehicle Wallet Roles
+
+In an autonomous deployment, the vehicle wallet plays **two distinct roles** in the MPCP authorization pipeline.
+
+### Session Authority
+
+The wallet creates and signs the **SignedBudgetAuthorization (SBA)** before the session begins. This establishes the session-level spending envelope:
+
+- Sets `maxAmountMinor` — the total spend ceiling for the session
+- Sets `destinationAllowlist` — the permitted payees
+- Binds to the PolicyGrant via `grantId`
+
+The SBA is signed with the wallet's SBA key (`MPCP_SBA_SIGNING_PRIVATE_KEY_PEM`). Verifiers check this signature to confirm the budget was set by a trusted session authority.
+
+### Payment Decision Service
+
+For each payment request within the session, the wallet evaluates the request against the loaded policy chain and, if approved, creates and signs a **SignedPaymentAuthorization (SPA)**:
+
+- Assigns a unique `decisionId`
+- Commits to the specific amount, destination, and asset
+- Computes and binds an `intentHash` to a canonical SettlementIntent
+- Signs with the wallet's SPA key (`MPCP_SPA_SIGNING_PRIVATE_KEY_PEM`)
+
+This decision is made **locally** — no central approval API is contacted. The SPA is a cryptographic proof that the wallet approved this specific payment within the authorized budget.
+
+### Why Two Roles?
+
+Separating session authority from payment decisions allows fleet operators to:
+
+- Pre-authorize a spending envelope (SBA) before the vehicle enters service
+- Let the vehicle make individual payment decisions (SPA) locally within that envelope
+- Give verifiers a complete, self-contained authorization chain to validate
+
+---
+
 ## Wallet Integration
 
 A machine wallet integrates MPCP by performing checks *before* signing an SPA.
