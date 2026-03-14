@@ -34,6 +34,23 @@ export type {
 } from "./createSettlementIntent.js";
 
 export { checkRevocation } from "../protocol/revocation.js";
+export {
+  resolveXrplDid,
+  hederaHcsAnchorPolicyDocument,
+  checkXrplNftRevocation,
+  xrplEncryptAndStorePolicyDocument,
+  InMemoryPolicyCustody,
+  encryptPolicyDocument,
+  decryptPolicyDocument,
+} from "../anchor/index.js";
+export type {
+  PolicyAnchorSubmitMode,
+  PolicyAnchorEncryptionOptions,
+  EncryptedPolicyDocument,
+  PolicyDocumentIpfsStore,
+  PolicyDocumentCustody,
+  XrplPolicyAnchorPreparation,
+} from "../anchor/index.js";
 export { canonicalJson } from "../hash/index.js";
 export {
   computeSettlementIntentHash,

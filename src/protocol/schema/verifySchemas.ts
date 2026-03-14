@@ -24,6 +24,7 @@ export const policyGrantForVerificationSchema = z
     signature: z.string().optional(),
     revocationEndpoint: z.string().url().optional(),
     allowedPurposes: z.array(z.string()).optional(),
+    anchorRef: z.string().optional(),
   })
   .refine((g) => g.expiresAt != null || g.expiresAtISO != null, {
     message: "policy_grant_missing_expiry",

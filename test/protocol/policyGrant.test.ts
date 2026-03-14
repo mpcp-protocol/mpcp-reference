@@ -136,6 +136,38 @@ describe("createPolicyGrant with new fields", () => {
     expect(grant.revocationEndpoint).toBe("https://wallet.example.com/revoke");
     expect(grant.allowedPurposes).toEqual(["travel:hotel"]);
   });
+
+  it("includes anchorRef when provided", () => {
+    const grant = createPolicyGrant({
+      policyHash: "a1b2c3d4e5f6",
+      allowedRails: ["xrpl"],
+      expiresAt: "2030-01-01T00:00:00Z",
+      anchorRef: "hcs:0.0.1234:99",
+    });
+    expect(grant.anchorRef).toBe("hcs:0.0.1234:99");
+  });
+
+  it("includes xrpl:nft anchorRef when provided", () => {
+    const grant = createPolicyGrant({
+      policyHash: "a1b2c3d4e5f6",
+      allowedRails: ["xrpl"],
+      expiresAt: "2030-01-01T00:00:00Z",
+      anchorRef: "xrpl:nft:000800006B55D0F1584E4D2CBD04F60B9E61FFDD2A4E3F9F00000001",
+    });
+    expect(grant.anchorRef).toBe(
+      "xrpl:nft:000800006B55D0F1584E4D2CBD04F60B9E61FFDD2A4E3F9F00000001",
+    );
+  });
+
+  it("omits anchorRef when not provided", () => {
+    const grant = createPolicyGrant({
+      policyHash: "a1b2c3d4e5f6",
+      allowedRails: ["xrpl"],
+      expiresAt: "2030-01-01T00:00:00Z",
+    });
+    expect(grant.anchorRef).toBeUndefined();
+    expect("anchorRef" in grant).toBe(false);
+  });
 });
 
 describe("verifyPolicyGrant with signature enforcement", () => {

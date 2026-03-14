@@ -11,6 +11,7 @@ export interface CreatePolicyGrantInput {
   allowedAssets?: Array<{ kind: "XRP" } | { kind: "IOU"; currency: string; issuer: string } | { kind: "ERC20"; chainId: number; token: string }>;
   revocationEndpoint?: string;
   allowedPurposes?: string[];
+  anchorRef?: string;
 }
 
 /**
@@ -28,5 +29,6 @@ export function createPolicyGrant(input: CreatePolicyGrantInput): PolicyGrantLik
     allowedAssets: input.allowedAssets ?? [],
     ...(input.revocationEndpoint ? { revocationEndpoint: input.revocationEndpoint } : {}),
     ...(input.allowedPurposes ? { allowedPurposes: input.allowedPurposes } : {}),
+    ...(input.anchorRef ? { anchorRef: input.anchorRef } : {}),
   };
 }

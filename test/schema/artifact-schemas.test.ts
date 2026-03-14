@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   policyGrantSchema,
+  policyGrantForVerificationSchema,
   budgetAuthorizationSchema,
   signedBudgetAuthorizationSchema,
   paymentAuthorizationSchema,
@@ -133,6 +134,42 @@ describe("PolicyGrant schema", () => {
       unexpectedField: "should fail",
     });
     expect(result.ok).toBe(false);
+  });
+});
+
+describe("policyGrantForVerificationSchema — anchorRef", () => {
+  const baseVerifyGrant = {
+    grantId: "grant-1",
+    policyHash: "a1b2c3d4e5f6",
+    expiresAt: "2030-01-01T00:00:00Z",
+    allowedRails: ["xrpl"],
+  };
+
+  it("accepts grant without anchorRef", () => {
+    const result = policyGrantForVerificationSchema.safeParse(baseVerifyGrant);
+    expect(result.success).toBe(true);
+  });
+
+  it("accepts grant with hcs anchorRef", () => {
+    const result = policyGrantForVerificationSchema.safeParse({
+      ...baseVerifyGrant,
+      anchorRef: "hcs:0.0.1234:99",
+    });
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.anchorRef).toBe("hcs:0.0.1234:99");
+  });
+
+  it("accepts grant with xrpl:nft anchorRef", () => {
+    const result = policyGrantForVerificationSchema.safeParse({
+      ...baseVerifyGrant,
+      anchorRef: "xrpl:nft:000800006B55D0F1584E4D2CBD04F60B9E61FFDD2A4E3F9F00000001",
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.anchorRef).toBe(
+        "xrpl:nft:000800006B55D0F1584E4D2CBD04F60B9E61FFDD2A4E3F9F00000001",
+      );
+    }
   });
 });
 

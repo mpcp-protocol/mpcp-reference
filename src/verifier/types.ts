@@ -15,6 +15,7 @@ export interface PolicyGrantLike {
   allowedAssets?: unknown[];
   revocationEndpoint?: string;
   allowedPurposes?: string[];
+  anchorRef?: string; // "hcs:{topicId}:{seq}" | "xrpl:nft:{tokenId}"
 }
 
 /** Shared verification result for all verifiers. Use with CLI and callers. */
