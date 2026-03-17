@@ -90,7 +90,7 @@ Implements: protocol verification engine, artifact schemas, cryptographic signin
 | PR26 | Human-to-Agent Delegation Profile (`revocationEndpoint`, `allowedPurposes`, TRIP scope, `checkRevocation()`) | ✓ |
 | PR27 | On-Chain Policy Anchoring (`anchorRef`, `resolveXrplDid`, `hederaHcsAnchorPolicyDocument`, `checkXrplNftRevocation`) | ✓ |
 | PR28 | Encrypted Policy Anchoring (`submitMode`, AES-256-GCM via `crypto.subtle`, `PolicyDocumentCustody`, XRPL IPFS prep) | ✓ |
-| PR29 | Trust Bundle — types, signing, verification, and key resolution integration | pending |
+| PR29 | Trust Bundle — types, signing, verification, and key resolution integration | ✓ |
 
 ---
 
