@@ -1,6 +1,7 @@
 import crypto, { createHash, randomUUID } from "node:crypto";
 import type { Asset, PaymentPolicyDecision, Rail } from "../policy-core/types.js";
 import { canonicalJson } from "../hash/canonicalJson.js";
+import { resolveFromTrustBundle, type TrustBundle } from "./trustBundle.js";
 
 export type BudgetScope = "SESSION" | "DAY" | "VEHICLE" | "FLEET" | "TRIP";
 
@@ -75,6 +76,8 @@ export function createSignedSessionBudgetAuthorization(input: {
   allowedAssets: Asset[];
   destinationAllowlist: string[];
   expiresAt: string;
+  /** Issuer identity (domain or DID). Required for Trust Bundle key resolution. */
+  issuer?: string;
 }): SignedSessionBudgetAuthorization | null {
   const privateKey = parseSigningPrivateKey();
   if (!privateKey) return null;
@@ -98,19 +101,36 @@ export function createSignedSessionBudgetAuthorization(input: {
   };
 
   const signature = crypto.sign(null, hashAuthorization(authorization), privateKey).toString("base64");
-  return {
+  const result: SignedSessionBudgetAuthorization = {
     authorization,
     issuerKeyId: getExpectedKeyId(),
     signature,
   };
+  if (input.issuer) result.issuer = input.issuer;
+  return result;
 }
 
 export function verifySignedSessionBudgetAuthorizationForDecision(
   envelope: SignedSessionBudgetAuthorization,
-  input: { sessionId: string; decision: PaymentPolicyDecision; nowMs?: number; cumulativeSpentMinor?: string },
+  input: { sessionId: string; decision: PaymentPolicyDecision; nowMs?: number; cumulativeSpentMinor?: string; trustBundles?: TrustBundle[] },
 ): { ok: true } | { ok: false; reason: "invalid_signature" | "expired" | "budget_exceeded" | "mismatch" } {
-  if (envelope.issuerKeyId !== getExpectedKeyId()) return { ok: false, reason: "invalid_signature" };
-  const publicKey = parseVerificationPublicKey();
+  // Step 1: Trust Bundle key resolution (if provided and issuer known)
+  let publicKey: crypto.KeyObject | null = null;
+  if (input.trustBundles?.length && envelope.issuer) {
+    const jwk = resolveFromTrustBundle(envelope.issuer, envelope.issuerKeyId, input.trustBundles);
+    if (jwk) {
+      try {
+        publicKey = crypto.createPublicKey({ key: jwk, format: "jwk" });
+      } catch {
+        // fall through to env var
+      }
+    }
+  }
+  // Step 2: Env var fallback (existing behavior, with key ID check)
+  if (!publicKey) {
+    if (envelope.issuerKeyId !== getExpectedKeyId()) return { ok: false, reason: "invalid_signature" };
+    publicKey = parseVerificationPublicKey();
+  }
   if (!publicKey) return { ok: false, reason: "invalid_signature" };
 
   const isValid = crypto.verify(

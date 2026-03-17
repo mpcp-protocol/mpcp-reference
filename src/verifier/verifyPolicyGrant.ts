@@ -2,6 +2,7 @@ import type { PolicyGrantLike, VerificationResult } from "./types.js";
 import { policyGrantForVerificationSchema } from "../protocol/schema/verifySchemas.js";
 import { verifyPolicyGrantSignature } from "../protocol/policyGrant.js";
 import type { SignedPolicyGrant } from "../protocol/policyGrant.js";
+import type { TrustBundle } from "../protocol/trustBundle.js";
 
 /**
  * Verify a policy grant is valid (not expired).
@@ -14,7 +15,7 @@ import type { SignedPolicyGrant } from "../protocol/policyGrant.js";
  */
 export function verifyPolicyGrant(
   grant: unknown,
-  options?: { nowMs?: number },
+  options?: { nowMs?: number; trustBundles?: TrustBundle[] },
 ): VerificationResult {
   // 1. Schema validation
   const parsed = policyGrantForVerificationSchema.safeParse(grant);
@@ -38,8 +39,8 @@ export function verifyPolicyGrant(
     return { valid: false, reason: "policy_grant_expired", artifact: "policyGrant" };
   }
 
-  // If signing public key is configured, require and verify signature
-  if (process.env.MPCP_POLICY_GRANT_SIGNING_PUBLIC_KEY_PEM) {
+  // If signing public key is configured OR trust bundles are provided, require and verify signature
+  if (process.env.MPCP_POLICY_GRANT_SIGNING_PUBLIC_KEY_PEM || options?.trustBundles?.length) {
     if (!g.issuerKeyId || !g.signature) {
       return { valid: false, reason: "invalid_policy_grant_signature", artifact: "policyGrant" };
     }
@@ -50,7 +51,7 @@ export function verifyPolicyGrant(
       issuerKeyId: g.issuerKeyId,
       signature: g.signature,
       ...(g.issuer ? { issuer: g.issuer } : {}),
-    } as SignedPolicyGrant);
+    } as SignedPolicyGrant, { trustBundles: options?.trustBundles });
     if (!sigResult.ok) {
       return { valid: false, reason: "invalid_policy_grant_signature", artifact: "policyGrant" };
     }
