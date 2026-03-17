@@ -57,6 +57,9 @@ export {
   computeIntentHash,
 } from "../hash/index.js";
 
+export { signTrustBundle, verifyTrustBundle, resolveFromTrustBundle } from "../protocol/trustBundle.js";
+export type { TrustBundle, TrustBundleIssuerEntry, UnsignedTrustBundle } from "../protocol/trustBundle.js";
+
 export { verifyPolicyGrant } from "../verifier/verifyPolicyGrant.js";
 export {
   verifySettlement,

@@ -1,6 +1,7 @@
 import crypto, { createHash } from "node:crypto";
 import { canonicalJson } from "../hash/canonicalJson.js";
 import type { PolicyGrantLike } from "../verifier/types.js";
+import { resolveFromTrustBundle, type TrustBundle } from "./trustBundle.js";
 
 export interface SignedPolicyGrant {
   grant: PolicyGrantLike;
@@ -53,10 +54,25 @@ export function createSignedPolicyGrant(
 
 export function verifyPolicyGrantSignature(
   envelope: SignedPolicyGrant,
+  options?: { trustBundles?: TrustBundle[] },
 ): { ok: true } | { ok: false; reason: "invalid_signature" } {
-  if (envelope.issuerKeyId !== getExpectedKeyId()) return { ok: false, reason: "invalid_signature" };
-
-  const publicKey = parseVerificationPublicKey();
+  // Step 1: Trust Bundle key resolution (if provided and issuer known)
+  let publicKey: crypto.KeyObject | null = null;
+  if (options?.trustBundles?.length && envelope.issuer) {
+    const jwk = resolveFromTrustBundle(envelope.issuer, envelope.issuerKeyId, options.trustBundles);
+    if (jwk) {
+      try {
+        publicKey = crypto.createPublicKey({ key: jwk, format: "jwk" });
+      } catch {
+        // fall through to env var
+      }
+    }
+  }
+  // Step 2: Env var fallback (existing behavior, with key ID check)
+  if (!publicKey) {
+    if (envelope.issuerKeyId !== getExpectedKeyId()) return { ok: false, reason: "invalid_signature" };
+    publicKey = parseVerificationPublicKey();
+  }
   if (!publicKey) return { ok: false, reason: "invalid_signature" };
 
   const isValid = crypto.verify(
