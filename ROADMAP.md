@@ -134,7 +134,7 @@ export interface TrustBundle {
 
 ### Exports
 
-All three functions exported from `src/sdk/index.ts` under the `trust` namespace.
+All three functions flat-exported from `src/sdk/index.ts`, consistent with existing SDK exports (`checkRevocation`, `resolveXrplDid`, etc.).
 
 ### Tests
 
