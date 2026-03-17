@@ -90,6 +90,67 @@ Implements: protocol verification engine, artifact schemas, cryptographic signin
 | PR26 | Human-to-Agent Delegation Profile (`revocationEndpoint`, `allowedPurposes`, TRIP scope, `checkRevocation()`) | ✓ |
 | PR27 | On-Chain Policy Anchoring (`anchorRef`, `resolveXrplDid`, `hederaHcsAnchorPolicyDocument`, `checkXrplNftRevocation`) | ✓ |
 | PR28 | Encrypted Policy Anchoring (`submitMode`, AES-256-GCM via `crypto.subtle`, `PolicyDocumentCustody`, XRPL IPFS prep) | ✓ |
+| PR29 | Trust Bundle — types, signing, verification, and key resolution integration | pending |
+
+---
+
+## PR29 — Trust Bundle
+
+Implement the [Trust Bundle](https://mpcp-protocol.github.io/spec/protocol/trust-bundles/) specification as defined in the MPCP spec.
+
+Trust Bundles are pre-distributed signed documents that package trusted issuer public keys for MPCP verifiers operating without network access at verification time.
+
+### New types (`src/protocol/trustBundle.ts`)
+
+```typescript
+export interface TrustBundleIssuerEntry {
+  issuer: string;
+  keys: JsonWebKey[];
+}
+
+export interface TrustBundle {
+  version: "1.0";
+  bundleId: string;
+  bundleIssuer: string;
+  bundleKeyId: string;
+  category: string;
+  geography?: { region?: string; countryCodes?: string[] };
+  approvedIssuers: string[];
+  issuers: TrustBundleIssuerEntry[];
+  expiresAt: string;
+  signature: string;
+}
+```
+
+### New functions
+
+- `signTrustBundle(bundleWithoutSig, privateKeyPem)` — constructs canonical payload (`"MPCP:TrustBundle:1.0:" + canonicalJson(bundle)`), signs with Ed25519 or ECDSA P-256, returns signed bundle
+- `verifyTrustBundle(bundle, rootPublicKeyPem)` — verifies the bundle's own signature and expiry before use; returns `{ valid: true }` or `{ valid: false; reason: string }`
+- `resolveFromTrustBundle(issuer, issuerKeyId, bundles)` — step-1 key resolution; searches non-expired loaded bundles in descending `expiresAt` order; returns matching JWK or `null`
+
+### Key resolution integration
+
+`verifySignedBudgetAuthorization`, `verifyPolicyGrant`, and related verifiers gain an optional `trustBundles?: TrustBundle[]` parameter. When provided, key resolution checks bundles before falling back to HTTPS well-known and DID resolution (per the 3-step algorithm in the spec).
+
+### Exports
+
+All three functions flat-exported from `src/sdk/index.ts`, consistent with existing SDK exports (`checkRevocation`, `resolveXrplDid`, etc.).
+
+### Tests
+
+- `signTrustBundle` + `verifyTrustBundle` roundtrip
+- Expired bundle rejected by `verifyTrustBundle`
+- Tampered bundle signature rejected
+- `resolveFromTrustBundle` returns correct key from matching non-expired bundle
+- `resolveFromTrustBundle` skips expired bundles; falls through to `null`
+- `resolveFromTrustBundle` prefers bundle with latest `expiresAt` when multiple match
+- `verifySignedBudgetAuthorization` resolves signing key from Trust Bundle when `trustBundles` provided (no env var needed)
+
+### Deliverables
+
+- `src/protocol/trustBundle.ts`
+- `src/sdk/index.ts` updated
+- `test/protocol/trustBundle.test.ts`
 
 ---
 
