@@ -12,6 +12,9 @@ import {
   createSignedSessionBudgetAuthorization,
   verifySignedSessionBudgetAuthorizationForDecision,
 } from "../../src/protocol/sba.js";
+import { createSignedPolicyGrant } from "../../src/protocol/policyGrant.js";
+import { verifyPolicyGrant } from "../../src/verifier/verifyPolicyGrant.js";
+import type { PolicyGrantLike } from "../../src/verifier/types.js";
 import type { PaymentPolicyDecision } from "../../src/policy-core/types.js";
 
 // ---------------------------------------------------------------------------
@@ -53,6 +56,9 @@ afterEach(() => {
   delete process.env.MPCP_SBA_SIGNING_PRIVATE_KEY_PEM;
   delete process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM;
   delete process.env.MPCP_SBA_SIGNING_KEY_ID;
+  delete process.env.MPCP_POLICY_GRANT_SIGNING_PRIVATE_KEY_PEM;
+  delete process.env.MPCP_POLICY_GRANT_SIGNING_PUBLIC_KEY_PEM;
+  delete process.env.MPCP_POLICY_GRANT_SIGNING_KEY_ID;
 });
 
 // ---------------------------------------------------------------------------
@@ -237,5 +243,102 @@ describe("verifySignedSessionBudgetAuthorizationForDecision with trustBundles", 
       trustBundles: [trustBundle],
     });
     expect(result).toEqual({ ok: true });
+  });
+
+  it("fails when trust bundle contains wrong key for the issuer", () => {
+    const bundleKeys = generateEd25519("bundle-key-1");
+    const sbaKeys = generateEd25519("sba-key-1");
+    const wrongKeys = generateEd25519("sba-key-1"); // same kid, different key material
+
+    process.env.MPCP_SBA_SIGNING_PRIVATE_KEY_PEM = sbaKeys.privateKeyPem;
+    process.env.MPCP_SBA_SIGNING_KEY_ID = "sba-key-1";
+
+    const envelope = createSignedSessionBudgetAuthorization({
+      sessionId: "sess-tb-2",
+      actorId: "agent-1",
+      grantId: "grant-tb-2",
+      policyHash: "ph-tb-2",
+      currency: "USD",
+      maxAmountMinor: "5000",
+      allowedRails: ["stripe"],
+      allowedAssets: [],
+      destinationAllowlist: [],
+      expiresAt: new Date(Date.now() + 60_000).toISOString(),
+      issuer: "pa.example.com",
+    });
+    expect(envelope).not.toBeNull();
+
+    delete process.env.MPCP_SBA_SIGNING_PRIVATE_KEY_PEM;
+    delete process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM;
+    delete process.env.MPCP_SBA_SIGNING_KEY_ID;
+
+    // Bundle has the right issuer/kid but different key material
+    const trustBundle = signTrustBundle(
+      makeUnsignedBundle({ issuer: "pa.example.com", issuerJwk: wrongKeys.jwk }),
+      bundleKeys.privateKeyPem,
+    );
+
+    const decision: PaymentPolicyDecision = {
+      decisionId: "dec-tb-2",
+      policyHash: "ph-tb-2",
+      action: "ALLOW",
+      reasons: ["OK"],
+      expiresAtISO: new Date(Date.now() + 60_000).toISOString(),
+      rail: "stripe",
+      priceFiat: { amountMinor: "1000", currency: "USD" },
+    };
+
+    const result = verifySignedSessionBudgetAuthorizationForDecision(envelope!, {
+      sessionId: "sess-tb-2",
+      decision,
+      trustBundles: [trustBundle],
+    });
+    expect(result).toEqual({ ok: false, reason: "invalid_signature" });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// verifyPolicyGrant with trustBundles (integration)
+// ---------------------------------------------------------------------------
+
+describe("verifyPolicyGrant with trustBundles", () => {
+  it("verifies signed grant using trust bundle key — no env var needed", () => {
+    const bundleKeys = generateEd25519("bundle-key-1");
+    const grantKeys = generateEd25519("pg-key-1");
+
+    // Sign grant via env var
+    process.env.MPCP_POLICY_GRANT_SIGNING_PRIVATE_KEY_PEM = grantKeys.privateKeyPem;
+    process.env.MPCP_POLICY_GRANT_SIGNING_KEY_ID = "pg-key-1";
+
+    const baseGrant: PolicyGrantLike = {
+      grantId: "grant-tb-pg-1",
+      policyHash: "a1b2c3d4e5f6",
+      expiresAt: new Date(Date.now() + 60_000).toISOString(),
+      allowedRails: ["stripe"],
+      allowedAssets: [],
+    };
+
+    const signed = createSignedPolicyGrant(baseGrant, { issuer: "pa.example.com", keyId: "pg-key-1" });
+    expect(signed).not.toBeNull();
+
+    // Remove env vars — verification must rely exclusively on the trust bundle
+    delete process.env.MPCP_POLICY_GRANT_SIGNING_PRIVATE_KEY_PEM;
+    delete process.env.MPCP_POLICY_GRANT_SIGNING_PUBLIC_KEY_PEM;
+    delete process.env.MPCP_POLICY_GRANT_SIGNING_KEY_ID;
+
+    const trustBundle = signTrustBundle(
+      makeUnsignedBundle({ issuer: "pa.example.com", issuerJwk: grantKeys.jwk }),
+      bundleKeys.privateKeyPem,
+    );
+
+    const grantWithSig = {
+      ...baseGrant,
+      issuer: signed!.issuer,
+      issuerKeyId: signed!.issuerKeyId,
+      signature: signed!.signature,
+    };
+
+    const result = verifyPolicyGrant(grantWithSig, { trustBundles: [trustBundle] });
+    expect(result).toEqual({ valid: true });
   });
 });
