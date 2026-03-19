@@ -19,6 +19,10 @@ export interface TrustBundle {
   bundleIssuer: string;
   bundleKeyId: string;
   category: string;
+  /** Identity (DID or domain) of the payment-accepting merchant this bundle is scoped to.
+   *  Used by embedded devices (e.g. EV charging stations) to filter bundles by the
+   *  merchant network they belong to. Omit for unscoped (multi-merchant) bundles. */
+  merchant?: string;
   geography?: { region?: string; countryCodes?: string[] };
   approvedIssuers: string[];
   issuers: TrustBundleIssuerEntry[];
