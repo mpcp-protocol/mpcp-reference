@@ -19,6 +19,10 @@ export interface TrustBundle {
   bundleIssuer: string;
   bundleKeyId: string;
   category: string;
+  /** Identity (DID or domain) of the payment-accepting merchant this bundle is scoped to.
+   *  Used by embedded devices (e.g. EV charging stations) to filter bundles by the
+   *  merchant network they belong to. Omit for unscoped (multi-merchant) bundles. */
+  merchant?: string;
   geography?: { region?: string; countryCodes?: string[] };
   approvedIssuers: string[];
   issuers: TrustBundleIssuerEntry[];
@@ -128,6 +132,14 @@ export function verifyTrustBundle(
  *
  * Bundles are searched in descending `expiresAt` order so the most recently
  * issued bundle is preferred when multiple bundles cover the same issuer.
+ *
+ * **Security**: callers MUST pre-filter `bundles` with `verifyTrustBundle` before
+ * passing them here. Unverified bundles allow an attacker to substitute arbitrary
+ * keys and forge SBAs. Example:
+ * ```typescript
+ * const valid = bundles.filter((b) => verifyTrustBundle(b, rootPublicKeyPem).valid);
+ * resolveFromTrustBundle(issuer, keyId, valid);
+ * ```
  *
  * @returns The matching JWK, or `null` if no non-expired bundle contains the key.
  */

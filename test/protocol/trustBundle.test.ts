@@ -29,6 +29,14 @@ function generateEd25519(kid: string) {
   return { privateKeyPem, publicKeyPem, jwk };
 }
 
+function generateP256(kid: string) {
+  const { privateKey, publicKey } = crypto.generateKeyPairSync("ec", { namedCurve: "P-256" });
+  const privateKeyPem = privateKey.export({ type: "pkcs8", format: "pem" }).toString();
+  const publicKeyPem = publicKey.export({ type: "spki", format: "pem" }).toString();
+  const jwk = { ...publicKey.export({ format: "jwk" }), kid } as KeyWithKid;
+  return { privateKeyPem, publicKeyPem, jwk };
+}
+
 function makeUnsignedBundle(opts: {
   issuer: string;
   issuerJwk: KeyWithKid;
@@ -106,6 +114,39 @@ describe("signTrustBundle + verifyTrustBundle", () => {
     );
     const tampered: TrustBundle = { ...signed, signature: "aW52YWxpZHNpZ25hdHVyZQ==" };
 
+    const result = verifyTrustBundle(tampered, bundleKeys.publicKeyPem);
+    expect(result).toEqual({ valid: false, reason: "invalid_bundle_signature" });
+  });
+
+  it("roundtrip: sign and verify a trust bundle with P-256 keys", () => {
+    const bundleKeys = generateP256("bundle-key-p256");
+    const sbaKeys = generateP256("sba-key-p256");
+
+    const signed = signTrustBundle(
+      makeUnsignedBundle({ issuer: "pa.example.com", issuerJwk: sbaKeys.jwk }),
+      bundleKeys.privateKeyPem,
+    );
+
+    const result = verifyTrustBundle(signed, bundleKeys.publicKeyPem);
+    expect(result).toEqual({ valid: true });
+  });
+
+  it("merchant field is included in the canonical hash — tampering it invalidates signature", () => {
+    const bundleKeys = generateEd25519("bundle-key-1");
+    const sbaKeys = generateEd25519("sba-key-1");
+
+    const unsigned: UnsignedTrustBundle = {
+      ...makeUnsignedBundle({ issuer: "pa.example.com", issuerJwk: sbaKeys.jwk }),
+      merchant: "did:web:ionity.eu",
+    };
+    const signed = signTrustBundle(unsigned, bundleKeys.privateKeyPem);
+
+    // Verify the signed bundle passes
+    expect(verifyTrustBundle(signed, bundleKeys.publicKeyPem)).toEqual({ valid: true });
+    expect(signed.merchant).toBe("did:web:ionity.eu");
+
+    // Tamper the merchant field — signature must no longer be valid
+    const tampered: TrustBundle = { ...signed, merchant: "did:web:attacker.example.com" };
     const result = verifyTrustBundle(tampered, bundleKeys.publicKeyPem);
     expect(result).toEqual({ valid: false, reason: "invalid_bundle_signature" });
   });
