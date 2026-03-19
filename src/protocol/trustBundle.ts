@@ -133,6 +133,14 @@ export function verifyTrustBundle(
  * Bundles are searched in descending `expiresAt` order so the most recently
  * issued bundle is preferred when multiple bundles cover the same issuer.
  *
+ * **Security**: callers MUST pre-filter `bundles` with `verifyTrustBundle` before
+ * passing them here. Unverified bundles allow an attacker to substitute arbitrary
+ * keys and forge SBAs. Example:
+ * ```typescript
+ * const valid = bundles.filter((b) => verifyTrustBundle(b, rootPublicKeyPem).valid);
+ * resolveFromTrustBundle(issuer, keyId, valid);
+ * ```
+ *
  * @returns The matching JWK, or `null` if no non-expired bundle contains the key.
  */
 export function resolveFromTrustBundle(
