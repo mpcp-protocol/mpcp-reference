@@ -18,8 +18,11 @@ export interface CreatePolicyGrantInput {
   budgetCurrency?: string;
   /** On-chain escrow locking budgetMinor. Format: "xrpl:escrow:{account}:{sequence}". Signed by the PA. */
   budgetEscrowRef?: string;
+  /** Address of the only gateway authorized to spend against this grant's escrow. Rail-specific format. PA-signed. */
   authorizedGateway?: string;
+  /** PA-signed per-transaction cap for offline merchant acceptance, in minor units (see offlineMaxSinglePaymentCurrency). */
   offlineMaxSinglePayment?: string;
+  /** Currency code for offlineMaxSinglePayment (e.g. "XRP"). */
   offlineMaxSinglePaymentCurrency?: string;
 }
 

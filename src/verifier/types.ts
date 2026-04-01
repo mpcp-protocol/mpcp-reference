@@ -24,13 +24,13 @@ export interface PolicyGrantLike {
    * On-chain budget escrow reference — proof that budgetMinor is locked on-chain.
    * Format is rail-specific:
    *   XRPL:    "xrpl:escrow:{account}:{sequence}"
-   *   (future) "eth:timelock:{contract}"
+   *   (future) "eth:timelock:{contract}:{lockId}"
    * Included in the PA signature, making the escrow commitment tamper-evident.
    */
   budgetEscrowRef?: string;
-  /** XRPL address of the only gateway authorized to spend against this grant's escrow. PA-signed. */
+  /** Address of the only gateway authorized to spend against this grant's escrow. Rail-specific format. PA-signed. */
   authorizedGateway?: string;
-  /** PA-signed per-transaction cap for offline merchant acceptance (drops). */
+  /** PA-signed per-transaction cap for offline merchant acceptance, in minor units (see offlineMaxSinglePaymentCurrency). */
   offlineMaxSinglePayment?: string;
   /** Currency for offlineMaxSinglePayment (e.g. "XRP"). */
   offlineMaxSinglePaymentCurrency?: string;
