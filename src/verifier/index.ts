@@ -10,8 +10,6 @@ export type {
 } from "./types.js";
 export * from "./verifyPolicyGrant.js";
 export * from "./verifyBudgetAuthorization.js";
-export * from "./verifyPaymentAuthorization.js";
-export * from "./verifySettlementIntent.js";
 export {
   verifySettlement,
   verifySettlementDetailed,
@@ -20,11 +18,5 @@ export {
   verifySettlementWithReport,
   verifySettlementWithReportSafe,
 } from "./verifySettlement.js";
-export {
-  verifyDisputedSettlement,
-  verifyDisputedSettlementAsync,
-  type DisputeVerificationInput,
-  type DisputeVerificationResult,
-} from "./verifyDisputedSettlement.js";
 export { runVerificationPipeline } from "./verifyPipeline.js";
 export type { VerificationPipelineOutput } from "./verifyPipeline.js";

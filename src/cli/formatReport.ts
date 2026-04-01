@@ -4,15 +4,12 @@
  */
 
 import type { VerificationReport, VerificationStep } from "../verifier/types.js";
-import type { PaymentPolicyDecision } from "../policy-core/types.js";
 
 const CHECK = "✔";
 const CROSS = "✗";
 
-/** Reverse execution order for chain display: leaf (intent) → root (grant). */
+/** Reverse execution order for chain display: leaf (budget) → root (grant). */
 const CHAIN_ORDER = [
-  "SettlementIntent.intentHash",
-  "SignedPaymentAuthorization.valid",
   "SignedBudgetAuthorization.valid",
   "PolicyGrant.valid",
 ];
@@ -26,14 +23,9 @@ function orderSteps(steps: VerificationStep[]): VerificationStep[] {
   return ordered;
 }
 
-export function formatVerificationReport(report: VerificationReport & { decision?: PaymentPolicyDecision & { _synthesized?: boolean } }): string {
+export function formatVerificationReport(report: VerificationReport): string {
   const lines: string[] = [];
   const ordered = orderSteps(report.steps);
-
-  if (report.decision?._synthesized) {
-    lines.push("⚠ Policy decision: SYNTHESIZED FROM SPA (policy evaluation not verified)");
-    lines.push("");
-  }
 
   for (const step of ordered) {
     const icon = step.ok ? CHECK : CROSS;
@@ -42,12 +34,6 @@ export function formatVerificationReport(report: VerificationReport & { decision
   }
 
   if (ordered.length > 0) lines.push("");
-
-  if (report.hashBindingChecked === true) {
-    lines.push("Hash binding: CHECKED");
-  } else if (report.hashBindingChecked === false) {
-    lines.push("Hash binding: NOT CHECKED (Lite Profile — intentHash absent)");
-  }
 
   if (report.result.valid) {
     lines.push("MPCP verification PASSED");

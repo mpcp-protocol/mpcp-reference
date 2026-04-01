@@ -4,9 +4,6 @@ import {
   policyGrantForVerificationSchema,
   budgetAuthorizationSchema,
   signedBudgetAuthorizationSchema,
-  paymentAuthorizationSchema,
-  signedPaymentAuthorizationSchema,
-  settlementIntentSchema,
   fleetPolicyAuthorizationSchema,
   artifactBundleSchema,
   validateWithSchema,
@@ -38,29 +35,6 @@ const validBudgetAuthorization = {
   allowedAssets: [{ kind: "IOU", currency: "USDC", issuer: "rIssuer" }],
   destinationAllowlist: ["rDest"],
   expiresAt: "2026-03-08T14:00:00Z",
-};
-
-const validPaymentAuthorization = {
-  version: "1.0",
-  decisionId: "dec_123",
-  sessionId: "sess_456",
-  policyHash: "a1b2c3d4e5f6",
-  budgetId: "550e8400-e29b-41d4-a716-446655440000",
-  quoteId: "quote_789",
-  rail: "xrpl",
-  asset: { kind: "IOU", currency: "USDC", issuer: "rIssuer" },
-  amount: "19440000",
-  destination: "rDest",
-  expiresAt: "2026-03-08T14:00:00Z",
-};
-
-const validSettlementIntent = {
-  version: "1.0",
-  rail: "xrpl",
-  asset: { kind: "IOU", currency: "RLUSD", issuer: "rIssuer" },
-  amount: "19440000",
-  destination: "rDestination",
-  createdAt: "2026-03-08T13:55:00Z",
 };
 
 const validFleetPolicyPayload = {
@@ -249,89 +223,6 @@ describe("SignedBudgetAuthorization schema", () => {
   });
 });
 
-describe("PaymentAuthorization schema", () => {
-  it("accepts valid PaymentAuthorization", () => {
-    const result = validateWithSchema(paymentAuthorizationSchema, validPaymentAuthorization);
-    expect(result.ok).toBe(true);
-  });
-
-  it("accepts optional intentHash", () => {
-    const result = validateWithSchema(paymentAuthorizationSchema, {
-      ...validPaymentAuthorization,
-      intentHash: "a".repeat(64),
-    });
-    expect(result.ok).toBe(true);
-  });
-
-  it("rejects invalid intentHash (wrong length)", () => {
-    const result = validateWithSchema(paymentAuthorizationSchema, {
-      ...validPaymentAuthorization,
-      intentHash: "abc", // not 64 chars
-    });
-    expect(result.ok).toBe(false);
-  });
-
-  it("rejects unexpected fields (strict)", () => {
-    const result = validateWithSchema(paymentAuthorizationSchema, {
-      ...validPaymentAuthorization,
-      rogue: "field",
-    });
-    expect(result.ok).toBe(false);
-  });
-});
-
-describe("SignedPaymentAuthorization schema", () => {
-  it("accepts valid envelope", () => {
-    const result = validateWithSchema(signedPaymentAuthorizationSchema, {
-      authorization: validPaymentAuthorization,
-      issuerKeyId: "mpcp-spa-signing-key-1",
-      signature: "base64...",
-    });
-    expect(result.ok).toBe(true);
-  });
-
-  it("rejects unexpected fields (strict)", () => {
-    const result = validateWithSchema(signedPaymentAuthorizationSchema, {
-      authorization: validPaymentAuthorization,
-      issuerKeyId: "key",
-      signature: "base64...",
-      unknownField: "invalid",
-    });
-    expect(result.ok).toBe(false);
-  });
-});
-
-describe("SettlementIntent schema", () => {
-  it("accepts valid SettlementIntent", () => {
-    const result = validateWithSchema(settlementIntentSchema, validSettlementIntent);
-    expect(result.ok).toBe(true);
-  });
-
-  it("rejects invalid createdAt format", () => {
-    const result = validateWithSchema(settlementIntentSchema, {
-      ...validSettlementIntent,
-      createdAt: "invalid",
-    });
-    expect(result.ok).toBe(false);
-  });
-
-  it("rejects invalid rail", () => {
-    const result = validateWithSchema(settlementIntentSchema, {
-      ...validSettlementIntent,
-      rail: "bitcoin",
-    });
-    expect(result.ok).toBe(false);
-  });
-
-  it("rejects unexpected fields (strict)", () => {
-    const result = validateWithSchema(settlementIntentSchema, {
-      ...validSettlementIntent,
-      extra: "field",
-    });
-    expect(result.ok).toBe(false);
-  });
-});
-
 describe("FleetPolicyAuthorization schema", () => {
   it("accepts valid FleetPolicyAuthorization", () => {
     const result = validateWithSchema(fleetPolicyAuthorizationSchema, {
@@ -375,18 +266,6 @@ const validArtifactBundle = {
     issuerKeyId: "mpcp-sba-signing-key-1",
     signature: "base64...",
   },
-  spa: {
-    authorization: validPaymentAuthorization,
-    issuerKeyId: "mpcp-spa-signing-key-1",
-    signature: "base64...",
-  },
-  settlement: {
-    amount: "19440000",
-    rail: "xrpl",
-    asset: { kind: "IOU", currency: "RLUSD", issuer: "rIssuer" },
-    destination: "rDestination",
-    nowISO: "2026-01-15T12:00:00Z",
-  },
 };
 
 describe("ArtifactBundle schema", () => {
@@ -395,19 +274,10 @@ describe("ArtifactBundle schema", () => {
     expect(result.ok).toBe(true);
   });
 
-  it("accepts bundle with optional settlementIntent", () => {
-    const result = validateWithSchema(artifactBundleSchema, {
-      ...validArtifactBundle,
-      settlementIntent: validSettlementIntent,
-    });
-    expect(result.ok).toBe(true);
-  });
-
-  it("accepts bundle with optional public keys", () => {
+  it("accepts bundle with optional public key", () => {
     const result = validateWithSchema(artifactBundleSchema, {
       ...validArtifactBundle,
       sbaPublicKeyPem: "-----BEGIN PUBLIC KEY-----\n...",
-      spaPublicKeyPem: "-----BEGIN PUBLIC KEY-----\n...",
     });
     expect(result.ok).toBe(true);
   });
@@ -415,14 +285,6 @@ describe("ArtifactBundle schema", () => {
   it("rejects bundle missing required policyGrant", () => {
     const { policyGrant: _, ...rest } = validArtifactBundle;
     const result = validateWithSchema(artifactBundleSchema, rest);
-    expect(result.ok).toBe(false);
-  });
-
-  it("rejects bundle with invalid settlement rail", () => {
-    const result = validateWithSchema(artifactBundleSchema, {
-      ...validArtifactBundle,
-      settlement: { ...validArtifactBundle.settlement, rail: "bitcoin" },
-    });
     expect(result.ok).toBe(false);
   });
 

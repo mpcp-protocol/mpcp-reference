@@ -8,17 +8,12 @@ import type {
   PolicyGrantLike,
   SettlementVerificationContext,
 } from "../verifier/types.js";
-import type { DisputeVerificationInput, DisputeVerificationResult } from "../verifier/verifyDisputedSettlement.js";
 import type { Asset, Rail } from "../policy-core/types.js";
 import type { SignedSessionBudgetAuthorization } from "../protocol/sba.js";
 import type { AnchorOptions, AnchorResult } from "../anchor/types.js";
 
 import { createSignedSessionBudgetAuthorization } from "../protocol/sba.js";
 import { verifySettlement } from "../verifier/verifySettlement.js";
-import {
-  verifyDisputedSettlement,
-  verifyDisputedSettlementAsync,
-} from "../verifier/verifyDisputedSettlement.js";
 import { mockAnchorIntentHash } from "../anchor/mockAnchor.js";
 import { hederaHcsAnchorIntentHash } from "../anchor/hederaHcsAnchor.js";
 
@@ -78,26 +73,10 @@ export function issueBudget(input: IssueBudgetInput): SignedSessionBudgetAuthori
 // --- Verify Settlement ---
 
 /**
- * Verify a settlement against the full MPCP chain.
+ * Verify a settlement against the full MPCP chain (PolicyGrant → SBA).
  */
 export function verifySettlementService(ctx: SettlementVerificationContext) {
   return verifySettlement(ctx);
-}
-
-// --- Verify Dispute ---
-
-/**
- * Verify a disputed settlement (sync).
- */
-export function verifyDispute(input: DisputeVerificationInput): DisputeVerificationResult {
-  return verifyDisputedSettlement(input);
-}
-
-/**
- * Verify a disputed settlement (async). Use for Hedera HCS anchors.
- */
-export function verifyDisputeAsync(input: DisputeVerificationInput): Promise<DisputeVerificationResult> {
-  return verifyDisputedSettlementAsync(input);
 }
 
 // --- Anchor Intent ---

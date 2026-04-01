@@ -3,7 +3,6 @@ export type {
   MPCPClientConfig,
   GrantRequest,
   BudgetRequest,
-  AuthorizeRequest,
   VerifySettlementRequest,
   MPCPError,
   SettlementIntent,
@@ -21,4 +20,3 @@ export type {
 } from "../policy-core/types.js";
 
 export type { PolicyGrant, SignedBudgetAuthorization } from "../protocol/types.js";
-export type { SignedPaymentAuthorization } from "../protocol/spa.js";

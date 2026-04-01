@@ -26,7 +26,7 @@ Verify options:
 
 Accepts:
   - Full SettlementVerificationContext (policyGrant, signedBudgetAuthorization, etc.)
-  - JSON artifact bundle: settlement, intent, spa, sba, policyGrant
+  - JSON artifact bundle: sba, policyGrant
 
 Examples:
   mpcp verify examples/parking/settlement-bundle.json
