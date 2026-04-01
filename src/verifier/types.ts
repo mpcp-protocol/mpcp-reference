@@ -16,6 +16,24 @@ export interface PolicyGrantLike {
   revocationEndpoint?: string;
   allowedPurposes?: string[];
   anchorRef?: string; // "hcs:{topicId}:{seq}" | "xrpl:nft:{tokenId}"
+  /** Total authorized spend for this grant in minor units (e.g. drops for XRP). PA-signed. */
+  budgetMinor?: string;
+  /** Currency code for budgetMinor (e.g. "XRP"). Required when budgetMinor is set. */
+  budgetCurrency?: string;
+  /**
+   * On-chain budget escrow reference — proof that budgetMinor is locked on-chain.
+   * Format is rail-specific:
+   *   XRPL:    "xrpl:escrow:{account}:{sequence}"
+   *   (future) "eth:timelock:{contract}:{lockId}"
+   * Included in the PA signature, making the escrow commitment tamper-evident.
+   */
+  budgetEscrowRef?: string;
+  /** Address of the only gateway authorized to spend against this grant's escrow. Rail-specific format. PA-signed. */
+  authorizedGateway?: string;
+  /** PA-signed per-transaction cap for offline merchant acceptance, in minor units (see offlineMaxSinglePaymentCurrency). */
+  offlineMaxSinglePayment?: string;
+  /** Currency for offlineMaxSinglePayment (e.g. "XRP"). */
+  offlineMaxSinglePaymentCurrency?: string;
 }
 
 /** Shared verification result for all verifiers. Use with CLI and callers. */

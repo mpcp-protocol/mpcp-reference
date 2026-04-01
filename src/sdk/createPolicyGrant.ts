@@ -12,6 +12,18 @@ export interface CreatePolicyGrantInput {
   revocationEndpoint?: string;
   allowedPurposes?: string[];
   anchorRef?: string;
+  /** Total authorized spend in minor units (e.g. drops for XRP). Signed by the PA. */
+  budgetMinor?: string;
+  /** Currency code for budgetMinor (e.g. "XRP"). Required when budgetMinor is set. */
+  budgetCurrency?: string;
+  /** On-chain escrow locking budgetMinor. Format: "xrpl:escrow:{account}:{sequence}". Signed by the PA. */
+  budgetEscrowRef?: string;
+  /** Address of the only gateway authorized to spend against this grant's escrow. Rail-specific format. PA-signed. */
+  authorizedGateway?: string;
+  /** PA-signed per-transaction cap for offline merchant acceptance, in minor units (see offlineMaxSinglePaymentCurrency). */
+  offlineMaxSinglePayment?: string;
+  /** Currency code for offlineMaxSinglePayment (e.g. "XRP"). */
+  offlineMaxSinglePaymentCurrency?: string;
 }
 
 /**
@@ -30,5 +42,11 @@ export function createPolicyGrant(input: CreatePolicyGrantInput): PolicyGrantLik
     ...(input.revocationEndpoint ? { revocationEndpoint: input.revocationEndpoint } : {}),
     ...(input.allowedPurposes ? { allowedPurposes: input.allowedPurposes } : {}),
     ...(input.anchorRef ? { anchorRef: input.anchorRef } : {}),
+    ...(input.budgetMinor ? { budgetMinor: input.budgetMinor } : {}),
+    ...(input.budgetCurrency ? { budgetCurrency: input.budgetCurrency } : {}),
+    ...(input.budgetEscrowRef ? { budgetEscrowRef: input.budgetEscrowRef } : {}),
+    ...(input.authorizedGateway ? { authorizedGateway: input.authorizedGateway } : {}),
+    ...(input.offlineMaxSinglePayment ? { offlineMaxSinglePayment: input.offlineMaxSinglePayment } : {}),
+    ...(input.offlineMaxSinglePaymentCurrency ? { offlineMaxSinglePaymentCurrency: input.offlineMaxSinglePaymentCurrency } : {}),
   };
 }
