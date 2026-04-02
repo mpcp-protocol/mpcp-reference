@@ -4,7 +4,7 @@ Machine-to-machine payment loop for autonomous fleet vehicles.
 
 ## Scenario
 
-Robotaxi enters parking facility → parking meter sends payment request → vehicle evaluates fleet policy and session budget → vehicle signs SPA → payment executes on rail → parking system verifies MPCP chain → gate opens.
+Robotaxi enters parking facility → parking meter sends payment request → vehicle evaluates fleet policy and session budget → vehicle issues SBA → Trust Gateway verifies chain and executes XRPL payment → parking system verifies MPCP chain → gate opens.
 
 ## Architecture
 
@@ -15,18 +15,24 @@ Robotaxi enters parking facility → parking meter sends payment request → veh
 │                 │                            │  wallet)        │
 │ • request       │     MPCP artifacts         │                 │
 │ • verify        │ ◄────────────────────────  │ • policy check  │
-└────────┬────────┘     (SBA, SPA, intent)     │ • budget check  │
-         │                                      │ • sign SPA      │
+└────────┬────────┘     (PolicyGrant, SBA)     │ • budget check  │
+         │                                      │ • issue SBA     │
          │ verify                               └────────┬────────┘
          ▼                                                │
-┌─────────────────┐                                      │ execute
+┌─────────────────┐                                      │ SBA to gateway
 │    Verifier     │                                      ▼
 │ (local, no API) │                            ┌─────────────────┐
-└─────────────────┘                            │ Settlement Rail │
-         │                                      │ (mock / XRPL)   │
-         │ PASS                                 └─────────────────┘
-         ▼
-    Gate opens
+└─────────────────┘                            │  Trust Gateway  │
+         │                                      │ verify chain +  │
+         │ PASS                                 │ submit XRPL     │
+         ▼                                      └────────┬────────┘
+    Gate opens                                           │
+                                                         ▼
+                                               ┌─────────────────┐
+                                               │   XRPL Ledger   │
+                                               │ (mpcp/grant-id  │
+                                               │  memo attached) │
+                                               └─────────────────┘
 ```
 
 ## Components
@@ -35,8 +41,8 @@ Robotaxi enters parking facility → parking meter sends payment request → veh
 |-----------|------|
 | **Vehicle Agent** | MPCP SDK, wallet/signing keys, policy + budget enforcement |
 | **Parking Service** | Payment request endpoint, MPCP verification |
-| **Verifier** | Validates PolicyGrant → SBA → SPA → SettlementIntent chain |
-| **Settlement Rail** | Mock rail or XRPL |
+| **Verifier** | Validates PolicyGrant → SBA → Settlement chain |
+| **Trust Gateway** | Verifies SBA chain, submits XRPL payment with `mpcp/grant-id` memo |
 
 ## Run
 
@@ -73,7 +79,7 @@ Uses `examples/machine-commerce/fleet-policy.json` and `simulate.mjs`.
 
 - Autonomous payment authorization within fleet limits
 - Session budget enforcement
-- Deterministic SettlementIntent hashing
+- Trust Gateway handles XRPL execution with on-chain audit trail
 - Verification without centralized payment infrastructure
 
 ## See Also

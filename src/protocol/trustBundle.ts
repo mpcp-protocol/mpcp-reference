@@ -127,8 +127,9 @@ export function verifyTrustBundle(
 /**
  * Resolve an issuer's public key from a set of pre-loaded Trust Bundles.
  *
- * Implements step 1 of the MPCP key resolution algorithm:
- * https://mpcp-protocol.github.io/spec/protocol/key-resolution/
+ * Implements step 1 of the MPCP 3-step key resolution algorithm
+ * (Trust Bundle → Pre-configured key → HTTPS well-known).
+ * See mpcp-spec: docs/protocol/SignedBudgetAuthorization.md § Verification.
  *
  * Bundles are searched in descending `expiresAt` order so the most recently
  * issued bundle is preferred when multiple bundles cover the same issuer.

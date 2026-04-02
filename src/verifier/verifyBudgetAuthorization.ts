@@ -3,6 +3,7 @@ import { verifySignedSessionBudgetAuthorizationForDecision } from "../protocol/s
 import type { SignedSessionBudgetAuthorization } from "../protocol/sba.js";
 import { signedBudgetAuthorizationSchema } from "../protocol/schema/signedBudgetAuthorization.js";
 import { policyGrantForVerificationSchema } from "../protocol/schema/verifySchemas.js";
+import type { TrustBundle } from "../protocol/trustBundle.js";
 import type { VerificationResult } from "./types.js";
 import { verifyPolicyGrant } from "./verifyPolicyGrant.js";
 
@@ -22,7 +23,7 @@ export function verifyBudgetAuthorization(
   envelope: unknown,
   grant: unknown,
   decision: PaymentPolicyDecision,
-  options?: { nowMs?: number; cumulativeSpentMinor?: string },
+  options?: { nowMs?: number; cumulativeSpentMinor?: string; trustBundles?: TrustBundle[] },
 ): VerificationResult {
   // 1. Schema validation
   const sbaResult = signedBudgetAuthorizationSchema.safeParse(envelope);
@@ -55,7 +56,7 @@ export function verifyBudgetAuthorization(
   }
 
   // 5. Policy constraints (grant expiry)
-  const grantVerify = verifyPolicyGrant(grantParsed, options);
+  const grantVerify = verifyPolicyGrant(grantParsed, { nowMs: options?.nowMs, trustBundles: options?.trustBundles });
   if (!grantVerify.valid) return grantVerify;
 
   // 4. Budget limits + 5. Policy (SBA signature, expiry) — via protocol
@@ -64,6 +65,7 @@ export function verifyBudgetAuthorization(
     decision,
     nowMs: options?.nowMs,
     cumulativeSpentMinor: options?.cumulativeSpentMinor,
+    trustBundles: options?.trustBundles,
   });
   if (!result.ok) return { valid: false, reason: result.reason, artifact: "signedBudgetAuthorization" };
   return { valid: true };

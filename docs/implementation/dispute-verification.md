@@ -1,23 +1,28 @@
 # Dispute Verification
 
-Tooling to verify disputed settlements using the full MPCP chain plus optional ledger anchor.
+Tooling to verify disputed settlements using the full MPCP chain plus optional policy anchor.
 
 ## Purpose
 
 When a settlement is disputed, `verifyDisputedSettlement` validates:
 
-1. **MPCP chain** — PolicyGrant → SignedBudgetAuthorization → SignedPaymentAuthorization → SettlementIntent
-2. **Ledger anchor** (optional) — When provided, verifies the anchor is consistent with the settlement intent
+1. **MPCP chain** — PolicyGrant → SignedBudgetAuthorization → Settlement
+2. **Policy anchor** (optional) — When provided, verifies the `anchorRef` on the PolicyGrant is consistent with an on-chain record of the policy document
 
 ## Usage
 
 ```typescript
-import { verifyDisputedSettlement, mockAnchorIntentHash } from "mpcp-service";
-import { computeSettlementIntentHash } from "mpcp-service";
+import { verifyDisputedSettlement } from "mpcp-service";
 
 const result = verifyDisputedSettlement({
   context: settlementVerificationContext,
-  ledgerAnchor: await mockAnchorIntentHash(computeSettlementIntentHash(intent)),
+  // Optional: ledger anchor result from policy document anchoring
+  ledgerAnchor: {
+    anchorRef: grant.anchorRef,  // "hcs:0.0.12345:42" or "xrpl:nft:ABC123..."
+    rail: "hedera-hcs",
+    sequenceNumber: "42",
+    topicId: "0.0.12345",
+  },
 });
 
 if (result.verified) {
@@ -29,8 +34,8 @@ if (result.verified) {
 
 ## Inputs
 
-- **context** — Full `SettlementVerificationContext` (settlement, artifacts, policy grant, SBA, SPA, decision, settlement intent)
-- **ledgerAnchor** — Optional `AnchorResult` from intent anchoring
+- **context** — Full `SettlementVerificationContext` (settlement, policyGrant, signedBudgetAuthorization, decision)
+- **ledgerAnchor** — Optional `PolicyAnchorResult` from policy document anchoring
 
 ## Output
 
@@ -40,10 +45,23 @@ if (result.verified) {
 ## Failure Reasons
 
 - `settlement_verification_failed` — Standard MPCP chain verification failed
-- `anchor_provided_but_settlement_intent_missing` — Anchor provided but context has no settlement intent
-- `anchor_mismatch: ...` — Mock anchor txHash does not match intent hash
-- `anchor_rail_not_supported: ...` — Real ledger anchor verification not yet implemented
+- `anchor_provided_but_anchor_ref_missing` — Anchor provided but PolicyGrant has no `anchorRef`
+- `anchor_mismatch` — PolicyGrant `anchorRef` does not match the provided ledger anchor
+- `anchor_rail_not_supported` — Anchor rail not available for verification
 
-## Mock Anchor
+## Async Verification (Hedera HCS Mirror)
 
-Only mock anchors are supported. Real ledger verification (Hedera HCS, XRPL, EVM) is future work.
+Use `verifyDisputedSettlementAsync` to verify a Hedera HCS anchor by querying the mirror node:
+
+```typescript
+const result = await verifyDisputedSettlementAsync({
+  context: settlementVerificationContext,
+  ledgerAnchor: hcsAnchorResult,
+});
+```
+
+This fetches the anchored policy document from the Hedera mirror node and confirms it matches the PolicyGrant's `policyHash`.
+
+## XRPL Audit Trail
+
+Even without a policy document anchor, every XRPL payment submitted via the Trust Gateway includes an `mpcp/grant-id` memo. Disputes can reference this memo to confirm the on-chain payment was associated with the correct PolicyGrant.

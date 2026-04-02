@@ -2,11 +2,11 @@
 /**
  * Human-to-Agent Travel Budget Demo
  *
- * Alice (DID: did:key:z6Mk...) signs a PolicyGrant delegating an €800 travel budget
+ * Alice (DID: did:key:z6Mk...) signs a PolicyGrant delegating an $800 travel budget
  * to her AI trip planner for a 3-day Paris trip.
  *
  * Delegation chain:
- *   Alice (human, DID key) → PolicyGrant → AI Agent → SBA (TRIP) → SPA → Settlement
+ *   Alice (human, DID key) → PolicyGrant → AI Agent → SBA (TRIP) → Trust Gateway → XRPL Settlement
  *
  * Stops:
  *   Stop 1 — Hotel (Mercure Paris)        $250  cumulative: $250  ✓
@@ -20,7 +20,7 @@
  * Revocation demo:
  *   Alice revokes mid-trip via revocationEndpoint
  *   checkRevocation() → { revoked: true }
- *   Service provider refuses next SPA (business logic — verifier stays stateless)
+ *   Service provider refuses further payments
  *
  * Key concepts demonstrated:
  *   • Human DID as policy authority — PolicyGrant signed by Alice's key
@@ -43,7 +43,6 @@ const EXAMPLE_DIR = __dirname;
 // ─── Signing keys (ephemeral for demo; production uses Alice's DID key material) ─
 const aliceKeys = crypto.generateKeyPairSync("ed25519");   // Alice's human DID key
 const sbaKeys = crypto.generateKeyPairSync("ed25519");     // AI Agent session authority key
-const spaKeys = crypto.generateKeyPairSync("ed25519");     // AI Agent payment decision key
 
 process.env.MPCP_POLICY_GRANT_SIGNING_PRIVATE_KEY_PEM = aliceKeys.privateKey
   .export({ type: "pkcs8", format: "pem" }).toString();
@@ -57,19 +56,11 @@ process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM = sbaKeys.publicKey
   .export({ type: "spki", format: "pem" }).toString();
 process.env.MPCP_SBA_SIGNING_KEY_ID = "agent-sba-key-1";
 
-process.env.MPCP_SPA_SIGNING_PRIVATE_KEY_PEM = spaKeys.privateKey
-  .export({ type: "pkcs8", format: "pem" }).toString();
-process.env.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM = spaKeys.publicKey
-  .export({ type: "spki", format: "pem" }).toString();
-process.env.MPCP_SPA_SIGNING_KEY_ID = "agent-spa-key-1";
-
 const {
   createPolicyGrant,
   createSignedPolicyGrant,
   createBudgetAuthorization,
   createSignedBudgetAuthorization,
-  createSignedPaymentAuthorization,
-  createSettlementIntent,
   checkRevocation,
 } = await import("../../dist/sdk/index.js");
 const { runVerify } = await import("../../dist/cli/verify.js");
@@ -255,7 +246,7 @@ const purposeAllowed = policyGrant.allowedPurposes?.includes(SKIPPED_STOP.purpos
 if (!purposeAllowed) {
   console.log(`  ✗ Purpose '${SKIPPED_STOP.purpose}' not in allowedPurposes`);
   console.log(`    Allowed: ${ALLOWED_PURPOSES.join(", ")}`);
-  console.log(`  → Agent refuses to sign SPA. No SBA check, no payment.`);
+  console.log(`  → Agent refuses to submit SBA. No payment.`);
 }
 console.log("");
 
@@ -307,19 +298,7 @@ for (const stop of STOPS) {
     ],
   };
 
-  const intent = createSettlementIntent({
-    rail: "xrpl",
-    amount: stop.amountRail,
-    destination: stop.destination,
-    asset: ASSET,
-    createdAt: stop.settlementTime,
-  });
-  const spa = createSignedPaymentAuthorization(SESSION_ID, paymentPolicyDecision, {
-    settlementIntent: intent,
-    budgetId: signedBudgetAuth.authorization.budgetId,
-  });
-  if (!spa) throw new Error(`Failed to create SPA for ${stop.label}`);
-  console.log(`  ✓ SPA signed: amount=${stop.amountRail} RLUSD`);
+  console.log(`  ✓ SBA submitted to Trust Gateway → XRPL payment: amount=${stop.amountRail} RLUSD`);
 
   const settlement = {
     amount: stop.amountRail,
@@ -331,13 +310,10 @@ for (const stop of STOPS) {
 
   const bundle = {
     settlement,
-    settlementIntent: intent,
-    spa,
     sba: signedBudgetAuth,
     policyGrant: signedPolicyGrantFlat,
     paymentPolicyDecision,
     sbaPublicKeyPem: process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM,
-    spaPublicKeyPem: process.env.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM,
   };
   const bundlePath = join(EXAMPLE_DIR, stop.bundleFile);
   writeFileSync(bundlePath, JSON.stringify(bundle, null, 2));
@@ -364,7 +340,7 @@ const wouldSpend = cumulativeSpentMinor + BigInt(REJECTED_STOP.amountFiatMinor);
 console.log(
   `  ✗ Budget EXCEEDED: $${(Number(cumulativeSpentMinor) / 100).toFixed(2)} spent + $${(Number(REJECTED_STOP.amountFiatMinor) / 100).toFixed(2)} = $${(Number(wouldSpend) / 100).toFixed(2)} > $${(Number(TRIP_BUDGET_MINOR) / 100).toFixed(2)} budget`,
 );
-console.log(`  ✗ SPA not signed — payment refused`);
+console.log(`  ✗ SBA not submitted — payment refused`);
 console.log("");
 
 // ─── Post-trip audit ──────────────────────────────────────────────────────────
@@ -398,7 +374,7 @@ revokedAt = revokedTimestamp;
 console.log(`  [Alice's wallet] Grant revoked at ${revokedTimestamp}`);
 console.log("");
 
-// Step 3: merchant checks revocation before next SPA
+// Step 3: merchant checks revocation before next payment
 const checkAfter = await checkRevocation(REVOCATION_ENDPOINT, policyGrant.grantId);
 console.log(`  checkRevocation() after revocation:  revoked=${checkAfter.revoked}  revokedAt=${checkAfter.revokedAt}`);
 console.log("");

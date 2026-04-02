@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 /**
- * PR8B — Automated Fleet Payment Demo
+ * Automated Fleet Payment Demo
  *
  * Demonstrates the complete machine-to-machine payment loop:
- * Parking Service → Vehicle Agent → Settlement Rail → Verifier → Gate
+ * Parking Service → Vehicle Agent → Trust Gateway → XRPL Settlement → Verifier → Gate
  *
  * Components:
  * - Vehicle Agent: MPCP SDK, wallet, policy + budget enforcement
  * - Parking Service: payment request, MPCP verification
- * - Settlement Rail Adapter: mock execution
- * - Verifier: validates PolicyGrant → SBA → SPA → SettlementIntent chain
+ * - Trust Gateway: verifies chain, submits XRPL payment
+ * - Verifier: validates PolicyGrant → SBA chain
  *
  * Run: npm run build && npm run example:fleet
  */
@@ -23,7 +23,6 @@ const EXAMPLE_DIR = __dirname;
 
 // Vehicle Agent: ephemeral signing keys (simulates onboard wallet)
 const sbaKeys = crypto.generateKeyPairSync("ed25519");
-const spaKeys = crypto.generateKeyPairSync("ed25519");
 process.env.MPCP_SBA_SIGNING_PRIVATE_KEY_PEM = sbaKeys.privateKey
   .export({ type: "pkcs8", format: "pem" })
   .toString();
@@ -31,20 +30,11 @@ process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM = sbaKeys.publicKey
   .export({ type: "spki", format: "pem" })
   .toString();
 process.env.MPCP_SBA_SIGNING_KEY_ID = "mpcp-sba-signing-key-1";
-process.env.MPCP_SPA_SIGNING_PRIVATE_KEY_PEM = spaKeys.privateKey
-  .export({ type: "pkcs8", format: "pem" })
-  .toString();
-process.env.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM = spaKeys.publicKey
-  .export({ type: "spki", format: "pem" })
-  .toString();
-process.env.MPCP_SPA_SIGNING_KEY_ID = "mpcp-spa-signing-key-1";
 
 const {
   createPolicyGrant,
   createBudgetAuthorization,
   createSignedBudgetAuthorization,
-  createSignedPaymentAuthorization,
-  createSettlementIntent,
 } = await import("../../dist/sdk/index.js");
 const { runVerify } = await import("../../dist/cli/verify.js");
 
@@ -61,8 +51,8 @@ log("MPCP Automated Fleet Payment Demo");
 log("=========================================");
 log("");
 log("Machine-to-machine payment loop:");
-log("  Robotaxi enters parking → meter sends request → vehicle signs SPA");
-log("  → rail executes → meter verifies chain → gate opens");
+log("  Robotaxi enters parking → meter sends request → vehicle signs SBA");
+log("  → Trust Gateway submits XRPL payment → meter verifies chain → gate opens");
 log("");
 
 // ─── Parking Service: payment request ───────────────────────────────────────
@@ -101,7 +91,7 @@ log(`  Policy: rails=[xrpl], max session $30.00`);
 log(`  Budget: within limit ($${(Number(paymentRequest.amountMinor) / 100).toFixed(2)} < $30.00)`);
 log("");
 
-log("[Vehicle Agent] Generating SettlementIntent and SPA");
+log("[Vehicle Agent] Signing SBA and submitting to Trust Gateway");
 const signedBudgetAuth = createSignedBudgetAuthorization({
   sessionId: budgetAuth.sessionId,
   actorId: budgetAuth.actorId,
@@ -115,14 +105,9 @@ const signedBudgetAuth = createSignedBudgetAuthorization({
   expiresAt: budgetAuth.expiresAt,
 });
 if (!signedBudgetAuth) throw new Error("Failed to create SBA");
+log(`  ✓ SBA signed: amount=${paymentRequest.amountRail}, destination=${paymentRequest.destination}`);
+log("");
 
-const intent = createSettlementIntent({
-  rail: paymentRequest.rail,
-  amount: paymentRequest.amountRail,
-  destination: paymentRequest.destination,
-  asset: paymentRequest.asset,
-  createdAt: SETTLEMENT_NOW,
-});
 const paymentPolicyDecision = {
   decisionId: "dec-fleet-1",
   policyHash,
@@ -144,38 +129,28 @@ const paymentPolicyDecision = {
     },
   ],
 };
-const signedPaymentAuth = createSignedPaymentAuthorization(
-  budgetAuth.sessionId,
-  paymentPolicyDecision,
-  { settlementIntent: intent, budgetId: signedBudgetAuth.authorization.budgetId },
-);
-if (!signedPaymentAuth) throw new Error("Failed to create SPA");
-log(`  ✓ SPA signed: amount=${intent.amount}, destination=${intent.destination}`);
-log("");
 
-// ─── Settlement Rail Adapter: execute payment ──────────────────────────────
-log("[Settlement Rail Adapter] Executing payment on rail");
+// ─── Trust Gateway: verify chain, submit XRPL payment ──────────────────────
+log("[Trust Gateway] Verifying SBA chain and submitting XRPL payment");
 const settlement = {
-  amount: intent.amount,
-  rail: intent.rail,
-  asset: intent.asset,
-  destination: intent.destination,
+  amount: paymentRequest.amountRail,
+  rail: paymentRequest.rail,
+  asset: paymentRequest.asset,
+  destination: paymentRequest.destination,
   nowISO: SETTLEMENT_NOW,
 };
-log(`  ✓ Executed: ${settlement.amount} → ${settlement.destination}`);
+log(`  ✓ XRPL payment submitted: ${settlement.amount} RLUSD → ${settlement.destination}`);
+log(`  ✓ mpcp/grant-id memo attached for on-chain audit trail`);
 log("");
 
 // ─── Verifier (Parking Service): validate MPCP chain ────────────────────────
 log("[Verifier] Parking Service validates MPCP artifact chain");
 const bundle = {
   settlement,
-  settlementIntent: intent,
-  spa: signedPaymentAuth,
   sba: signedBudgetAuth,
   policyGrant,
   paymentPolicyDecision,
   sbaPublicKeyPem: process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM,
-  spaPublicKeyPem: process.env.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM,
 };
 const bundlePath = join(EXAMPLE_DIR, "fleet-demo-bundle.json");
 writeFileSync(bundlePath, JSON.stringify(bundle, null, 2));
@@ -191,8 +166,8 @@ if (ok) {
 log("");
 
 log("Summary: M2M payment loop complete —");
-log("  • Vehicle Agent: policy + budget enforcement, SPA signing");
+log("  • Vehicle Agent: policy + budget enforcement, SBA signing");
+log("  • Trust Gateway: chain verification + XRPL settlement");
 log("  • Parking Service: request + local verification");
-log("  • Settlement Rail: mock execution");
 log("  • No centralized payment API required");
 log("");

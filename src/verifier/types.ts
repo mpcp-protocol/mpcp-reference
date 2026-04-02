@@ -2,6 +2,7 @@ import type {
   PaymentPolicyDecision,
 } from "../policy-core/types.js";
 import type { SignedSessionBudgetAuthorization } from "../protocol/sba.js";
+import type { TrustBundle } from "../protocol/trustBundle.js";
 
 /** Minimal grant shape for verification */
 export interface PolicyGrantLike {
@@ -92,4 +93,8 @@ export interface SettlementVerificationContext {
    *  When provided, budget check becomes: cumulativeSpentMinor + currentAmount <= maxAmountMinor.
    *  Session authority MUST maintain this counter for correct cumulative enforcement. */
   cumulativeSpentMinor?: string;
+  /** Pre-verified Trust Bundles for offline key resolution.
+   *  When provided, SBA and PolicyGrant signature verification resolves issuer keys
+   *  from the bundles before falling back to env-var or HTTPS well-known. */
+  trustBundles?: TrustBundle[];
 }

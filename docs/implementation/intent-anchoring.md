@@ -1,52 +1,54 @@
-# Intent Anchoring
+# Policy Anchoring
 
-Optional support for publishing intent hashes to distributed ledgers. Provides public auditability, dispute protection, and replay protection.
+Optional support for publishing MPCP policy documents to distributed ledgers. Provides public auditability, dispute protection, and tamper-evident policy history.
 
-**Mock anchor** is included for development. **Hedera HCS** adapter is implemented. XRPL and EVM are future work.
+**Hedera HCS** adapter is implemented (publish policy document to a topic). **XRPL NFT** adapter is implemented (mint an NFT representing the policy document). Both return an `anchorRef` that is stored on the PolicyGrant.
 
 ## Purpose
 
-- **Public auditability** — Intent hashes can be verified against a public record
-- **Dispute protection** — Timestamped proof of intent before settlement
-- **Replay protection** — Ledger sequence provides ordering and uniqueness
+- **Public auditability** — Policy documents can be verified against a public ledger record
+- **Dispute protection** — Timestamped proof that a policy document existed before settlement
+- **Tamper evidence** — On-chain record makes retroactive policy modification detectable
 
-## Supported Rails
+## anchorRef Format
 
-| Rail | Description |
-|------|-------------|
-| Hedera HCS | Hashgraph Consensus Service topic |
-| XRPL | XRP Ledger memo or dedicated table |
-| EVM | Ethereum / EVM-compatible chain |
-| mock | Development and testing (no ledger) |
+The `anchorRef` field on a PolicyGrant identifies the on-chain location of the anchored policy document:
+
+| Format | Rail | Example |
+|--------|------|---------|
+| `hcs:{topicId}:{seq}` | Hedera HCS | `hcs:0.0.12345:42` |
+| `xrpl:nft:{tokenId}` | XRPL NFT | `xrpl:nft:ABC123...` |
 
 ## Usage
 
 ```typescript
-import { computeSettlementIntentHash, mockAnchorIntentHash, hederaHcsAnchorIntentHash } from "mpcp-service";
+import { hederaHcsAnchorPolicyDocument, checkXrplNftRevocation } from "mpcp-service/anchor";
 
-const intent = { version: "1.0", rail: "xrpl", amount: "1000", destination: "rDest..." };
-const intentHash = computeSettlementIntentHash(intent);
+const policyDoc = { version: "1.0", policyHash: "a1b2c3...", issuedAt: "2026-01-01T00:00:00Z" };
 
-// Mock anchor (development)
-const mockResult = await mockAnchorIntentHash(intentHash, { rail: "mock" });
-// { rail: "mock", txHash: "mock-...", anchoredAt: "..." }
+// Hedera HCS (requires MPCP_HCS_POLICY_TOPIC_ID, MPCP_HCS_OPERATOR_ID, MPCP_HCS_OPERATOR_KEY)
+const result = await hederaHcsAnchorPolicyDocument(policyDoc);
+// { anchorRef: "hcs:0.0.12345:42", rail: "hedera-hcs", anchoredAt: "..." }
 
-// Hedera HCS (requires @hashgraph/sdk, HEDERA_OPERATOR_*, HEDERA_TOPIC_ID)
-const hederaResult = await hederaHcsAnchorIntentHash(intentHash, { rail: "hedera-hcs" });
-// { rail: "hedera-hcs", topicId, sequenceNumber, intentHash, anchoredAt }
+// Store the anchorRef on the PolicyGrant
+const grant = createPolicyGrant({
+  policyHash: "a1b2c3",
+  allowedRails: ["xrpl"],
+  allowedAssets: [...],
+  expiresAt: "2030-12-31T23:59:59Z",
+  anchorRef: result.anchorRef,
+});
 ```
 
-## Anchor Result
+## PolicyAnchorResult
 
 ```typescript
-interface AnchorResult {
+interface PolicyAnchorResult {
+  anchorRef: string;         // "hcs:{topicId}:{seq}" | "xrpl:nft:{tokenId}"
   rail: AnchorRail;
-  txHash?: string;           // XRPL, EVM transaction hash
-  reference?: string;        // Rail-neutral reference (e.g. topicId:sequenceNumber)
-  consensusTimestamp?: string; // Hedera HCS (ISO 8601)
-  topicId?: string;          // Hedera HCS
-  sequenceNumber?: string;   // Hedera HCS
-  intentHash?: string;        // For verification
+  txHash?: string;           // XRPL transaction hash
+  topicId?: string;          // Hedera HCS topic ID
+  sequenceNumber?: string;   // Hedera HCS sequence number
   anchoredAt?: string;       // ISO 8601
 }
 ```
@@ -59,25 +61,32 @@ Anchoring is **optional**. MPCP verification does not require an anchor. Anchors
 - Audit trails
 - Compliance and attestation
 
-## Mock Anchor
-
-The `mockAnchorIntentHash` function simulates anchoring without contacting a ledger. Use for:
-
-- Development
-- Testing
-- Demos
-
-**Validation:** Requires 64-char hex intentHash. Throws on invalid input. Only accepts `rail: "mock"` — passing other rails throws to avoid confusion with real ledger behavior.
-
 ## Hedera HCS Adapter
 
-The Hedera HCS adapter publishes intent hashes to a Hedera Consensus Service topic.
+The Hedera HCS adapter publishes policy documents to a Hedera Consensus Service topic.
 
 **Requirements:**
 - `npm install @hashgraph/sdk` (optional peer dependency; install when using Hedera HCS)
-- `HEDERA_OPERATOR_ACCOUNT_ID` — Operator account ID
-- `HEDERA_OPERATOR_PRIVATE_KEY` — Operator private key (DER or hex)
-- `HEDERA_TOPIC_ID` — HCS topic ID
+- `MPCP_HCS_OPERATOR_ID` — Operator account ID
+- `MPCP_HCS_OPERATOR_KEY` — Operator private key (DER or hex)
+- `MPCP_HCS_POLICY_TOPIC_ID` — HCS topic ID for policy anchoring
 - `HEDERA_NETWORK` (optional) — `testnet` or `mainnet`, default `testnet`
 
-**Verification:** Use `verifyDisputedSettlementAsync` for full verification against the Hedera mirror node. The sync `verifyDisputedSettlement` accepts hedera-hcs anchors when `intentHash` is present in the anchor result.
+## XRPL NFT Adapter
+
+The XRPL NFT adapter mints an NFT on the XRP Ledger representing the policy document. The NFT token ID becomes the `anchorRef`.
+
+**Revocation check:** Use `checkXrplNftRevocation(tokenId)` to verify whether the NFT has been burned (which signals policy revocation).
+
+```typescript
+import { checkXrplNftRevocation } from "mpcp-service/anchor";
+
+const revoked = await checkXrplNftRevocation("ABC123...");
+if (revoked) {
+  // Policy has been revoked on-chain
+}
+```
+
+## XRPL Payment Memos
+
+Every XRPL payment submitted via the Trust Gateway includes an `mpcp/grant-id` memo field. This provides a lightweight on-chain audit trail linking each payment to its PolicyGrant — even without a full policy document anchor.

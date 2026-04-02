@@ -4,7 +4,7 @@ Named deployment profiles for MPCP. Adopters choose a profile instead of inventi
 
 ## Profiles
 
-| Profile | Use Case | Rails | Offline | Intent Anchor |
+| Profile | Use Case | Rails | Offline | Policy Anchor |
 |---------|----------|-------|---------|---------------|
 | Fleet Offline | Pre-auth budgets, no network at payment | xrpl, evm | yes | optional |
 | Parking | Meter/gate, short sessions | xrpl | yes | optional |
@@ -16,13 +16,13 @@ Named deployment profiles for MPCP. Adopters choose a profile instead of inventi
 
 ## Fleet Offline Profile
 
-**Use case:** Fleet vehicles with pre-authorized spending envelopes. Payment can complete without network at payment time.
+**Use case:** Fleet vehicles with pre-authorized spending envelopes. Payment authorization can complete without network at payment time; settlement executes via Trust Gateway when connectivity returns.
 
 **Characteristics:**
 - PolicyGrant + SBA loaded before going offline
-- SPA signed locally by vehicle
-- Verifier (e.g. parking meter) validates chain locally
-- Settlement reconciled when connectivity returns
+- SBA verified locally by merchant
+- Trust Gateway submits XRPL payment with `mpcp/grant-id` memo when connectivity returns
+- Settlement reconciled using on-chain XRPL record
 
 **Policy shape:** `maxSessionSpend`, `allowedRails`, `allowedAssets`, `destinations`, `expiresAt`
 
@@ -77,6 +77,7 @@ Named deployment profiles for MPCP. Adopters choose a profile instead of inventi
 - Rail: `xrpl` only
 - Asset: `kind: IOU`, `currency`, `issuer` — issuer must be validated by wallet/verifier
 - Wallet and verifier expectations for stablecoin settlement documented
+- All payments flow through Trust Gateway; `mpcp/grant-id` memo attached to every XRPL transaction
 
 **Example:** `profiles/xrpl-stablecoin.json`
 
@@ -96,4 +97,4 @@ mpcp policy-summary profiles/xrpl-stablecoin.json --profile xrpl-stablecoin
 mpcp policy-summary examples/machine-commerce/fleet-policy.json --profile parking
 ```
 
-Validation checks: `allowedRails` in the policy must be a subset of the profile’s allowed rails; if the policy declares `_profile`, it must match the profile name.
+Validation checks: `allowedRails` in the policy must be a subset of the profile's allowed rails; if the policy declares `_profile`, it must match the profile name.

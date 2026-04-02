@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 /**
- * PR8D — Offline Payment Authorization Demo
+ * Offline Payment Authorization Demo
  *
  * Demonstrates MPCP enabling payments when network connectivity is unavailable.
  * Vehicle holds pre-authorized policy chain (PolicyGrant + SBA), evaluates locally,
- * signs SPA locally, parking verifies locally — no central backend.
+ * and submits the SBA to the Trust Gateway when connectivity returns.
+ * Parking meter verifies the SBA chain locally — no central backend required.
  *
  * Run: npm run build && npm run example:offline
  */
@@ -17,7 +18,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const EXAMPLE_DIR = __dirname;
 
 const sbaKeys = crypto.generateKeyPairSync("ed25519");
-const spaKeys = crypto.generateKeyPairSync("ed25519");
 process.env.MPCP_SBA_SIGNING_PRIVATE_KEY_PEM = sbaKeys.privateKey
   .export({ type: "pkcs8", format: "pem" })
   .toString();
@@ -25,20 +25,11 @@ process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM = sbaKeys.publicKey
   .export({ type: "spki", format: "pem" })
   .toString();
 process.env.MPCP_SBA_SIGNING_KEY_ID = "mpcp-sba-signing-key-1";
-process.env.MPCP_SPA_SIGNING_PRIVATE_KEY_PEM = spaKeys.privateKey
-  .export({ type: "pkcs8", format: "pem" })
-  .toString();
-process.env.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM = spaKeys.publicKey
-  .export({ type: "spki", format: "pem" })
-  .toString();
-process.env.MPCP_SPA_SIGNING_KEY_ID = "mpcp-spa-signing-key-1";
 
 const {
   createPolicyGrant,
   createBudgetAuthorization,
   createSignedBudgetAuthorization,
-  createSignedPaymentAuthorization,
-  createSettlementIntent,
 } = await import("../../dist/sdk/index.js");
 const { runVerify } = await import("../../dist/cli/verify.js");
 
@@ -58,7 +49,7 @@ log("Scenario: Vehicle enters underground garage — NO NETWORK");
 log("");
 
 log("1. Pre-trip: Vehicle loads policy chain (while online)");
-log("   FleetPolicy → PolicyGrant → BudgetAuthorization → SBA");
+log("   PolicyGrant → SBA");
 const policyGrant = createPolicyGrant({
   policyHash,
   allowedRails: ["xrpl"],
@@ -112,14 +103,20 @@ log("   ✓ Destination in allowlist");
 log("   ✓ Asset and rail permitted");
 log("");
 
-log("5. Vehicle signs SPA locally");
-const intent = createSettlementIntent({
-  rail: paymentRequest.rail,
-  amount: paymentRequest.amountRail,
-  destination: paymentRequest.destination,
-  asset: paymentRequest.asset,
-  createdAt: SETTLEMENT_NOW,
+log("5. Vehicle presents signed SBA (per-payment)");
+const paymentSba = createSignedBudgetAuthorization({
+  sessionId: budgetAuth.sessionId,
+  actorId: budgetAuth.actorId,
+  policyHash: budgetAuth.policyHash,
+  currency: budgetAuth.currency,
+  maxAmountMinor: paymentRequest.amountMinor,
+  allowedRails: budgetAuth.allowedRails,
+  allowedAssets: budgetAuth.allowedAssets,
+  destinationAllowlist: budgetAuth.destinationAllowlist,
+  expiresAt: budgetAuth.expiresAt,
 });
+if (!paymentSba) throw new Error("Failed to create payment SBA");
+
 const paymentPolicyDecision = {
   decisionId: "dec-offline-1",
   policyHash,
@@ -141,32 +138,23 @@ const paymentPolicyDecision = {
     },
   ],
 };
-const signedPaymentAuth = createSignedPaymentAuthorization(
-  budgetAuth.sessionId,
-  paymentPolicyDecision,
-  { settlementIntent: intent },
-);
-if (!signedPaymentAuth) throw new Error("Failed to create SPA");
-log(`   ✓ SPA signed: amount=${intent.amount}, destination=${intent.destination}`);
+log(`   ✓ SBA signed: amount=${paymentRequest.amountMinor} cents, destination=${paymentRequest.destination}`);
 log("");
 
 log("6. Parking system verifies MPCP chain locally");
 const settlement = {
-  amount: intent.amount,
-  rail: intent.rail,
-  asset: intent.asset,
-  destination: intent.destination,
+  amount: paymentRequest.amountRail,
+  rail: paymentRequest.rail,
+  asset: paymentRequest.asset,
+  destination: paymentRequest.destination,
   nowISO: SETTLEMENT_NOW,
 };
 const bundle = {
   settlement,
-  settlementIntent: intent,
-  spa: signedPaymentAuth,
-  sba: signedBudgetAuth,
+  sba: paymentSba,
   policyGrant,
   paymentPolicyDecision,
   sbaPublicKeyPem: process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM,
-  spaPublicKeyPem: process.env.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM,
 };
 const bundlePath = join(EXAMPLE_DIR, "offline-demo-bundle.json");
 writeFileSync(bundlePath, JSON.stringify(bundle, null, 2));
@@ -182,13 +170,13 @@ if (ok) {
 log("");
 
 log("7. Later: reconciliation when connectivity returns");
-log("   Parking system can submit settlement to rail, reconcile with fleet.");
+log("   Vehicle submits SBA to Trust Gateway → XRPL payment settled.");
 log("");
 
 log("Summary: Offline payment —");
 log("  • Pre-authorized policy chain (PolicyGrant + SBA)");
 log("  • Local authorization decisions");
-log("  • Local SPA signing");
+log("  • Per-payment SBA signing (no SPA required)");
 log("  • Local verification (no central API)");
 log("  • Resilient payment during network outage");
 log("");

@@ -39,13 +39,11 @@ The example generates the MPCP authorization chain:
 |------|----------|-------------|
 | policy-grant.json | PolicyGrant | Permission envelope (allowedRails, policyHash, expiresAt) |
 | budget-auth.json | BudgetAuthorization | Unsigned spending envelope |
-| signed-budget-auth.json | SignedBudgetAuthorization (SBA) | Signed budget; session max $30 |
-| spa.json | SignedPaymentAuthorization (SPA) | Signed payment binding (amount, destination, intentHash) |
-| settlement-intent.json | SettlementIntent | Canonical intent for hashing |
-| settlement.json | Settlement | Executed settlement record |
+| signed-budget-auth.json | SignedBudgetAuthorization (SBA) | Signed budget for this payment (maxAmountMinor) |
+| settlement.json | Settlement | Executed settlement record (via Trust Gateway → XRPL) |
 | settlement-bundle.json | Bundle | All artifacts combined for verification |
 
-Chain flow: **PolicyGrant → SBA → SPA → Settlement → Verification**
+Chain flow: **PolicyGrant → SBA → Trust Gateway → XRPL Settlement → Verification**
 
 ## 5. Verify the Bundle
 

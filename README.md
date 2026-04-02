@@ -1,114 +1,76 @@
-# MPCP Service
+# MPCP Reference Implementation
 
-**Reference implementation of the Machine Payment Control Protocol (MPCP).**
+**Canonical TypeScript implementation of the Machine Payment Control Protocol (MPCP).**
 
-MPCP defines a policy‑bounded authorization pipeline for autonomous and software‑initiated payments.  
-This repository contains the **core protocol implementation** used to issue, verify, and enforce MPCP authorization artifacts.
+MPCP defines a policy-bounded authorization pipeline for autonomous and software-initiated payments.
+This repository contains the **core protocol SDK** used to issue, verify, and enforce MPCP authorization artifacts.
 
-The service is designed to sit between **application logic** (such as parking systems, EV charging networks, robotics platforms, or AI agents) and **settlement rails** (XRPL, EVM chains, or hosted payment providers).
+For the protocol rationale, see [What is MPCP](https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/overview/what-is-mpcp.md).
 
-For the rationale behind the protocol, see:
+For the full specification, see [mpcp-spec](https://github.com/mpcp-protocol/mpcp-spec).
 
-[Why MPCP Exists](https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/overview/what-is-mpcp.md)
-
-For the full documentation site (overview, guides, examples, reference), see **[docs/](./docs/)**.
-
-For the full protocol specification, see:
-
-[Machine Payment Control Protocol Specification](https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/protocol/mpcp.md)
-
-This document defines the MPCP artifacts, verification rules, canonical hashing, replay protection, the authorization lifecycle, and the verification algorithm used by MPCP implementations.
-
-## Documentation Layout
-
-This repository contains one documentation layer:
-
-- **docs/** — Developer documentation site (guides, examples, reference, API)
-
-The canonical protocol specification lives in the [mpcp-spec](https://github.com/mpcp-protocol/mpcp-spec) repository.
+For developer documentation (guides, examples, reference), see **[docs/](./docs/)**.
 
 ---
 
 # Quick Start
 
-The following example demonstrates the core MPCP lifecycle: entry policy evaluation → payment authorization → settlement verification.
-
 ```ts
 import {
-  evaluateEntryPolicy,
-  evaluatePaymentPolicy,
-  enforcePayment,
-  computeIntentHash,
-  canonicalJson,
-  type MPCPPolicy,
+  createPolicyGrant,
+  createSignedBudgetAuthorization,
+  verifyPolicyGrant,
+  verifySettlement,
 } from "mpcp-service/sdk";
 
-// Policy schema version is numeric (1). Protocol artifact versioning uses semantic strings ("1.0") per the spec.
-const policy: MPCPPolicy = { version: 1, lotAllowlist: ["LOT-A"], railAllowlist: ["xrpl"], capPerTxMinor: "5000" };
-const now = new Date().toISOString();
-const asset = { kind: "IOU" as const, currency: "USDC", issuer: "rIssuer" };
-
-// 1. Entry: evaluate policy → PolicyGrant
-const grant = evaluateEntryPolicy({ policy, lotId: "LOT-A", nowISO: now, railsOffered: ["xrpl"], assetsOffered: [asset] });
-// grant.grantAction === "ALLOW"
-
-// 2. Payment: evaluate payment policy → PaymentPolicyDecision
-const decision = evaluatePaymentPolicy({
-  policy,
-  lotId: "LOT-A",
-  nowISO: now,
-  sessionGrantId: grant.grantId,
-  priceFiat: { amountMinor: "1000", currency: "USD" },
-  railsOffered: ["xrpl"],
-  assetsOffered: [asset],
-});
-// decision.action === "ALLOW"
-
-// 3. Settlement: verify executed payment matches decision
-const result = enforcePayment(decision, {
-  amount: "1000",
-  rail: "xrpl",
-  destination: "rDestination",
-  asset,
-});
-// result.allowed === true
-
-// Canonical intent helpers
-const intent = {
-  rail: "xrpl",
-  destination: "rDestination",
-  amount: "1000",
-  asset: { kind: "IOU" as const, currency: "USDC", issuer: "rIssuer" },
-};
-
-const hash = computeIntentHash(intent);
-
-const canonical = canonicalJson({
-  rail: "xrpl",
-  destination: "rDestination",
-  amount: "1000",
+// 1. Issue a PolicyGrant (Policy Authority)
+const grant = createPolicyGrant({
+  policyHash: "a1b2c3d4e5f6",
+  expiresAt: "2030-12-31T23:59:59Z",
+  allowedRails: ["xrpl"],
+  allowedAssets: [{ kind: "IOU", currency: "RLUSD", issuer: "rIssuer" }],
 });
 
-console.log(hash);
-console.log(canonical);
+// 2. Create and sign an SBA (machine wallet / AI agent)
+// Requires MPCP_SBA_SIGNING_PRIVATE_KEY_PEM env var
+const sba = createSignedBudgetAuthorization({
+  grantId: grant.grantId,
+  sessionId: "sess-123",
+  actorId: "agent-1",
+  policyHash: "a1b2c3d4e5f6",
+  currency: "USD",
+  maxAmountMinor: "1500",
+  allowedRails: ["xrpl"],
+  allowedAssets: [{ kind: "IOU", currency: "RLUSD", issuer: "rIssuer" }],
+  destinationAllowlist: ["rMerchant"],
+  expiresAt: "2030-12-31T23:59:59Z",
+  // issuer: "vehicle:ev-001.fleet.example.com", // for Trust Bundle key resolution
+});
+
+// 3. Verify the chain (merchant / Trust Gateway)
+const result = verifySettlement({
+  policyGrant: grant,
+  signedBudgetAuthorization: sba,
+  paymentPolicyDecision: decision,
+});
+// result.valid === true
 ```
-
-To issue **SignedBudgetAuthorization** and **SignedPaymentAuthorization**, configure `MPCP_SBA_SIGNING_*` and `MPCP_SPA_SIGNING_*` env vars, then use `createSignedBudgetAuthorization` and `createSignedPaymentAuthorization` from `mpcp-service/sdk`.
 
 ---
 
-# What MPCP Solves
+# MPCP Authorization Pipeline
 
-Traditional payment systems assume a **human approving every transaction**.
+```
+PolicyGrant (issued by Policy Authority)
+      ↓
+SignedBudgetAuthorization / SBA (signed by machine wallet or AI agent)
+      ↓
+Trust Gateway (verifies chain, enforces budget ceiling, submits XRPL payment)
+      ↓
+XRPL Settlement (EscrowFinish + mpcp/grant-id memo)
+```
 
-Machine economies require a different model:
-
-- autonomous vehicles paying for parking or charging
-- delivery robots paying for infrastructure access
-- IoT devices purchasing services
-- AI agents executing programmatic purchases
-
-MPCP introduces a **cryptographically enforced authorization pipeline** that constrains these payments through signed artifacts and deterministic verification.
+Each stage cryptographically constrains the next. The Trust Gateway is the mandatory settlement actor for the XRPL profile — it holds the budget escrow and submits on-chain payments.
 
 ---
 
@@ -116,187 +78,56 @@ MPCP introduces a **cryptographically enforced authorization pipeline** that con
 
 ## PolicyGrant
 
-The result of entry policy evaluation. Grants a session permission to enter a lot (or scope) and defines the allowed rails, assets, and spending caps for that session. Includes a `policyHash` that binds subsequent authorizations to the evaluated policy.
+Issued by the Policy Authority. Grants a session permission to spend within a defined budget envelope. Specifies allowed rails, allowed assets, destination constraints, and budget ceiling (`budgetMinor`). Includes a `policyHash` that binds downstream SBAs to the evaluated policy. Optionally includes `revocationEndpoint`, `anchorRef`, and `authorizedGateway`.
 
 ## SBA (SignedBudgetAuthorization)
 
-SignedBudgetAuthorization authorizes a spending envelope for a session. It specifies a budget (`maxAmountMinor`), allowed rails, allowed assets, and destination allowlist. The SBA is cryptographically signed before the session begins. It constrains subsequent payment authorizations.
-
-## SPA (SignedPaymentAuthorization)
-
-SignedPaymentAuthorization binds a specific payment to a policy decision. It includes the decision ID, rail, asset, amount, destination, and optional `intentHash`. The SPA is signed when the payment is authorized. It is verified against the executed settlement.
-
-## intentHash
-
-A deterministic hash of a settlement intent (e.g. `SHA256(canonicalJson(intent))`). Used to bind a payment authorization to a specific settlement intent. Ensures the executed settlement matches the authorized intent.
+Signed by the machine wallet or AI agent for each payment. Specifies `maxAmountMinor`, allowed rails, allowed assets, and destination allowlist. Cryptographically binds the payment to the grant's `policyHash` and `grantId`. The Trust Gateway verifies the full chain (SBA → PolicyGrant) before submitting to XRPL.
 
 ---
 
-# MPCP Authorization Pipeline
+# Core SDK Exports
 
-```
-Policy
-   ↓
-PolicyGrant
-   ↓
-SignedBudgetAuthorization (SBA)
-   ↓
-SignedPaymentAuthorization (SPA)
-   ↓
-Settlement Execution
-   ↓
-Settlement Verification
-   ↓
-Optional Intent Attestation
-```
+```ts
+// Artifact construction
+createPolicyGrant, createSignedPolicyGrant, createSignedBudgetAuthorization
 
-Each stage cryptographically constrains the next.
+// Verification
+verifyPolicyGrant, verifySettlement, verifySettlementWithReport, verifySettlementDetailed
 
----
+// On-chain adapters
+resolveXrplDid, hederaHcsAnchorPolicyDocument, checkXrplNftRevocation
 
-# Core Components in This Repository
+// Revocation
+checkRevocation
 
-This repository implements the MPCP protocol core and reference verification engine.
-It does not yet include the full MPCP network service.
+// Trust Bundles (offline key resolution)
+signTrustBundle, verifyTrustBundle, resolveFromTrustBundle
 
-## Policy Engine
-
-Evaluates machine payment policies and produces `PolicyGrant` artifacts.
-
-```
-policy-core/
+// Schemas and canonical JSON hashing
+canonicalJson, hashPolicyDocument
 ```
 
-Responsibilities:
-
-- policy evaluation
-- operator allowlists
-- lot / geographic restrictions
-- spending caps
-- approval requirements
-
----
-
-## Authorization Artifacts
-
-Definitions and helpers for the core MPCP artifacts:
-
-- **PolicyGrant**
-- **SignedBudgetAuthorization (SBA)**
-- **SignedPaymentAuthorization (SPA)**
-
-Artifacts contain the parameters that bound autonomous spending.
-
----
-
-## Intent Hashing
-
-Implements deterministic hashing for payment intents.
-
-Components include:
-
-- canonical JSON serialization
-- `intentHash` computation
-
-These are used to bind authorizations to a specific settlement intent.
-
-## Intent Anchoring (optional)
-
-Optional support for publishing intent hashes to distributed ledgers (public auditability, dispute protection). **Mock anchor** for development; **Hedera HCS** adapter for real anchoring. See [Intent Anchoring](./docs/implementation/intent-anchoring.md).
-
-## Dispute Verification (optional)
-
-`verifyDisputedSettlement` validates disputed settlements using the full MPCP chain plus optional ledger anchor. See [Dispute Verification](./docs/implementation/dispute-verification.md).
-
-## Reference Service API (optional)
-
-Backend-friendly facade: `issueBudget`, `verifySettlementService`, `verifyDispute` / `verifyDisputeAsync`, `anchorIntent`. See [Reference Service API](./docs/reference/service-api.md). Import from `mpcp-service/service`.
-
-## Fleet Operator Tooling (optional)
-
-- **Settlement verification logs** — `mpcp verify <file> --append-log audit.jsonl` appends verification results to a JSONL audit trail
-- **Fleet policy summary** — `mpcp policy-summary <policy.json>` prints policy constraints. Use `--profile <name>` for lightweight reference-profile validation [(parking, charging, fleet-offline, hosted-rail)](./docs/implementation/reference-profiles.md). See [Fleet Operator Tooling](./docs/implementation/fleet-operator-tooling.md).
-
----
-
-## Verification Engine
-
-Settlement verification logic ensures that executed transactions match the authorized parameters.
-
-Verification checks include:
-
-- rail verification
-- asset verification
-- amount verification
-- destination verification
-- expiration enforcement
-- replay protection
-
----
-
-## Replay Protection
-
-The protocol prevents reuse of authorization artifacts by tracking:
-
-- consumed `decisionId`s
-- settlement transaction identifiers
-
----
-
-# Architecture Overview
-
-MPCP Service sits between application logic and settlement rails:
-
-```
-Application (Parking, EV, Robots, AI Agents)
-        │
-        │ MPCP API
-        ▼
-   MPCP Service
- (Policy + Authorization + Verification)
-        │
-        ▼
-Settlement Rails (XRPL / EVM / Hosted)
-        │
-        ▼
-Intent Attestation (optional, e.g. Hedera HCS)
-```
-
----
-
-# Example Flow
-
-Example machine payment flow using MPCP:
-
-```
-Vehicle enters parking lot
-  → Parker requests PolicyGrant
-
-Session begins
-  → MPCP issues SignedBudgetAuthorization
-
-Vehicle exits
-  → MPCP issues SignedPaymentAuthorization
-
-Wallet executes settlement
-  → MPCP verifies settlement transaction
-```
+Import from `mpcp-service/sdk`.
 
 ---
 
 # Repository Structure
 
 ```
-mpcp-service
+mpcp-reference
  ├── src
- │   ├── crypto
- │   ├── policy-core
- │   ├── protocol
- │   ├── sdk
- │   └── ...
+ │   ├── anchor/          # On-chain adapters: did:xrpl, HCS, XRPL NFT revocation
+ │   ├── hash/            # Canonical JSON serialization and SHA-256 hashing
+ │   ├── policy-core/     # Policy evaluation engine and types
+ │   ├── protocol/        # Artifact types, schemas, SBA/PolicyGrant signing, Trust Bundles
+ │   ├── sdk/             # Public SDK barrel exports
+ │   └── verifier/        # PolicyGrant and SBA verifiers
  │
  ├── test
- ├── docs
+ │   └── vectors/         # Golden protocol test vectors
+ ├── docs/                # Developer documentation
+ ├── examples/            # Runnable examples (build first)
  ├── package.json
  └── tsconfig.json
 ```
@@ -310,69 +141,22 @@ npm install
 npm run build
 ```
 
----
-
 # Testing
 
 ```
 npm test
 ```
 
----
+# Running Examples
 
-# Relationship to Parker
-
-The **Parker parking system** is the first production client of MPCP.
-
-Architecture:
+Build first, then run any example:
 
 ```
-Parker App
-      ↓
-MPCP Service
-      ↓
-Settlement Rails
+npm run build
+node examples/ev-charging/generate.mjs
+node examples/parking/demo-offline.mjs
+node examples/human-agent-trip/demo-human-agent-trip.mjs
 ```
-
-Parker handles:
-
-- parking sessions
-- pricing
-- entry / exit orchestration
-
-MPCP Service handles:
-
-- policy enforcement
-- payment authorization
-- settlement verification
-
----
-
-# Status
-
-This repository currently contains the **core protocol implementation**.
-
-Planned additions:
-
-- HTTP service layer
-- persistent replay protection storage
-- intent attestation layer
-- real ledger anchoring — Hedera HCS implemented; mock anchor for dev
-- multi‑application support
-
----
-
-# Long-Term Vision
-
-MPCP Service aims to become the **reference implementation of the Machine Payment Control Protocol**.
-
-Potential future applications:
-
-- autonomous vehicle payments
-- EV charging networks
-- robotic logistics
-- machine‑to‑machine commerce
-- AI agent marketplaces
 
 ---
 

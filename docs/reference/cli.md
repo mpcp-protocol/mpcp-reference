@@ -35,7 +35,7 @@ mpcp verify <settlement-file> [options]
 ### Accepts
 
 - Full `SettlementVerificationContext` (policyGrant, signedBudgetAuthorization, etc.)
-- JSON artifact bundle: settlement, intent, spa, sba, policyGrant
+- JSON artifact bundle: settlement, sba, policyGrant
 
 ### Examples
 
@@ -75,10 +75,9 @@ mpcp policy-summary profiles/parking.json --profile parking
 
 Golden test vectors are in `test/vectors/` for interoperability and regression testing:
 
-- `test/vectors/valid-settlement.json` — valid settlement with intent hash
+- `test/vectors/valid-settlement.json` — valid settlement bundle, must pass
 - `test/vectors/expired-grant.json` — expired policy grant
 - `test/vectors/budget-exceeded.json` — payment exceeds budget
-- `test/vectors/intent-hash-mismatch.json` — intent hash mismatch
 - `test/vectors/settlement-mismatch.json` — settlement amount mismatch
 
 `npm test` runs the golden vector suite. Other implementations can verify compatibility by running their verifier against these vectors.

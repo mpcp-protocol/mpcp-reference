@@ -10,41 +10,6 @@
     "destination": "rHotelMercureParis",
     "nowISO": "2026-04-10T15:00:00Z"
   },
-  "settlementIntent": {
-    "version": "1.0",
-    "rail": "xrpl",
-    "amount": "250000000",
-    "createdAt": "2026-04-10T15:00:00Z",
-    "destination": "rHotelMercureParis",
-    "asset": {
-      "kind": "IOU",
-      "currency": "RLUSD",
-      "issuer": "rIssuer"
-    }
-  },
-  "spa": {
-    "authorization": {
-      "version": "1.0",
-      "decisionId": "dec-hotel-001",
-      "sessionId": "paris-trip-2026-alice",
-      "policyHash": "a1b2c3d4e5f6",
-      "budgetId": "b597142d-d0a3-416b-9494-a2ebfdc36232",
-      "quoteId": "q-hotel-001",
-      "rail": "xrpl",
-      "asset": {
-        "kind": "IOU",
-        "currency": "RLUSD",
-        "issuer": "rIssuer"
-      },
-      "amount": "250000000",
-      "destination": "rHotelMercureParis",
-      "intentHash": "d7a7c201c1f42401b9f0209482c560396d7caf8365a69d0cb1f92848c98adfed",
-      "expiresAt": "2030-12-31T23:59:59Z",
-      "nonce": "3794c12e-369e-4ff3-9092-b583bcb398e6"
-    },
-    "issuerKeyId": "agent-spa-key-1",
-    "signature": "Og+BPRUdt/G01MnZh84vLCrvnMNPYqvxkiAAowqU/zuDvOORGtL++bxOfUm+2JM0n+13JytNtPJFce2ZnB98Aw=="
-  },
   "sba": {
     "authorization": {
       "version": "1.0",
@@ -143,6 +108,5 @@
       }
     ]
   },
-  "sbaPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAyruO/mCPiFMN58KD2MNnt1XXOx2pi3menrxgj8ErYJ8=\n-----END PUBLIC KEY-----\n",
-  "spaPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAHsx6sy9p36RfOiPe7m+AVrES7Sqfoy4rPJsbRr5QHkA=\n-----END PUBLIC KEY-----\n"
+  "sbaPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAyruO/mCPiFMN58KD2MNnt1XXOx2pi3menrxgj8ErYJ8=\n-----END PUBLIC KEY-----\n"
 }

@@ -13,11 +13,10 @@ A deployment profile is a named constraint set that makes MPCP concrete for a sp
 The following remain fixed in MPCP and are not profile-specific:
 
 - **PolicyGrant** — Fleet policy authorization
-- **SignedBudgetAuthorization** — Session budget envelope
-- **SignedPaymentAuthorization** — Signed payment binding
-- **SettlementIntent** — Canonical intent for hashing
+- **SignedBudgetAuthorization** — Per-payment spending envelope
 - **Canonical hashing** — Deterministic JSON serialization and SHA-256
-- **Verification chain** — PolicyGrant → SBA → SPA → SettlementIntent → Settlement
+- **Verification chain** — PolicyGrant → SBA → Trust Gateway → XRPL Settlement
+- **Trust Gateway** — Mandatory actor for XRPL payment execution in v1.0
 
 ---
 
@@ -39,7 +38,7 @@ Profiles define constraints and expectations for a given deployment:
 
 Profiles serve several goals:
 
-- **Keep MPCP rail-agnostic** — The base protocol does not hard-code rails or assets
+- **Keep MPCP extensible** — The base protocol does not hard-code rails or assets beyond XRPL v1.0 primary
 - **Avoid forking the protocol per ecosystem** — Each ecosystem gets a profile instead of a protocol fork
 - **Make adoption concrete** — Adopters choose a profile and know exactly what to implement
 - **Support interoperability** — Implementations following the same profile interoperate

@@ -10,41 +10,6 @@
     "destination": "rEurostar",
     "nowISO": "2026-04-11T08:30:00Z"
   },
-  "settlementIntent": {
-    "version": "1.0",
-    "rail": "xrpl",
-    "amount": "120000000",
-    "createdAt": "2026-04-11T08:30:00Z",
-    "destination": "rEurostar",
-    "asset": {
-      "kind": "IOU",
-      "currency": "RLUSD",
-      "issuer": "rIssuer"
-    }
-  },
-  "spa": {
-    "authorization": {
-      "version": "1.0",
-      "decisionId": "dec-train-001",
-      "sessionId": "paris-trip-2026-alice",
-      "policyHash": "a1b2c3d4e5f6",
-      "budgetId": "b597142d-d0a3-416b-9494-a2ebfdc36232",
-      "quoteId": "q-train-001",
-      "rail": "xrpl",
-      "asset": {
-        "kind": "IOU",
-        "currency": "RLUSD",
-        "issuer": "rIssuer"
-      },
-      "amount": "120000000",
-      "destination": "rEurostar",
-      "intentHash": "2fee5e6437ebc327e7281c06f7f11f4d1c098b255cbc846a77e23554b3a732d0",
-      "expiresAt": "2030-12-31T23:59:59Z",
-      "nonce": "2f680707-a541-460c-8d5a-e6fd5a736124"
-    },
-    "issuerKeyId": "agent-spa-key-1",
-    "signature": "4eICYdryBOHj+dNO1M1+wpYDcmPNchhl5d/64pNm+qJbuXLvnl5yz7aEiBY+DS8B/EVaHrGgaq4+iC6FoCLjCg=="
-  },
   "sba": {
     "authorization": {
       "version": "1.0",
@@ -143,6 +108,5 @@
       }
     ]
   },
-  "sbaPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAyruO/mCPiFMN58KD2MNnt1XXOx2pi3menrxgj8ErYJ8=\n-----END PUBLIC KEY-----\n",
-  "spaPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAHsx6sy9p36RfOiPe7m+AVrES7Sqfoy4rPJsbRr5QHkA=\n-----END PUBLIC KEY-----\n"
+  "sbaPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAyruO/mCPiFMN58KD2MNnt1XXOx2pi3menrxgj8ErYJ8=\n-----END PUBLIC KEY-----\n"
 }

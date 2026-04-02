@@ -10,39 +10,6 @@
     "destination": "rParkingGarage",
     "nowISO": "2026-01-15T12:00:00Z"
   },
-  "settlementIntent": {
-    "version": "1.0",
-    "rail": "xrpl",
-    "amount": "5400000",
-    "createdAt": "2026-01-15T12:00:00Z",
-    "destination": "rParkingGarage",
-    "asset": {
-      "kind": "IOU",
-      "currency": "RLUSD",
-      "issuer": "rIssuer"
-    }
-  },
-  "spa": {
-    "authorization": {
-      "version": "1.0",
-      "decisionId": "dec-offline-1",
-      "sessionId": "33333333-3333-4333-8333-333333333333",
-      "policyHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-      "quoteId": "q-offline-1",
-      "rail": "xrpl",
-      "asset": {
-        "kind": "IOU",
-        "currency": "RLUSD",
-        "issuer": "rIssuer"
-      },
-      "amount": "5400000",
-      "destination": "rParkingGarage",
-      "intentHash": "a9d2ed4048857840dbc6f931c489a4a714e7f6178bd79f5f0e3c1cdb295ec5a4",
-      "expiresAt": "2030-12-31T23:59:59Z"
-    },
-    "signature": "N2QYryTuhmxZKnKa42tetS9H+E73EmiTX0ZlfZjZ3HF+pcwCaCGLvRJt7wl4mPT4jzfel93e1CrmwiJGhY1FCQ==",
-    "issuerKeyId": "mpcp-spa-signing-key-1"
-  },
   "sba": {
     "authorization": {
       "version": "1.0",
@@ -127,6 +94,5 @@
       }
     ]
   },
-  "sbaPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAGjp1MSCdE1+VGso6N5IdphyaZ7AdT/sv2bJcqwQ1cN0=\n-----END PUBLIC KEY-----\n",
-  "spaPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAkDWZmxFmQ/lQQSR1uT5LF45A8IFTAh10P4z5IiLWtY0=\n-----END PUBLIC KEY-----\n"
+  "sbaPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAGjp1MSCdE1+VGso6N5IdphyaZ7AdT/sv2bJcqwQ1cN0=\n-----END PUBLIC KEY-----\n"
 }

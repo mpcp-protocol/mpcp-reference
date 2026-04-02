@@ -116,7 +116,7 @@ export function runVerificationPipeline(
   }
 
   // --- Policy grant ---
-  const grantResult = verifyPolicyGrant(ctx.policyGrant, { nowMs: ctx.nowMs });
+  const grantResult = verifyPolicyGrant(ctx.policyGrant, { nowMs: ctx.nowMs, trustBundles: ctx.trustBundles });
   if (!pushStep(steps, "PolicyGrant.valid", grantResult)) {
     pushCheck(checks, "PolicyGrant", "valid", "policy", false, {
       reason: grantResult.valid ? undefined : grantResult.reason,
@@ -130,7 +130,7 @@ export function runVerificationPipeline(
     ctx.signedBudgetAuthorization,
     ctx.policyGrant,
     ctx.paymentPolicyDecision,
-    { nowMs: ctx.nowMs, cumulativeSpentMinor: ctx.cumulativeSpentMinor },
+    { nowMs: ctx.nowMs, cumulativeSpentMinor: ctx.cumulativeSpentMinor, trustBundles: ctx.trustBundles },
   );
   if (!pushStep(steps, "SignedBudgetAuthorization.valid", budgetResult)) {
     pushCheck(checks, "SignedBudgetAuthorization", "valid", "linkage", false, {
