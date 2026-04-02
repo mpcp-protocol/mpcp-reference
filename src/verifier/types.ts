@@ -95,6 +95,6 @@ export interface SettlementVerificationContext {
   cumulativeSpentMinor?: string;
   /** Pre-verified Trust Bundles for offline key resolution.
    *  When provided, SBA and PolicyGrant signature verification resolves issuer keys
-   *  from the bundles before falling back to env-var or HTTPS well-known. */
+   *  from the bundles before falling back to pre-configured key or HTTPS well-known. */
   trustBundles?: TrustBundle[];
 }

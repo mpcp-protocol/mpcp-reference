@@ -52,7 +52,10 @@ function mergeTwo(base: Policy, override: Policy): Policy {
       base.vendorAllowlist ?? base.operatorAllowlist,
       override.vendorAllowlist ?? override.operatorAllowlist,
     ),
-    operatorAllowlist: undefined,
+    operatorAllowlist: mergeAllowlist(
+      base.vendorAllowlist ?? base.operatorAllowlist,
+      override.vendorAllowlist ?? override.operatorAllowlist,
+    ),
     geoAllowlist: mergeGeoAllowlist(base.geoAllowlist, override.geoAllowlist),
     railAllowlist: mergeRailAllowlist(base.railAllowlist, override.railAllowlist),
     assetAllowlist: mergeAssetAllowlist(base.assetAllowlist, override.assetAllowlist),

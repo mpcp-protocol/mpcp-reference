@@ -48,6 +48,7 @@ const sba = createSignedBudgetAuthorization({
 });
 
 // 3. Verify the chain (merchant / Trust Gateway)
+const decision = { /* PaymentPolicyDecision from evaluatePaymentPolicy() */ };
 const result = verifySettlement({
   policyGrant: grant,
   signedBudgetAuthorization: sba,
