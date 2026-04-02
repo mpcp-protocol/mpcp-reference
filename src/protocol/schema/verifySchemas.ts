@@ -4,7 +4,6 @@ import {
   assetSchema,
   policyHashSchema,
   iso8601DatetimeSchema,
-  mpcpVersionSchema,
 } from "./shared.js";
 
 /**
@@ -39,17 +38,3 @@ export const policyGrantForVerificationSchema = z
 export type PolicyGrantForVerification = z.infer<
   typeof policyGrantForVerificationSchema
 >;
-
-/**
- * Settlement intent for verification. Requires core fields; version/createdAt optional
- * to support intents from various sources.
- */
-export const settlementIntentForVerificationSchema = z.object({
-  version: mpcpVersionSchema.optional(),
-  rail: railSchema,
-  amount: z.string(),
-  destination: z.string().optional(),
-  asset: assetSchema.optional(),
-  referenceId: z.string().optional(),
-  createdAt: iso8601DatetimeSchema.optional(),
-});

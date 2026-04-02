@@ -7,12 +7,13 @@ import type {
 import { runVerificationPipeline } from "./verifyPipeline.js";
 
 /**
- * Verify a full MPCP settlement chain.
+ * Verify a full MPCP authorization chain (PolicyGrant → SBA).
+ * The Trust Gateway is mandatory — it submits XRPL payments directly.
+ * The authorization chain ends at SBA.
  *
- * Order: 1 schema validation, 2 hash validation, 3 artifact linkage,
- *        4 budget limits, 5 policy constraints (via sub-verifiers).
+ * Order: 1 schema validation, 2 policy grant check, 3 budget linkage check.
  *
- * @param ctx - Full verification context
+ * @param ctx - Verification context (policyGrant + signedBudgetAuthorization + paymentPolicyDecision)
  * @returns Deterministic result with clear failure reason
  */
 export function verifySettlement(
@@ -23,13 +24,13 @@ export function verifySettlement(
 
 /**
  * Verify settlement and return a per-step report for CLI and debugging.
- * Display order: intent hash (if applicable), payment auth, budget auth, policy grant.
+ * Display order: budget auth, policy grant.
  */
 export function verifySettlementWithReport(
   ctx: SettlementVerificationContext,
 ): VerificationReport {
-  const { result, steps, hashBindingChecked } = runVerificationPipeline(ctx);
-  return { result, steps, hashBindingChecked };
+  const { result, steps } = runVerificationPipeline(ctx);
+  return { result, steps };
 }
 
 /**
@@ -72,7 +73,6 @@ export function verifySettlementWithReportSafe(
     return {
       result: { valid: false, reason: `verification_error: ${message}` },
       steps: [{ name: "Verification.error", ok: false, reason: message }],
-      hashBindingChecked: false,
     };
   }
 }

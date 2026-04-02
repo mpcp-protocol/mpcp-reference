@@ -1,5 +1,4 @@
 import type { PolicyGrant, SignedBudgetAuthorization } from "../protocol/types.js";
-import type { SignedPaymentAuthorization } from "../protocol/spa.js";
 import type {
   Asset,
   Policy,
@@ -41,17 +40,11 @@ export interface BudgetRequest {
   expiresAt: string;
 }
 
-export interface AuthorizeRequest {
-  sessionId: string;
-  decision: PaymentPolicyDecision;
-  settlementIntent?: SettlementIntent;
-}
-
 export interface VerifySettlementRequest {
   decisionId: string;
   settlement: SettlementResult;
-  spa: SignedPaymentAuthorization;
-  settlementIntent?: SettlementIntent;
+  sba: SignedBudgetAuthorization;
+  decision: PaymentPolicyDecision;
 }
 
 export interface MPCPError extends Error {
@@ -61,7 +54,7 @@ export interface MPCPError extends Error {
 
 /**
  * Tiny HTTP client for the MPCP Service.
- * Wraps /grant, /budget, /authorize, /verify-settlement, /intent/hash.
+ * Wraps /grant, /budget, /verify-settlement.
  */
 export class MPCPClient {
   constructor(private readonly config: MPCPClientConfig) {}
@@ -107,21 +100,10 @@ export class MPCPClient {
     return this.json<SignedBudgetAuthorization>("/budget", { method: "POST", body: input });
   }
 
-  async createAuthorization(input: AuthorizeRequest): Promise<SignedPaymentAuthorization> {
-    return this.json<SignedPaymentAuthorization>("/authorize", { method: "POST", body: input });
-  }
-
   async verifySettlement(input: VerifySettlementRequest): Promise<VerificationResult> {
     return this.json<VerificationResult>("/verify-settlement", {
       method: "POST",
       body: input,
-    });
-  }
-
-  async computeIntentHash(intent: SettlementIntent): Promise<{ intentHash: string; canonicalIntent: object }> {
-    return this.json<{ intentHash: string; canonicalIntent: object }>("/intent/hash", {
-      method: "POST",
-      body: { intent },
     });
   }
 }

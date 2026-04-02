@@ -6,7 +6,7 @@
       "id": "valid-settlement",
       "file": "valid-settlement.json",
       "expect": "valid",
-      "description": "Valid settlement with intent hash"
+      "description": "Valid PolicyGrant + SBA chain"
     },
     {
       "id": "expired-grant",
@@ -23,22 +23,6 @@
       "reason": "budget_exceeded",
       "artifact": "signedBudgetAuthorization",
       "description": "Payment decision exceeds budget"
-    },
-    {
-      "id": "intent-hash-mismatch",
-      "file": "intent-hash-mismatch.json",
-      "expect": "invalid",
-      "reason": "intent_hash_mismatch",
-      "artifact": "settlementIntent",
-      "description": "Settlement intent hash does not match SPA"
-    },
-    {
-      "id": "settlement-mismatch",
-      "file": "settlement-mismatch.json",
-      "expect": "invalid",
-      "reason": "payment_auth_mismatch",
-      "artifact": "signedPaymentAuthorization",
-      "description": "Settlement amount does not match SPA"
     }
   ]
 }

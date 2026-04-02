@@ -29,39 +29,19 @@ const SBA_ENV = {
   publicKey: process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM,
   keyId: process.env.MPCP_SBA_SIGNING_KEY_ID,
 };
-const SPA_ENV = {
-  privateKey: process.env.MPCP_SPA_SIGNING_PRIVATE_KEY_PEM,
-  publicKey: process.env.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM,
-  keyId: process.env.MPCP_SPA_SIGNING_KEY_ID,
-};
 
 afterEach(() => {
   process.env.MPCP_SBA_SIGNING_PRIVATE_KEY_PEM = SBA_ENV.privateKey;
   process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM = SBA_ENV.publicKey;
   process.env.MPCP_SBA_SIGNING_KEY_ID = SBA_ENV.keyId;
-  process.env.MPCP_SPA_SIGNING_PRIVATE_KEY_PEM = SPA_ENV.privateKey;
-  process.env.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM = SPA_ENV.publicKey;
-  process.env.MPCP_SPA_SIGNING_KEY_ID = SPA_ENV.keyId;
 });
 
 function injectBundleKeys(bundle: Record<string, unknown>) {
   const sba = bundle.sba as { issuerKeyId?: string } | undefined;
-  const spa = bundle.spa as { issuerKeyId?: string } | undefined;
   if (bundle.sbaPublicKeyPem && typeof bundle.sbaPublicKeyPem === "string") {
     process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM = bundle.sbaPublicKeyPem as string;
     if (sba?.issuerKeyId) process.env.MPCP_SBA_SIGNING_KEY_ID = sba.issuerKeyId;
   }
-  if (bundle.spaPublicKeyPem && typeof bundle.spaPublicKeyPem === "string") {
-    process.env.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM = bundle.spaPublicKeyPem as string;
-    if (spa?.issuerKeyId) process.env.MPCP_SPA_SIGNING_KEY_ID = spa.issuerKeyId;
-  }
-}
-
-function parseSettlementNowMs(settlement: { nowISO?: string }): number | undefined {
-  const nowISO = settlement?.nowISO;
-  if (!nowISO || typeof nowISO !== "string") return undefined;
-  const ms = Date.parse(nowISO);
-  return Number.isFinite(ms) ? ms : undefined;
 }
 
 describe("Golden Protocol Vectors", () => {
@@ -80,10 +60,6 @@ describe("Golden Protocol Vectors", () => {
       injectBundleKeys(raw);
 
       const ctx = bundleToContext(raw);
-      const nowMs = parseSettlementNowMs(raw.settlement);
-      if (nowMs !== undefined) {
-        (ctx as { nowMs?: number }).nowMs = nowMs;
-      }
 
       const result = verifySettlement(ctx);
 

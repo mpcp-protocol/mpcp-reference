@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
 import { mockAnchorIntentHash } from "../../src/anchor/mockAnchor.js";
-import { computeSettlementIntentHash } from "../../src/hash/index.js";
 
 describe("mockAnchorIntentHash", () => {
   it("returns stub anchor result", async () => {
@@ -15,19 +14,6 @@ describe("mockAnchorIntentHash", () => {
     const intentHash = "abcd1234" + "0".repeat(56);
     const result = await mockAnchorIntentHash(intentHash);
     expect(result.txHash).toBe("mock-abcd123400000000");
-  });
-
-  it("works with computeSettlementIntentHash", async () => {
-    const intent = {
-      version: "1.0",
-      rail: "xrpl",
-      amount: "1000",
-      destination: "rDest",
-    };
-    const intentHash = computeSettlementIntentHash(intent);
-    const result = await mockAnchorIntentHash(intentHash);
-    expect(result.rail).toBe("mock");
-    expect(result.txHash).toMatch(/^mock-/);
   });
 
   it("accepts options.rail 'mock'", async () => {

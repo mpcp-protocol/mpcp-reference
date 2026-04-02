@@ -1,11 +1,11 @@
 /**
- * PR9 — Integration Tests
+ * PR9 — Integration Tests (updated PR31: SPA/SettlementIntent removed)
  *
  * Simulates a full MPCP lifecycle:
- *   fleet policy (constraints) → policy grant → budget authorization → SBA → SPA
- *   → settlement intent → settlement → verification
+ *   fleet policy (constraints) → policy grant → budget authorization → SBA
+ *   → [Trust Gateway submits XRPL tx] → verification
  *
- * Uses the SDK as the primary API. Verifies the full chain passes.
+ * Uses the SDK as the primary API. Verifies the PolicyGrant → SBA chain passes.
  */
 import crypto from "node:crypto";
 import { existsSync, unlinkSync, writeFileSync } from "node:fs";
@@ -16,46 +16,31 @@ import {
   createPolicyGrant,
   createBudgetAuthorization,
   createSignedBudgetAuthorization,
-  createSignedPaymentAuthorization,
-  createSettlementIntent,
   verifySettlement,
 } from "../../src/sdk/index.js";
 import { runVerify } from "../../src/cli/verify.js";
-import type { PaymentPolicyDecision, SettlementResult } from "../../src/policy-core/types.js";
+import type { PaymentPolicyDecision } from "../../src/policy-core/types.js";
 
 const SBA_ENV = {
   privateKey: process.env.MPCP_SBA_SIGNING_PRIVATE_KEY_PEM,
   publicKey: process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM,
   keyId: process.env.MPCP_SBA_SIGNING_KEY_ID,
 };
-const SPA_ENV = {
-  privateKey: process.env.MPCP_SPA_SIGNING_PRIVATE_KEY_PEM,
-  publicKey: process.env.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM,
-  keyId: process.env.MPCP_SPA_SIGNING_KEY_ID,
-};
 
 afterEach(() => {
   process.env.MPCP_SBA_SIGNING_PRIVATE_KEY_PEM = SBA_ENV.privateKey;
   process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM = SBA_ENV.publicKey;
   process.env.MPCP_SBA_SIGNING_KEY_ID = SBA_ENV.keyId;
-  process.env.MPCP_SPA_SIGNING_PRIVATE_KEY_PEM = SPA_ENV.privateKey;
-  process.env.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM = SPA_ENV.publicKey;
-  process.env.MPCP_SPA_SIGNING_KEY_ID = SPA_ENV.keyId;
 });
 
 function setupKeys() {
   const sbaKeys = crypto.generateKeyPairSync("ed25519");
-  const spaKeys = crypto.generateKeyPairSync("ed25519");
   process.env.MPCP_SBA_SIGNING_PRIVATE_KEY_PEM = sbaKeys.privateKey.export({ type: "pkcs8", format: "pem" }).toString();
   process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM = sbaKeys.publicKey.export({ type: "spki", format: "pem" }).toString();
   process.env.MPCP_SBA_SIGNING_KEY_ID = "mpcp-sba-signing-key-1";
-  process.env.MPCP_SPA_SIGNING_PRIVATE_KEY_PEM = spaKeys.privateKey.export({ type: "pkcs8", format: "pem" }).toString();
-  process.env.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM = spaKeys.publicKey.export({ type: "spki", format: "pem" }).toString();
-  process.env.MPCP_SPA_SIGNING_KEY_ID = "mpcp-spa-signing-key-1";
 }
 
 const EXPIRY = "2030-12-31T23:59:59Z";
-const SETTLEMENT_NOW = "2026-01-15T12:00:00Z";
 const POLICY_HASH = "a1b2c3d4e5f6";
 const ASSET = { kind: "IOU" as const, currency: "RLUSD", issuer: "rIssuer" };
 
@@ -107,17 +92,6 @@ function makeDecision(): PaymentPolicyDecision {
   };
 }
 
-function makeSettlement(overrides?: Partial<SettlementResult>): SettlementResult {
-  return {
-    amount: "19440000",
-    rail: "xrpl",
-    asset: ASSET,
-    destination: "rDestination",
-    nowISO: SETTLEMENT_NOW,
-    ...overrides,
-  };
-}
-
 function buildLifecycle() {
   const policyGrant = makeGrant();
   const budgetAuth = makeBudgetAuth(policyGrant.grantId);
@@ -133,79 +107,58 @@ function buildLifecycle() {
     destinationAllowlist: budgetAuth.destinationAllowlist,
     expiresAt: budgetAuth.expiresAt,
   });
-  const intent = createSettlementIntent({
-    rail: "xrpl",
-    amount: "19440000",
-    destination: "rDestination",
-    asset: ASSET,
-  });
   const paymentPolicyDecision = makeDecision();
-  const signedPaymentAuth = createSignedPaymentAuthorization(
-    budgetAuth.sessionId,
-    paymentPolicyDecision,
-    { settlementIntent: intent, budgetId: signedBudgetAuth!.authorization.budgetId },
-  );
   return {
     policyGrant,
     budgetAuth,
     signedBudgetAuth: signedBudgetAuth!,
-    intent,
     paymentPolicyDecision,
-    signedPaymentAuth: signedPaymentAuth!,
   };
 }
 
 describe("MPCP full lifecycle integration", () => {
-  it("fleet policy → policy grant → budget auth → SBA → SPA → settlement intent → settlement → verification passes", () => {
+  it("fleet policy → policy grant → budget auth → SBA → verification passes", () => {
     setupKeys();
-    const { policyGrant, signedBudgetAuth, intent, paymentPolicyDecision, signedPaymentAuth } = buildLifecycle();
+    const { policyGrant, signedBudgetAuth, paymentPolicyDecision } = buildLifecycle();
 
     expect(policyGrant).toBeDefined();
-    expect(signedPaymentAuth.authorization.intentHash).toBeDefined();
 
     const result = verifySettlement({
       policyGrant,
       signedBudgetAuthorization: signedBudgetAuth,
-      signedPaymentAuthorization: signedPaymentAuth,
-      settlement: makeSettlement(),
       paymentPolicyDecision,
-      decisionId: paymentPolicyDecision.decisionId,
-      settlementIntent: intent,
     });
 
     expect(result).toEqual({ valid: true });
   });
 
-  it("tampered settlement amount → verification fails", () => {
+  it("expired grant → verification fails", () => {
     setupKeys();
-    const { policyGrant, signedBudgetAuth, intent, paymentPolicyDecision, signedPaymentAuth } = buildLifecycle();
+    const { signedBudgetAuth, paymentPolicyDecision } = buildLifecycle();
+
+    const expiredGrant = makeGrant();
+    expiredGrant.expiresAt = new Date(Date.now() - 60_000).toISOString();
 
     const result = verifySettlement({
-      policyGrant,
+      policyGrant: expiredGrant,
       signedBudgetAuthorization: signedBudgetAuth,
-      signedPaymentAuthorization: signedPaymentAuth,
-      settlement: makeSettlement({ amount: "99999999" }),
       paymentPolicyDecision,
-      decisionId: paymentPolicyDecision.decisionId,
-      settlementIntent: intent,
+      nowMs: Date.now(),
     });
 
-    expect(result).toMatchObject({ valid: false, reason: "payment_auth_mismatch" });
+    expect(result.valid).toBe(false);
+    expect(result).toMatchObject({ reason: "policy_grant_expired" });
   });
 
-  it("CLI verify on bundle passes (self-contained with embedded public keys)", () => {
+  it("CLI verify on bundle passes (self-contained with embedded public key)", () => {
     setupKeys();
-    const { policyGrant, intent, paymentPolicyDecision, signedPaymentAuth, signedBudgetAuth } = buildLifecycle();
+    const { policyGrant, paymentPolicyDecision, signedBudgetAuth } = buildLifecycle();
 
     const bundle = {
-      settlement: makeSettlement(),
-      settlementIntent: intent,
-      spa: signedPaymentAuth,
       sba: signedBudgetAuth,
       policyGrant,
       paymentPolicyDecision,
       sbaPublicKeyPem: process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM,
-      spaPublicKeyPem: process.env.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM,
     };
 
     const tmpPath = join(tmpdir(), `mpcp-lifecycle-${Date.now()}.json`);

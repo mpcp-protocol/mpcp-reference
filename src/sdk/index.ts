@@ -22,17 +22,6 @@ export {
   verifySignedSessionBudgetAuthorizationForDecision as verifySignedBudgetAuthorization,
 } from "../protocol/sba.js";
 
-export {
-  createSignedPaymentAuthorization,
-  verifySignedPaymentAuthorizationForSettlement,
-} from "../protocol/spa.js";
-
-export { createSettlementIntent } from "./createSettlementIntent.js";
-export type {
-  CreateSettlementIntentInput,
-  SettlementIntent,
-} from "./createSettlementIntent.js";
-
 export { checkRevocation } from "../protocol/revocation.js";
 export {
   resolveXrplDid,
@@ -52,10 +41,6 @@ export type {
   XrplPolicyAnchorPreparation,
 } from "../anchor/index.js";
 export { canonicalJson } from "../hash/index.js";
-export {
-  computeSettlementIntentHash,
-  computeIntentHash,
-} from "../hash/index.js";
 
 export { signTrustBundle, verifyTrustBundle, resolveFromTrustBundle } from "../protocol/trustBundle.js";
 export type { TrustBundle, TrustBundleIssuerEntry, UnsignedTrustBundle, KeyWithKid } from "../protocol/trustBundle.js";

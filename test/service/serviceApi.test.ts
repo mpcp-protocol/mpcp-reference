@@ -3,7 +3,6 @@ import crypto from "node:crypto";
 import {
   issueBudget,
   verifySettlementService,
-  verifyDispute,
   anchorIntent,
 } from "../../src/service/index.js";
 import { createPolicyGrant } from "../../src/sdk/createPolicyGrant.js";
@@ -75,23 +74,11 @@ describe("service API", () => {
       const ctx = {
         policyGrant: { policyHash: "x", allowedRails: ["xrpl"], expiresAt: "2030-12-31T23:59:59Z" },
         signedBudgetAuthorization: {} as never,
-        signedPaymentAuthorization: {} as never,
-        settlement: {} as never,
         paymentPolicyDecision: {} as never,
-        decisionId: "d1",
       } as unknown as SettlementVerificationContext;
       const result = verifySettlementService(ctx);
       expect(result.valid).toBe(false);
       expect("reason" in result).toBe(true);
-    });
-  });
-
-  describe("verifyDispute", () => {
-    it("returns verified when no anchor", () => {
-      const result = verifyDispute({
-        context: {} as never,
-      });
-      expect(result.verified).toBe(false);
     });
   });
 

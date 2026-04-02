@@ -1,9 +1,7 @@
 import type {
   PaymentPolicyDecision,
-  SettlementResult,
 } from "../policy-core/types.js";
 import type { SignedSessionBudgetAuthorization } from "../protocol/sba.js";
-import type { SignedPaymentAuthorization } from "../protocol/spa.js";
 
 /** Minimal grant shape for verification */
 export interface PolicyGrantLike {
@@ -52,8 +50,6 @@ export interface VerificationStep {
 export interface VerificationReport {
   result: VerificationResult;
   steps: VerificationStep[];
-  /** Whether intentHash binding was verified. False when SPA has no intentHash (Lite Profile). */
-  hashBindingChecked?: boolean;
 }
 
 /** Check phase for ordering: schema → linkage → hash → policy */
@@ -61,13 +57,13 @@ export type VerificationCheckPhase = "schema" | "linkage" | "hash" | "policy";
 
 /** Single check in a detailed verification report (--explain mode). */
 export interface VerificationCheck {
-  /** Combined identifier: artifact.check (e.g. SettlementIntent.intentHash) */
+  /** Combined identifier: artifact.check (e.g. PolicyGrant.schema) */
   name: string;
   /** Phase for ordering: schema → linkage → hash → policy */
   phase: VerificationCheckPhase;
-  /** Artifact type, PascalCase (e.g. SettlementIntent, PolicyGrant). Omitted for synthetic error checks. */
+  /** Artifact type, PascalCase (e.g. PolicyGrant). Omitted for synthetic error checks. */
   artifact?: string;
-  /** Check type (e.g. schema, valid, intentHash). Omitted for synthetic error checks. */
+  /** Check type (e.g. schema, valid). Omitted for synthetic error checks. */
   check?: string;
   valid: boolean;
   reason?: string;
@@ -89,12 +85,8 @@ export interface DetailedVerificationReport {
 export interface SettlementVerificationContext {
   policyGrant: PolicyGrantLike;
   signedBudgetAuthorization: SignedSessionBudgetAuthorization;
-  signedPaymentAuthorization: SignedPaymentAuthorization;
-  settlement: SettlementResult;
-  /** Decision used to create the SPA; required for budget limit verification */
+  /** Decision used to create the SBA; required for budget limit verification */
   paymentPolicyDecision: PaymentPolicyDecision;
-  settlementIntent?: unknown;
-  decisionId: string;
   nowMs?: number;
   /** Running total of minor-unit amounts spent in this session before this payment.
    *  When provided, budget check becomes: cumulativeSpentMinor + currentAmount <= maxAmountMinor.
