@@ -546,10 +546,32 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#https-well-known-baseline" class="md-nav__link">
+  <a href="#1-trust-bundle-preferred-offline" class="md-nav__link">
     <span class="md-ellipsis">
       
-        HTTPS Well-Known (Baseline)
+        1. Trust Bundle (Preferred — Offline)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-pre-configured-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Pre-Configured Key
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-https-well-known" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. HTTPS Well-Known
       
     </span>
   </a>
@@ -1234,10 +1256,32 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#https-well-known-baseline" class="md-nav__link">
+  <a href="#1-trust-bundle-preferred-offline" class="md-nav__link">
     <span class="md-ellipsis">
       
-        HTTPS Well-Known (Baseline)
+        1. Trust Bundle (Preferred — Offline)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-pre-configured-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Pre-Configured Key
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-https-well-known" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. HTTPS Well-Known
       
     </span>
   </a>
@@ -1324,9 +1368,9 @@
 <p>The verifier runs checks in order:</p>
 <ol>
 <li><strong>Schema</strong> — All artifacts parse and validate against expected structure</li>
-<li><strong>Linkage</strong> — PolicyGrant → SBA → SPA chain is consistent (sessionId, policyHash, constraints)</li>
-<li><strong>Hash</strong> — If intentHash is present, it matches <code>computeSettlementIntentHash(settlementIntent)</code></li>
+<li><strong>Linkage</strong> — PolicyGrant → SBA chain is consistent (sessionId, policyHash, constraints)</li>
 <li><strong>Policy</strong> — Budget limits, rail/asset/destination constraints, expiration</li>
+<li><strong>Anchor</strong> (optional) — If <code>anchorRef</code> is present on the PolicyGrant, the on-chain policy document can be verified</li>
 </ol>
 <p>If any check fails, verification fails with a specific reason.</p>
 <h2 id="what-is-verified">What Is Verified</h2>
@@ -1351,16 +1395,12 @@
 <td>Budget not exceeded; rail, asset, destination in allowlists</td>
 </tr>
 <tr>
-<td>SPA</td>
-<td>Signature valid; expiresAt not passed</td>
+<td>Settlement</td>
+<td>Amount, rail, destination, asset match SBA constraints</td>
 </tr>
 <tr>
-<td>SPA → settlement</td>
-<td>decisionId, rail, amount, destination, asset match executed settlement</td>
-</tr>
-<tr>
-<td>intentHash</td>
-<td>If present, equals hash of settlement intent</td>
+<td>anchorRef</td>
+<td>If present on PolicyGrant, format validated (<code>hcs:{topicId}:{seq}</code> or <code>xrpl:nft:{tokenId}</code>)</td>
 </tr>
 </tbody>
 </table>
@@ -1375,10 +1415,22 @@
 <span class="w">  </span><span class="c1">// result.reason describes the failure</span>
 <span class="p">}</span>
 </code></pre></div>
-<p>The <code>context</code> includes policyGrant, signedBudgetAuthorization, signedPaymentAuthorization, settlement, paymentPolicyDecision, decisionId, and optional settlementIntent.</p>
+<p>The <code>context</code> includes policyGrant, signedBudgetAuthorization, settlement, paymentPolicyDecision, and decisionId.</p>
 <h2 id="key-resolution">Key Resolution</h2>
-<p>MPCP signatures include an <code>issuerKeyId</code> field that identifies which public key to use for verification. Verifiers resolve the key using one of two mechanisms.</p>
-<h3 id="https-well-known-baseline">HTTPS Well-Known (Baseline)</h3>
+<p>MPCP signatures include an <code>issuerKeyId</code> field that identifies which public key to use for verification. When the SBA or PolicyGrant envelope also includes <code>issuer</code>, verifiers can resolve keys offline from Trust Bundles.</p>
+<p>Verifiers resolve the signing key using the following 3-step algorithm (in order of precedence):</p>
+<h3 id="1-trust-bundle-preferred-offline">1. Trust Bundle (Preferred — Offline)</h3>
+<p>For fleet and embedded deployments, key resolution uses pre-distributed Trust Bundles. The verifier looks up the <code>issuer</code> in the bundle's <code>issuers</code> list and retrieves the JWK by <code>issuerKeyId</code>. This path works fully offline.</p>
+<p>The <code>issuer</code> field in the SBA/PolicyGrant envelope is <strong>required</strong> when the verifier uses Trust Bundle key resolution.</p>
+<p>Pass <code>trustBundles</code> to the verifier options to enable this path:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">verifySettlement</span><span class="p">({</span>
+<span class="w">  </span><span class="p">...</span><span class="nx">context</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">trustBundles</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="nx">verifiedBundle</span><span class="p">],</span>
+<span class="p">});</span>
+</code></pre></div>
+<h3 id="2-pre-configured-key">2. Pre-Configured Key</h3>
+<p>If no Trust Bundle matches, the verifier falls back to a pre-configured public key. Set <code>MPCP_SBA_SIGNING_PUBLIC_KEY_PEM</code> (for SBAs) or <code>MPCP_POLICY_GRANT_SIGNING_PUBLIC_KEY_PEM</code> (for PolicyGrants) as environment variables.</p>
+<h3 id="3-https-well-known">3. HTTPS Well-Known</h3>
 <p>The issuer publishes their public keys at:</p>
 <div class="highlight"><pre><span></span><code>https://{issuerDomain}/.well-known/mpcp-keys.json
 </code></pre></div>
@@ -1389,29 +1441,26 @@
 <span class="w">      </span><span class="nt">&quot;keyId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mpcp-sba-signing-key-1&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;publicKeyPem&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----\n&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;use&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sba&quot;</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;keyId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mpcp-spa-signing-key-1&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;publicKeyPem&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----\n&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;use&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;spa&quot;</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">]</span>
 <span class="p">}</span>
 </code></pre></div>
 <p>The <code>issuerKeyId</code> in the signed envelope identifies which entry to use.</p>
+<blockquote>
+<p><strong>Note:</strong> HTTPS well-known is not yet implemented in the reference SDK. The current implementation covers steps 1 and 2.</p>
+</blockquote>
 <h3 id="did-document-optional">DID Document (Optional)</h3>
-<p>For issuers using decentralized identifiers, keys may be resolved via a DID document. The <code>issuerKeyId</code> corresponds to a <code>verificationMethod</code> in the DID document. DID resolution is an optional enhancement over the HTTPS well-known baseline.</p>
+<p>For issuers using decentralized identifiers, keys may be resolved via a DID document. The <code>issuerKeyId</code> corresponds to a <code>verificationMethod</code> in the DID document. DID resolution is an optional enhancement.</p>
 <h3 id="inline-keys-self-contained-bundles">Inline Keys (Self-Contained Bundles)</h3>
-<p>Settlement bundles for development and conformance testing may include <code>sbaPublicKeyPem</code> and <code>spaPublicKeyPem</code> directly. This avoids external resolution and makes bundles self-contained for <code>mpcp verify</code>.</p>
+<p>Settlement bundles for development and conformance testing may include <code>sbaPublicKeyPem</code> directly. This avoids external resolution and makes bundles self-contained for <code>mpcp verify</code>.</p>
 <hr />
 <h2 id="dispute-verification">Dispute Verification</h2>
-<p>When a settlement is disputed, <code>verifyDisputedSettlement</code> runs full chain verification plus optional ledger anchor verification. If the intent was anchored (e.g., to Hedera HCS), the anchor can be checked against the expected intentHash.</p>
+<p>When a settlement is disputed, <code>verifyDisputedSettlement</code> runs full chain verification plus optional policy anchor verification. If the PolicyGrant has an <code>anchorRef</code> (e.g., to Hedera HCS or XRPL NFT), the anchor can be checked to confirm the policy document was published before the settlement.</p>
 <p>See <a href="https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/guides/dispute-resolution.md">Dispute Resolution</a> for the guide.</p>
 <h2 id="see-also">See Also</h2>
 <ul>
 <li><a href="https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/architecture/reference-flow.md">MPCP Reference Flow</a> — End-to-end verification in EV charging</li>
 <li><a href="https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/protocol/artifacts.md">Protocol: Artifacts</a></li>
-<li><a href="https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/protocol/hashing.md">Protocol: Hashing</a></li>
 <li><a href="../../reference/cli/">Reference: CLI</a> — <code>mpcp verify</code> command</li>
 </ul>
 

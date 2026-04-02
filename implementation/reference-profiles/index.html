@@ -1272,7 +1272,7 @@
 <th>Use Case</th>
 <th>Rails</th>
 <th>Offline</th>
-<th>Intent Anchor</th>
+<th>Policy Anchor</th>
 </tr>
 </thead>
 <tbody>
@@ -1315,12 +1315,12 @@
 </table>
 <hr />
 <h2 id="fleet-offline-profile">Fleet Offline Profile</h2>
-<p><strong>Use case:</strong> Fleet vehicles with pre-authorized spending envelopes. Payment can complete without network at payment time.</p>
+<p><strong>Use case:</strong> Fleet vehicles with pre-authorized spending envelopes. Payment authorization can complete without network at payment time; settlement executes via Trust Gateway when connectivity returns.</p>
 <p><strong>Characteristics:</strong>
 - PolicyGrant + SBA loaded before going offline
-- SPA signed locally by vehicle
-- Verifier (e.g. parking meter) validates chain locally
-- Settlement reconciled when connectivity returns</p>
+- SBA verified locally by merchant
+- Trust Gateway submits XRPL payment with <code>mpcp/grant-id</code> memo when connectivity returns
+- Settlement reconciled using on-chain XRPL record</p>
 <p><strong>Policy shape:</strong> <code>maxSessionSpend</code>, <code>allowedRails</code>, <code>allowedAssets</code>, <code>destinations</code>, <code>expiresAt</code></p>
 <p><strong>Example:</strong> <code>profiles/fleet-offline.json</code></p>
 <hr />
@@ -1353,7 +1353,8 @@
 <p><strong>Characteristics:</strong>
 - Rail: <code>xrpl</code> only
 - Asset: <code>kind: IOU</code>, <code>currency</code>, <code>issuer</code> — issuer must be validated by wallet/verifier
-- Wallet and verifier expectations for stablecoin settlement documented</p>
+- Wallet and verifier expectations for stablecoin settlement documented
+- All payments flow through Trust Gateway; <code>mpcp/grant-id</code> memo attached to every XRPL transaction</p>
 <p><strong>Example:</strong> <code>profiles/xrpl-stablecoin.json</code></p>
 <p><strong>Full profile doc:</strong> <a href="../xrpl-stablecoin-profile/">XRPL Stablecoin Profile</a></p>
 <p><strong>Example bundle:</strong> <code>examples/xrpl-stablecoin/xrpl-stablecoin-bundle.json</code></p>
@@ -1364,7 +1365,7 @@
 mpcp<span class="w"> </span>policy-summary<span class="w"> </span>profiles/xrpl-stablecoin.json<span class="w"> </span>--profile<span class="w"> </span>xrpl-stablecoin
 mpcp<span class="w"> </span>policy-summary<span class="w"> </span>examples/machine-commerce/fleet-policy.json<span class="w"> </span>--profile<span class="w"> </span>parking
 </code></pre></div>
-<p>Validation checks: <code>allowedRails</code> in the policy must be a subset of the profile’s allowed rails; if the policy declares <code>_profile</code>, it must match the profile name.</p>
+<p>Validation checks: <code>allowedRails</code> in the policy must be a subset of the profile's allowed rails; if the policy declares <code>_profile</code>, it must match the profile name.</p>
 
 
 

@@ -1199,13 +1199,13 @@
 <h1 id="machine-wallet-guardrails-example">Machine Wallet Guardrails Example</h1>
 <p>Runnable example showing how MPCP acts as a <strong>machine wallet guardrail layer</strong>.</p>
 <h2 id="overview">Overview</h2>
-<p>A machine wallet should not send funds unless payment requests satisfy:</p>
+<p>A machine wallet should not authorize payments unless payment requests satisfy:</p>
 <ul>
 <li><strong>PolicyGrant</strong> constraints (rails, assets, expiration)</li>
 <li><strong>SignedBudgetAuthorization</strong> session limits (max amount, destination allowlist)</li>
-<li><strong>SignedPaymentAuthorization</strong> approval rules (amount binding, intent hash)</li>
 </ul>
-<p>This example shows the integration pattern: check all three layers before signing.</p>
+<p>Once the SBA is issued, the <strong>Trust Gateway</strong> verifies the chain and executes the XRPL payment.</p>
+<p>This example shows the integration pattern: check both layers before issuing an SBA.</p>
 <p>This example focuses on wallet-side guardrail logic and uses a preloaded SBA-shaped authorization object rather than demonstrating full SBA issuance and signature verification.</p>
 <h2 id="run">Run</h2>
 <div class="highlight"><pre><span></span><code>npm<span class="w"> </span>run<span class="w"> </span>build
@@ -1216,12 +1216,12 @@ npm<span class="w"> </span>run<span class="w"> </span>example:wallet-guardrails
 </code></pre></div>
 <h2 id="what-it-demonstrates">What It Demonstrates</h2>
 <ol>
-<li><strong>Allowed request</strong> — $15 to rParking passes all checks; SignedPaymentAuthorization is created</li>
+<li><strong>Allowed request</strong> — $15 to rParking passes all checks; SignedBudgetAuthorization is created</li>
 <li><strong>Wrong destination</strong> — $5 to rAttacker is rejected (not in allowlist)</li>
 <li><strong>Would exceed budget</strong> — $20 to rCharging when session already spent $15 is rejected</li>
 </ol>
 <h2 id="guardrail-check-flow">Guardrail Check Flow</h2>
-<div class="highlight"><pre><span></span><code>Payment request → PolicyGrant validation → SignedBudgetAuthorization validation → SignedPaymentAuthorization creation (or reject)
+<div class="highlight"><pre><span></span><code>Payment request → PolicyGrant validation → SignedBudgetAuthorization validation → SBA issued (or reject) → Trust Gateway → XRPL
 </code></pre></div>
 <p>See <a href="../../implementation/machine-wallet-guardrails/">Machine Wallet Guardrails</a> for the full guide and threat model.</p>
 

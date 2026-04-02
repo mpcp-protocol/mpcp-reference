@@ -1328,22 +1328,12 @@ npm<span class="w"> </span>install
 <tr>
 <td>signed-budget-auth.json</td>
 <td>SignedBudgetAuthorization (SBA)</td>
-<td>Signed budget; session max $30</td>
-</tr>
-<tr>
-<td>spa.json</td>
-<td>SignedPaymentAuthorization (SPA)</td>
-<td>Signed payment binding (amount, destination, intentHash)</td>
-</tr>
-<tr>
-<td>settlement-intent.json</td>
-<td>SettlementIntent</td>
-<td>Canonical intent for hashing</td>
+<td>Signed budget for this payment (maxAmountMinor)</td>
 </tr>
 <tr>
 <td>settlement.json</td>
 <td>Settlement</td>
-<td>Executed settlement record</td>
+<td>Executed settlement record (via Trust Gateway → XRPL)</td>
 </tr>
 <tr>
 <td>settlement-bundle.json</td>
@@ -1352,7 +1342,7 @@ npm<span class="w"> </span>install
 </tr>
 </tbody>
 </table>
-<p>Chain flow: <strong>PolicyGrant → SBA → SPA → Settlement → Verification</strong></p>
+<p>Chain flow: <strong>PolicyGrant → SBA → Trust Gateway → XRPL Settlement → Verification</strong></p>
 <h2 id="5-verify-the-bundle">5. Verify the Bundle</h2>
 <p>Verify the settlement bundle with the CLI:</p>
 <div class="highlight"><pre><span></span><code>npx<span class="w"> </span>mpcp<span class="w"> </span>verify<span class="w"> </span>examples/parking/settlement-bundle.json<span class="w"> </span>--explain

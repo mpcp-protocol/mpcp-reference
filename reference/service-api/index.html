@@ -858,10 +858,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#anchorintent" class="md-nav__link">
+  <a href="#anchorpolicydocument" class="md-nav__link">
     <span class="md-ellipsis">
       
-        anchorIntent
+        anchorPolicyDocument
       
     </span>
   </a>
@@ -1194,10 +1194,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#anchorintent" class="md-nav__link">
+  <a href="#anchorpolicydocument" class="md-nav__link">
     <span class="md-ellipsis">
       
-        anchorIntent
+        anchorPolicyDocument
       
     </span>
   </a>
@@ -1248,7 +1248,7 @@
 <span class="w">  </span><span class="nx">verifySettlementService</span><span class="p">,</span>
 <span class="w">  </span><span class="nx">verifyDispute</span><span class="p">,</span>
 <span class="w">  </span><span class="nx">verifyDisputeAsync</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">anchorIntent</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">anchorPolicyDocument</span><span class="p">,</span>
 <span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;mpcp-service/service&quot;</span><span class="p">;</span>
 </code></pre></div>
 <h2 id="issuebudget">issueBudget</h2>
@@ -1257,7 +1257,7 @@
 <span class="w">  </span><span class="nx">policyGrant</span><span class="p">,</span>
 <span class="w">  </span><span class="nx">sessionId</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;session-123&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nx">actorId</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;actor-001&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">maxAmountMinor</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;3000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">maxAmountMinor</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;1000&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nx">destinationAllowlist</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;rParking&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;rCharging&quot;</span><span class="p">],</span>
 <span class="p">});</span>
 
@@ -1275,22 +1275,25 @@
 <hr />
 <h2 id="verifydispute-verifydisputeasync">verifyDispute / verifyDisputeAsync</h2>
 <p>Verify a disputed settlement with optional ledger anchor.</p>
-<div class="highlight"><pre><span></span><code><span class="c1">// Sync (mock anchor, or Hedera with intentHash in anchor)</span>
+<div class="highlight"><pre><span></span><code><span class="c1">// Sync (in-memory verification against SBA chain)</span>
 <span class="kd">const</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">verifyDispute</span><span class="p">({</span><span class="w"> </span><span class="nx">context</span><span class="p">,</span><span class="w"> </span><span class="nx">ledgerAnchor</span><span class="w"> </span><span class="p">});</span>
 
-<span class="c1">// Async (Hedera HCS mirror verification)</span>
+<span class="c1">// Async (Hedera HCS mirror verification for policy anchor)</span>
 <span class="kd">const</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">verifyDisputeAsync</span><span class="p">({</span><span class="w"> </span><span class="nx">context</span><span class="p">,</span><span class="w"> </span><span class="nx">ledgerAnchor</span><span class="w"> </span><span class="p">});</span>
 </code></pre></div>
 <hr />
-<h2 id="anchorintent">anchorIntent</h2>
-<p>Publish an intent hash to a ledger.</p>
-<div class="highlight"><pre><span></span><code><span class="c1">// Mock (development)</span>
-<span class="kd">const</span><span class="w"> </span><span class="nx">anchor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">anchorIntent</span><span class="p">(</span><span class="nx">intentHash</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">rail</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;mock&quot;</span><span class="w"> </span><span class="p">});</span>
+<h2 id="anchorpolicydocument">anchorPolicyDocument</h2>
+<p>Publish a policy document to a ledger and return an <code>anchorRef</code> for use in PolicyGrant.</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// Hedera HCS (requires MPCP_HCS_POLICY_TOPIC_ID, MPCP_HCS_OPERATOR_ID, MPCP_HCS_OPERATOR_KEY)</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">anchorPolicyDocument</span><span class="p">(</span><span class="nx">policyDoc</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">rail</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;hedera-hcs&quot;</span><span class="w"> </span><span class="p">});</span>
+<span class="c1">// result.anchorRef: &quot;hcs:{topicId}:{sequenceNumber}&quot;</span>
 
-<span class="c1">// Hedera HCS (requires HEDERA_OPERATOR_ACCOUNT_ID, etc.)</span>
-<span class="kd">const</span><span class="w"> </span><span class="nx">anchor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">anchorIntent</span><span class="p">(</span><span class="nx">intentHash</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">rail</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;hedera-hcs&quot;</span><span class="w"> </span><span class="p">});</span>
+<span class="c1">// XRPL NFT</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">anchorPolicyDocument</span><span class="p">(</span><span class="nx">policyDoc</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">rail</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;xrpl-nft&quot;</span><span class="w"> </span><span class="p">});</span>
+<span class="c1">// result.anchorRef: &quot;xrpl:nft:{tokenId}&quot;</span>
 </code></pre></div>
-<p>Supported rails: <code>mock</code>, <code>hedera-hcs</code>.</p>
+<p>Supported rails: <code>hedera-hcs</code>, <code>xrpl-nft</code>.</p>
+<p>The returned <code>anchorRef</code> can be stored on the PolicyGrant (<code>grant.anchorRef</code>) to provide on-chain auditability.</p>
 <hr />
 <h2 id="see-also">See Also</h2>
 <ul>

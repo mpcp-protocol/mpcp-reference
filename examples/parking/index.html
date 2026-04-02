@@ -1299,7 +1299,7 @@
 <h1 id="parking-example">Parking Example</h1>
 <p>A full MPCP settlement flow for a parking payment scenario.</p>
 <h2 id="scenario">Scenario</h2>
-<p>Vehicle parks at a meter or garage gate. The parking system requests payment. The vehicle evaluates fleet policy and session budget, signs an SPA, and returns the authorization. The parking system verifies the MPCP chain locally and opens the gate.</p>
+<p>Vehicle parks at a meter or garage gate. The parking system requests payment. The vehicle evaluates fleet policy and session budget, issues an SBA, and presents it to the Trust Gateway. The Trust Gateway verifies the MPCP chain and executes the XRPL payment. The parking system verifies the chain locally and opens the gate.</p>
 <h2 id="artifacts">Artifacts</h2>
 <table>
 <thead>
@@ -1322,16 +1322,8 @@
 <td>Signed budget auth (SBA)</td>
 </tr>
 <tr>
-<td>spa.json</td>
-<td>Signed payment authorization</td>
-</tr>
-<tr>
-<td>settlement-intent.json</td>
-<td>Settlement intent</td>
-</tr>
-<tr>
 <td>settlement.json</td>
-<td>Settlement result</td>
+<td>Settlement result (XRPL via Trust Gateway)</td>
 </tr>
 <tr>
 <td>settlement-bundle.json</td>
@@ -1358,7 +1350,7 @@ npm<span class="w"> </span>run<span class="w"> </span>example:parking
 <div class="highlight"><pre><span></span><code>npm<span class="w"> </span>run<span class="w"> </span>example:guardrails
 </code></pre></div>
 <h3 id="offline-payment">Offline Payment</h3>
-<p>Demonstrates offline machine payments: vehicle holds pre-authorized policy chain, completes payment when network is unavailable.</p>
+<p>Demonstrates offline machine payments: vehicle holds pre-authorized policy chain, authorizes payment when network is unavailable, Trust Gateway settles on XRPL when connectivity returns.</p>
 <div class="highlight"><pre><span></span><code>npm<span class="w"> </span>run<span class="w"> </span>example:offline
 </code></pre></div>
 <p>See <a href="../../implementation/offline-payments/">Offline Payments</a>.</p>

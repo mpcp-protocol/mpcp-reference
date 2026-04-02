@@ -528,6 +528,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#trust-gateway-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trust Gateway Integration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#verification-guidance" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1227,6 +1238,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#trust-gateway-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trust Gateway Integration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#verification-guidance" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1287,7 +1309,7 @@
 <h1 id="xrpl-stablecoin-profile">XRPL Stablecoin Profile</h1>
 <p>MPCP reference profile for <strong>XRPL issued assets</strong> (IOUs / stablecoins). Makes MPCP concrete for real XRPL-based machine payments.</p>
 <h2 id="overview">Overview</h2>
-<p>This profile defines how MPCP artifacts are used with XRPL issued currencies such as RLUSD or other stablecoins. It specifies payment constraints, wallet expectations, and verifier requirements for stablecoin settlement on XRPL.</p>
+<p>This profile defines how MPCP artifacts are used with XRPL issued currencies such as RLUSD or other stablecoins. It specifies payment constraints, wallet expectations, and verifier requirements for stablecoin settlement on XRPL via the Trust Gateway.</p>
 <h2 id="asset-constraints">Asset Constraints</h2>
 <table>
 <thead>
@@ -1320,24 +1342,32 @@
 <li><code>allowedAssets</code>: Array of <code>{ kind: "IOU", currency: string, issuer: string }</code></li>
 <li><code>destinationAllowlist</code> (in SBA): XRPL account addresses allowed as payment destinations</li>
 <li><code>maxAmountMinor</code>, <code>expiresAt</code> per standard MPCP</li>
+<li><code>anchorRef</code> (optional): on-chain policy document anchor (<code>hcs:{topicId}:{seq}</code> or <code>xrpl:nft:{tokenId}</code>)</li>
 </ul>
 <h2 id="wallet-expectations">Wallet Expectations</h2>
 <p>A machine wallet implementing this profile MUST:</p>
 <ol>
-<li><strong>Validate issuer</strong> — Only sign SPAs for assets whose issuer is in the trusted set</li>
-<li><strong>Respect destination allowlist</strong> — SPA destination must be in the SBA's <code>destinationAllowlist</code></li>
+<li><strong>Validate issuer</strong> — Only issue SBAs for assets whose issuer is in the trusted set</li>
+<li><strong>Respect destination allowlist</strong> — SBA destination must be in the <code>destinationAllowlist</code></li>
 <li><strong>Amount precision</strong> — Use 6 decimals for RLUSD-style assets; amounts are in smallest units</li>
-<li><strong>Settlement intent</strong> — Produce a SettlementIntent with <code>rail: "xrpl"</code>, <code>asset</code>, <code>amount</code>, <code>destination</code> before signing SPA</li>
+<li><strong>Present SBA to Trust Gateway</strong> — The Trust Gateway executes the XRPL payment; wallet does not submit directly</li>
 </ol>
 <h2 id="verifier-expectations">Verifier Expectations</h2>
 <p>A verifier (e.g. parking meter, charging station) MUST:</p>
 <ol>
-<li><strong>Verify the chain</strong> — PolicyGrant → SBA → SPA → SettlementIntent → Settlement</li>
+<li><strong>Verify the chain</strong> — PolicyGrant → SBA → Settlement</li>
 <li><strong>Check asset consistency</strong> — Same <code>currency</code> and <code>issuer</code> across all artifacts</li>
-<li><strong>Validate destination</strong> — Settlement destination matches SPA and is in SBA allowlist</li>
-<li><strong>Validate amount</strong> — Settlement amount ≤ SPA amount ≤ SBA maxAmountMinor</li>
+<li><strong>Validate destination</strong> — Settlement destination matches SBA and is in SBA allowlist</li>
+<li><strong>Validate amount</strong> — Settlement amount ≤ SBA maxAmountMinor</li>
 <li><strong>Check issuer</strong> — Issuer is in the verifier's trusted issuer list for that currency</li>
 </ol>
+<h2 id="trust-gateway-integration">Trust Gateway Integration</h2>
+<p>All XRPL payments for this profile MUST flow through the Trust Gateway:</p>
+<ul>
+<li>Trust Gateway verifies the PolicyGrant → SBA chain</li>
+<li>Trust Gateway submits the XRPL IOU payment</li>
+<li>Every XRPL transaction includes an <code>mpcp/grant-id</code> memo for on-chain audit trail</li>
+</ul>
 <h2 id="verification-guidance">Verification Guidance</h2>
 <p>Use <code>mpcp verify</code> on any artifact bundle:</p>
 <div class="highlight"><pre><span></span><code>mpcp<span class="w"> </span>verify<span class="w"> </span>examples/xrpl-stablecoin/xrpl-stablecoin-bundle.json
@@ -1348,12 +1378,12 @@ mpcp<span class="w"> </span>verify<span class="w"> </span>examples/xrpl-stableco
 </code></pre></div>
 <p><strong>Verification checklist:</strong></p>
 <ul>
-<li>[ ] All artifacts present (policyGrant, sba, spa, settlementIntent, settlement)</li>
-<li>[ ] Signatures valid for SBA and SPA</li>
-<li>[ ] Intent hash in SPA matches canonical hash of SettlementIntent</li>
+<li>[ ] All artifacts present (policyGrant, sba, settlement)</li>
+<li>[ ] Signature valid for SBA</li>
 <li>[ ] Asset (currency, issuer) consistent across chain</li>
 <li>[ ] Destination in SBA allowlist</li>
-<li>[ ] Amounts non-increasing: settlement ≤ SPA ≤ SBA max</li>
+<li>[ ] Amounts non-increasing: settlement ≤ SBA max</li>
+<li>[ ] XRPL transaction memo contains <code>mpcp/grant-id</code></li>
 </ul>
 <h2 id="example-bundle">Example Bundle</h2>
 <p>See <code>examples/xrpl-stablecoin/xrpl-stablecoin-bundle.json</code> for a complete, verifiable bundle conforming to this profile.</p>

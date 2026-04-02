@@ -1092,10 +1092,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#scene-5-ledger-anchor" class="md-nav__link">
+  <a href="#scene-5-policy-anchoring" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Scene 5 — Ledger Anchor
+        Scene 5 — Policy Anchoring
       
     </span>
   </a>
@@ -1203,10 +1203,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#scene-5-ledger-anchor" class="md-nav__link">
+  <a href="#scene-5-policy-anchoring" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Scene 5 — Ledger Anchor
+        Scene 5 — Policy Anchoring
       
     </span>
   </a>
@@ -1284,39 +1284,37 @@ PolicyGrant
 ↓
 SignedBudgetAuthorization (SBA)
 ↓
-SignedPaymentAuthorization (SPA)
+Trust Gateway
 ↓
-SettlementIntent
-↓
-Settlement</p>
+XRPL Settlement</p>
 <p>Narration:
 "MPCP introduces a simple chain of authorization for machine payments."</p>
-<p>"Policies define payment rules. Budgets define session limits. Each payment is explicitly authorized and verifiable."</p>
+<p>"Policies define payment rules. Budgets define per-payment limits. The Trust Gateway verifies the chain and executes on XRPL, attaching a grant ID to every transaction for a permanent audit trail."</p>
 <hr />
 <h2 id="scene-4-visual-demo-autonomous-parking">Scene 4 — Visual Demo (Autonomous Parking)</h2>
 <p>Visual sequence:
 1. Autonomous vehicle enters parking garage
 2. PolicyGrant appears
 3. SignedBudgetAuthorization (SBA) appears
-4. SignedPaymentAuthorization (SPA) triggers
-5. Settlement confirmation</p>
+4. Trust Gateway verifies chain
+5. XRPL settlement confirmation with mpcp/grant-id memo</p>
 <p>Narration:
 "A vehicle receives a policy defining where and how it can pay."</p>
-<p>"A session budget allows spending within defined limits."</p>
-<p>"Each payment request is cryptographically authorized."</p>
-<p>"The final settlement records the completed transaction."</p>
+<p>"A budget authorization allows spending within defined limits for this payment."</p>
+<p>"The Trust Gateway verifies the authorization chain and submits the XRPL transaction."</p>
+<p>"The final settlement records the completed transaction on-chain."</p>
 <hr />
-<h2 id="scene-5-ledger-anchor">Scene 5 — Ledger Anchor</h2>
+<h2 id="scene-5-policy-anchoring">Scene 5 — Policy Anchoring</h2>
 <p>Visual:
-Intent hash flowing into a public ledger.</p>
+Policy document hash flowing into a public ledger (Hedera HCS or XRPL NFT).</p>
 <p>Narration:
-"An optional intent hash can be anchored to a public ledger for audit and dispute resolution."</p>
+"An optional anchorRef on the PolicyGrant links it to a public ledger record — providing tamper-evident policy history for audit and dispute resolution."</p>
 <hr />
 <h2 id="scene-6-dispute-verification">Scene 6 — Dispute Verification</h2>
 <p>Visual:
 Verification chain replay.</p>
 <p>Narration:
-"Any dispute can be independently verified using the MPCP authorization chain."</p>
+"Any dispute can be independently verified using the MPCP authorization chain and the on-chain XRPL audit trail."</p>
 <hr />
 <h2 id="closing-frame">Closing Frame</h2>
 <p>Comparison:</p>
@@ -1339,9 +1337,9 @@ MPCP layered authorization chain
 Blocks stacking vertically</p>
 <p>Scene 4
 Autonomous parking example
-Vehicle enters → policy → budget → payment → settlement</p>
+Vehicle enters → policy → budget → Trust Gateway → XRPL settlement</p>
 <p>Scene 5
-Intent hash anchored to ledger</p>
+Policy document anchored to ledger (Hedera HCS / XRPL NFT)</p>
 <p>Scene 6
 Verification replay animation</p>
 <p>Closing
@@ -1353,11 +1351,11 @@ Protocol comparison diagram</p>
 <h2 id="prompt-2-agent-protocol-landscape">Prompt 2 — Agent Protocol Landscape</h2>
 <p>"clean animated diagram showing protocols MCP A2A ACP communicating between agents and tools, arrows moving between nodes, modern developer diagram style"</p>
 <h2 id="prompt-3-mpcp-authorization-chain">Prompt 3 — MPCP Authorization Chain</h2>
-<p>"layered protocol diagram animation PolicyGrant SignedBudgetAuthorization SignedPaymentAuthorization SettlementIntent Settlement blocks stacking vertically with glowing arrows"</p>
+<p>"layered protocol diagram animation PolicyGrant SignedBudgetAuthorization Trust Gateway XRPL Settlement blocks stacking vertically with glowing arrows"</p>
 <h2 id="prompt-4-autonomous-parking-payment">Prompt 4 — Autonomous Parking Payment</h2>
 <p>"autonomous car entering smart parking garage, digital authorization layers appearing around vehicle, futuristic payment confirmation animation"</p>
-<h2 id="prompt-5-ledger-anchoring">Prompt 5 — Ledger Anchoring</h2>
-<p>"cryptographic hash transforming into glowing data stream entering blockchain ledger block, modern protocol visualization"</p>
+<h2 id="prompt-5-policy-anchoring">Prompt 5 — Policy Anchoring</h2>
+<p>"cryptographic policy document transforming into glowing data stream entering blockchain ledger block, modern protocol visualization"</p>
 <h2 id="prompt-6-dispute-verification">Prompt 6 — Dispute Verification</h2>
 <p>"digital verification chain lighting up sequentially representing audit verification process"</p>
 <hr />
@@ -1372,9 +1370,8 @@ Protocol comparison diagram</p>
 - Fleet Policy
 - PolicyGrant
 - SignedBudgetAuthorization (SBA)
-- SignedPaymentAuthorization (SPA)
-- SettlementIntent
-- Settlement</p>
+- Trust Gateway
+- XRPL Settlement</p>
 <p>Animation style
 - minimal vector graphics
 - dark or neutral background

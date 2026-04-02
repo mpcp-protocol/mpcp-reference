@@ -647,10 +647,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#layer-3-signedpaymentauthorization-spa" class="md-nav__link">
+  <a href="#layer-3-trust-gateway" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Layer 3: SignedPaymentAuthorization (SPA)
+        Layer 3: Trust Gateway
       
     </span>
   </a>
@@ -686,21 +686,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#payment-decision-service" class="md-nav__link">
+  <a href="#why-the-trust-gateway" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Payment Decision Service
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#why-two-roles" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why Two Roles?
+        Why the Trust Gateway?
       
     </span>
   </a>
@@ -1351,10 +1340,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#layer-3-signedpaymentauthorization-spa" class="md-nav__link">
+  <a href="#layer-3-trust-gateway" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Layer 3: SignedPaymentAuthorization (SPA)
+        Layer 3: Trust Gateway
       
     </span>
   </a>
@@ -1390,21 +1379,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#payment-decision-service" class="md-nav__link">
+  <a href="#why-the-trust-gateway" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Payment Decision Service
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#why-two-roles" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why Two Roles?
+        Why the Trust Gateway?
       
     </span>
   </a>
@@ -1575,10 +1553,10 @@
 
 
 <h1 id="machine-wallet-guardrails">Machine Wallet Guardrails</h1>
-<p>MPCP acts as a <strong>machine wallet guardrail layer</strong>. A machine wallet should not send funds unless payment requests satisfy PolicyGrant constraints, SignedBudgetAuthorization session limits, and SignedPaymentAuthorization approval rules.</p>
+<p>MPCP acts as a <strong>machine wallet guardrail layer</strong>. A machine wallet should not authorize payments unless payment requests satisfy PolicyGrant constraints and SignedBudgetAuthorization session limits. The Trust Gateway then executes the XRPL payment once the SBA chain is verified.</p>
 <p>This guide describes the guardrail model, how to integrate it into a machine wallet, and threat-model considerations.</p>
 <h2 id="the-guardrail-model">The Guardrail Model</h2>
-<p>MPCP provides three layers of enforcement before a machine can pay:</p>
+<p>MPCP provides two layers of enforcement before a machine can authorize payment, followed by mandatory Trust Gateway execution:</p>
 <table>
 <thead>
 <tr>
@@ -1596,21 +1574,22 @@
 <tr>
 <td>2</td>
 <td>SignedBudgetAuthorization (SBA)</td>
-<td>Session spending envelope: max amount, destination allowlist</td>
+<td>Per-payment spending envelope: max amount, destination allowlist</td>
 </tr>
 <tr>
 <td>3</td>
-<td>SignedPaymentAuthorization (SPA)</td>
-<td>Payment binding: specific amount, destination, intent hash</td>
+<td>Trust Gateway</td>
+<td>Verifies SBA chain and submits XRPL payment with <code>mpcp/grant-id</code> memo</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Rule:</strong> The wallet must not sign an SPA unless the requested payment passes all three checks.</p>
+<p><strong>Rule:</strong> The wallet must not issue an SBA unless the requested payment passes both policy checks. The Trust Gateway must not submit payment unless it can verify the full PolicyGrant → SBA chain.</p>
 <h3 id="layer-1-policygrant">Layer 1: PolicyGrant</h3>
 <ul>
-<li><strong>Rails</strong> — Is the settlement rail (xrpl, evm, etc.) permitted?</li>
+<li><strong>Rails</strong> — Is the settlement rail (xrpl) permitted?</li>
 <li><strong>Assets</strong> — Is the asset (e.g. RLUSD IOU) in the allowed set?</li>
 <li><strong>Expiration</strong> — Has the grant expired?</li>
+<li><strong>anchorRef</strong> — Optional on-chain anchor of the policy document</li>
 </ul>
 <h3 id="layer-2-signedbudgetauthorization-sba">Layer 2: SignedBudgetAuthorization (SBA)</h3>
 <ul>
@@ -1619,41 +1598,32 @@
 <li><strong>Cumulative spend</strong> — For session budgets, has the session already spent up to the limit?</li>
 <li><strong>Expiration</strong> — Has the budget expired?</li>
 </ul>
-<h3 id="layer-3-signedpaymentauthorization-spa">Layer 3: SignedPaymentAuthorization (SPA)</h3>
+<h3 id="layer-3-trust-gateway">Layer 3: Trust Gateway</h3>
 <ul>
-<li><strong>Amount binding</strong> — SPA commits to a specific amount and destination</li>
-<li><strong>Intent hash</strong> — SPA binds to a canonical SettlementIntent</li>
-<li><strong>Tamper resistance</strong> — SettlementIntent and final settlement must match the signed authorization</li>
+<li><strong>Chain verification</strong> — Verifies PolicyGrant → SBA chain before executing</li>
+<li><strong>XRPL execution</strong> — Submits the XRPL payment with <code>mpcp/grant-id</code> memo for audit trail</li>
+<li><strong>Mandatory actor</strong> — All XRPL payments in MPCP v1.0 flow through the Trust Gateway</li>
 </ul>
 <h2 id="vehicle-wallet-roles">Vehicle Wallet Roles</h2>
-<p>In an autonomous deployment, the vehicle wallet plays <strong>two distinct roles</strong> in the MPCP authorization pipeline.</p>
+<p>In an autonomous deployment, the vehicle wallet plays the <strong>session authority</strong> role:</p>
 <h3 id="session-authority">Session Authority</h3>
-<p>The wallet creates and signs the <strong>SignedBudgetAuthorization (SBA)</strong> before the session begins. This establishes the session-level spending envelope:</p>
+<p>The wallet creates and signs the <strong>SignedBudgetAuthorization (SBA)</strong> for each payment. This establishes the per-payment spending envelope:</p>
 <ul>
-<li>Sets <code>maxAmountMinor</code> — the total spend ceiling for the session</li>
+<li>Sets <code>maxAmountMinor</code> — the amount for this specific payment</li>
 <li>Sets <code>destinationAllowlist</code> — the permitted payees</li>
 <li>Binds to the PolicyGrant via <code>grantId</code></li>
 </ul>
-<p>The SBA is signed with the wallet's SBA key (<code>MPCP_SBA_SIGNING_PRIVATE_KEY_PEM</code>). Verifiers check this signature to confirm the budget was set by a trusted session authority.</p>
-<h3 id="payment-decision-service">Payment Decision Service</h3>
-<p>For each payment request within the session, the wallet evaluates the request against the loaded policy chain and, if approved, creates and signs a <strong>SignedPaymentAuthorization (SPA)</strong>:</p>
+<p>The SBA is signed with the wallet's SBA key (<code>MPCP_SBA_SIGNING_PRIVATE_KEY_PEM</code>). Verifiers and the Trust Gateway check this signature to confirm the budget was set by a trusted session authority.</p>
+<h3 id="why-the-trust-gateway">Why the Trust Gateway?</h3>
+<p>The Trust Gateway is the mandatory execution layer for MPCP v1.0 (XRPL-primary). Separating wallet authorization from payment execution allows:</p>
 <ul>
-<li>Assigns a unique <code>decisionId</code></li>
-<li>Commits to the specific amount, destination, and asset</li>
-<li>Computes and binds an <code>intentHash</code> to a canonical SettlementIntent</li>
-<li>Signs with the wallet's SPA key (<code>MPCP_SPA_SIGNING_PRIVATE_KEY_PEM</code>)</li>
-</ul>
-<p>This decision is made <strong>locally</strong> — no central approval API is contacted. The SPA is a cryptographic proof that the wallet approved this specific payment within the authorized budget.</p>
-<h3 id="why-two-roles">Why Two Roles?</h3>
-<p>Separating session authority from payment decisions allows fleet operators to:</p>
-<ul>
-<li>Pre-authorize a spending envelope (SBA) before the vehicle enters service</li>
-<li>Let the vehicle make individual payment decisions (SPA) locally within that envelope</li>
-<li>Give verifiers a complete, self-contained authorization chain to validate</li>
+<li>Wallet signs the SBA (what is authorized)</li>
+<li>Trust Gateway executes on XRPL (how it settles), attaching <code>mpcp/grant-id</code> memo</li>
+<li>Verifiers can validate the full chain independently without contacting payment infrastructure</li>
 </ul>
 <hr />
 <h2 id="wallet-integration">Wallet Integration</h2>
-<p>A machine wallet integrates MPCP by performing checks <em>before</em> signing an SPA.</p>
+<p>A machine wallet integrates MPCP by performing checks <em>before</em> issuing an SBA.</p>
 <h3 id="decision-flow">Decision Flow</h3>
 <div class="highlight"><pre><span></span><code>Payment request received
     ↓
@@ -1661,28 +1631,28 @@ PolicyGrant validation (rail, asset, expiry)
     ↓ PASS
 SignedBudgetAuthorization validation (amount ≤ remaining, destination in allowlist, expiry)
     ↓ PASS
-Create SettlementIntent + SignedPaymentAuthorization
+Issue SBA for this payment
     ↓
-SignedPaymentAuthorization creation (or reject)
+Return SBA to Trust Gateway
     ↓
-Return SignedPaymentAuthorization (and optional SettlementIntent) to payee
+Trust Gateway submits XRPL payment with mpcp/grant-id memo
 </code></pre></div>
 <h3 id="integration-checklist">Integration Checklist</h3>
-<p>Before signing an SPA, the wallet <strong>must</strong>:</p>
+<p>Before issuing an SBA, the wallet <strong>must</strong>:</p>
 <ol>
 <li>Validate the payment request against the loaded PolicyGrant</li>
-<li>Validate against the loaded SBA (amount, destination, session balance)</li>
-<li>Create a canonical SettlementIntent for the requested payment</li>
-<li>Use <code>createSignedPaymentAuthorization</code> with the policy decision and intent</li>
+<li>Validate against session budget (amount, destination, session balance)</li>
+<li>Use <code>createSignedBudgetAuthorization</code> with the policy decision</li>
 <li>Never sign if any check fails</li>
 </ol>
-<p>See the <a href="../../examples/machine-wallet-guardrails/">wallet integration example</a> for a runnable implementation. That example focuses on wallet-side guardrail logic and uses a preloaded SBA-shaped authorization object rather than demonstrating full SBA issuance and signature verification.</p>
+<p>See the <a href="../../examples/machine-wallet-guardrails/">wallet integration example</a> for a runnable implementation.</p>
 <h2 id="bounded-authorization">Bounded Authorization</h2>
 <p>MPCP emphasizes <strong>bounded authorization</strong>: the machine is given a spending envelope, not open-ended access.</p>
 <ul>
 <li><strong>Pre-authorized</strong> — Policy and budget are set before the session</li>
-<li><strong>Cryptographically enforced</strong> — SBA and SPA are signed; tampering is detectable</li>
+<li><strong>Cryptographically enforced</strong> — SBA is signed; tampering is detectable</li>
 <li><strong>Local verification</strong> — The verifier (e.g. parking meter) can validate the chain without calling a central API</li>
+<li><strong>XRPL audit trail</strong> — Every XRPL payment carries <code>mpcp/grant-id</code> memo for on-chain auditability</li>
 </ul>
 <p>This makes MPCP attractive to fleet and robotics teams who need machines to spend money safely at scale.</p>
 <hr />
@@ -1700,23 +1670,23 @@ Return SignedPaymentAuthorization (and optional SettlementIntent) to payee
 <tbody>
 <tr>
 <td>SBA max amount</td>
-<td>SPA binds to a specific amount; settlement above SBA limit is invalid</td>
+<td>SBA commits to a specific max amount; settlement above SBA limit is invalid</td>
 </tr>
 <tr>
 <td>Session balance tracking</td>
-<td>Wallet tracks cumulative spend; refuses SPA if would exceed budget</td>
+<td>Wallet tracks cumulative spend; refuses SBA if would exceed budget</td>
 </tr>
 <tr>
-<td>Verifier checks</td>
-<td>Verifier validates amount ≤ SBA maxAmountMinor</td>
+<td>Trust Gateway check</td>
+<td>Gateway validates amount ≤ SBA maxAmountMinor before executing</td>
 </tr>
 <tr>
 <td>Deterministic verification</td>
-<td><code>mpcp verify</code> fails if settlement does not match SPA</td>
+<td><code>mpcp verify</code> fails if settlement does not match SBA</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Wallet responsibility:</strong> Track session spend. Do not sign SPA if <code>requested amount + sessionSpent &gt; maxAmountMinor</code>.</p>
+<p><strong>Wallet responsibility:</strong> Track session spend. Do not issue SBA if <code>requested amount + sessionSpent &gt; maxAmountMinor</code>.</p>
 <h3 id="threat-wrong-destination">Threat: Wrong Destination</h3>
 <p><strong>Scenario:</strong> Funds are sent to an unauthorized recipient.</p>
 <p><strong>Mitigations:</strong></p>
@@ -1733,8 +1703,8 @@ Return SignedPaymentAuthorization (and optional SettlementIntent) to payee
 <td>SBA <code>destinationAllowlist</code> constrains payees</td>
 </tr>
 <tr>
-<td>SPA binding</td>
-<td>SPA commits to specific destination; cannot be redirected</td>
+<td>Trust Gateway</td>
+<td>Gateway rejects payment if destination not in SBA allowlist</td>
 </tr>
 <tr>
 <td>Verifier checks</td>
@@ -1763,14 +1733,14 @@ Return SignedPaymentAuthorization (and optional SettlementIntent) to payee
 <td>SBA must match policy</td>
 </tr>
 <tr>
-<td>Verifier</td>
+<td>Trust Gateway</td>
 <td>Validates rail and asset consistency across chain</td>
 </tr>
 </tbody>
 </table>
 <p><strong>Wallet responsibility:</strong> Reject requests for rails or assets not in PolicyGrant/SBA.</p>
 <h3 id="threat-replay-and-tampering">Threat: Replay and Tampering</h3>
-<p><strong>Scenario:</strong> Reuse of old SPA, or modification of settlement after signing.</p>
+<p><strong>Scenario:</strong> Reuse of old SBA, or modification of settlement after signing.</p>
 <p><strong>Mitigations:</strong></p>
 <table>
 <thead>
@@ -1781,37 +1751,36 @@ Return SignedPaymentAuthorization (and optional SettlementIntent) to payee
 </thead>
 <tbody>
 <tr>
-<td>Intent hash</td>
-<td>SPA binds to canonical SettlementIntent; changed amount/destination invalidates hash</td>
-</tr>
-<tr>
 <td>Signatures</td>
-<td>SBA and SPA are signed; tampering breaks verification</td>
+<td>SBA is signed; tampering breaks verification</td>
 </tr>
 <tr>
 <td>Expiration</td>
 <td>All artifacts have expiresAt; expired chain fails verify</td>
 </tr>
+<tr>
+<td>XRPL memo</td>
+<td><code>mpcp/grant-id</code> memo on-chain prevents retroactive falsification</td>
+</tr>
 </tbody>
 </table>
-<p><strong>Wallet responsibility:</strong> Never reuse an SPA. Create a fresh SPA per payment.</p>
+<p><strong>Wallet responsibility:</strong> Never reuse an SBA for a different payment amount or destination.</p>
 <h3 id="threat-key-compromise">Threat: Key Compromise</h3>
-<p><strong>Scenario:</strong> SPA or SBA signing key is stolen.</p>
+<p><strong>Scenario:</strong> SBA signing key is stolen.</p>
 <p><strong>Mitigations:</strong></p>
 <ul>
 <li>SBA keys are typically held by fleet/issuer; compromise affects one fleet</li>
-<li>SPA keys are per-machine; rotate if compromised</li>
-<li>Budget limits (maxAmountMinor) bound maximum loss per session</li>
+<li>Budget limits (maxAmountMinor) bound maximum loss per payment</li>
 <li>Short session expirations reduce exposure window</li>
 </ul>
-<p><strong>Recommendation:</strong> Use short-lived budgets for high-risk environments. Rotate SPA keys if compromise is suspected.</p>
+<p><strong>Recommendation:</strong> Use short-lived budgets for high-risk environments. Rotate SBA keys if compromise is suspected.</p>
 <hr />
 <h2 id="summary">Summary</h2>
 <ul>
-<li><strong>Three-layer guardrail:</strong> PolicyGrant → SBA → SPA</li>
-<li><strong>Wallet rule:</strong> Do not sign SPA unless all checks pass</li>
+<li><strong>Two-layer guardrail + Trust Gateway:</strong> PolicyGrant → SBA → Trust Gateway → XRPL</li>
+<li><strong>Wallet rule:</strong> Do not issue SBA unless all checks pass</li>
 <li><strong>Threats addressed:</strong> Overspend, wrong destination, wrong rail/asset, replay/tampering, key compromise</li>
-<li><strong>Bounded authorization:</strong> Pre-authorized limits, cryptographic enforcement, local verification</li>
+<li><strong>Bounded authorization:</strong> Pre-authorized limits, cryptographic enforcement, local verification, XRPL on-chain audit trail</li>
 </ul>
 
 

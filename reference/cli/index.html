@@ -1392,7 +1392,7 @@ npx<span class="w"> </span>mpcp<span class="w"> </span>--help
 <h3 id="accepts">Accepts</h3>
 <ul>
 <li>Full <code>SettlementVerificationContext</code> (policyGrant, signedBudgetAuthorization, etc.)</li>
-<li>JSON artifact bundle: settlement, intent, spa, sba, policyGrant</li>
+<li>JSON artifact bundle: settlement, sba, policyGrant</li>
 </ul>
 <h3 id="examples">Examples</h3>
 <div class="highlight"><pre><span></span><code>mpcp<span class="w"> </span>verify<span class="w"> </span>examples/parking/settlement-bundle.json
@@ -1428,10 +1428,9 @@ mpcp<span class="w"> </span>policy-summary<span class="w"> </span>profiles/parki
 <h2 id="golden-protocol-vectors">Golden Protocol Vectors</h2>
 <p>Golden test vectors are in <code>test/vectors/</code> for interoperability and regression testing:</p>
 <ul>
-<li><code>test/vectors/valid-settlement.json</code> — valid settlement with intent hash</li>
+<li><code>test/vectors/valid-settlement.json</code> — valid settlement bundle, must pass</li>
 <li><code>test/vectors/expired-grant.json</code> — expired policy grant</li>
 <li><code>test/vectors/budget-exceeded.json</code> — payment exceeds budget</li>
-<li><code>test/vectors/intent-hash-mismatch.json</code> — intent hash mismatch</li>
 <li><code>test/vectors/settlement-mismatch.json</code> — settlement amount mismatch</li>
 </ul>
 <p><code>npm test</code> runs the golden vector suite. Other implementations can verify compatibility by running their verifier against these vectors.</p>

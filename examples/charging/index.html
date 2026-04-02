@@ -1243,7 +1243,7 @@
 <h1 id="charging-example">Charging Example</h1>
 <p>MPCP for EV charging: variable session length, multiple kWh, charging operator destinations.</p>
 <h2 id="scenario">Scenario</h2>
-<p>EV connects to a charging station. The station requests payment authorization. The vehicle (or charging session manager) evaluates policy and budget, signs an SPA for the charging session, and the station verifies the MPCP chain before supplying power.</p>
+<p>EV connects to a charging station. The station requests payment authorization. The vehicle (or charging session manager) evaluates policy and budget, issues an SBA for the charging session, and the station verifies the MPCP chain before supplying power. The Trust Gateway executes the XRPL payment when the session ends.</p>
 <h2 id="profile">Profile</h2>
 <p>The <a href="../../implementation/reference-profiles/#charging-profile">Charging reference profile</a> defines:</p>
 <ul>
@@ -1268,9 +1268,9 @@
 <ol>
 <li>Vehicle (or fleet) obtains PolicyGrant + SBA with charging destinations</li>
 <li>Charging station requests payment (amount may be estimated or updated during session)</li>
-<li>Vehicle signs SPA for the authorized amount</li>
-<li>Station verifies MPCP chain</li>
-<li>Power is supplied; settlement executes when session ends</li>
+<li>Vehicle issues SBA for the authorized amount</li>
+<li>Station verifies MPCP chain locally</li>
+<li>Power is supplied; Trust Gateway submits XRPL settlement when session ends</li>
 </ol>
 <h2 id="run-parking-example-same-flow">Run Parking Example (Same Flow)</h2>
 <p>The parking example uses the same MPCP flow. For charging, adjust:</p>

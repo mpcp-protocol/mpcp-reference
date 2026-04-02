@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#intent-anchoring" class="md-skip">
+        <a href="#policy-anchoring" class="md-skip">
           Skip to content
         </a>
       
@@ -680,10 +680,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#supported-rails" class="md-nav__link">
+  <a href="#anchorref-format" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Supported Rails
+        anchorRef Format
       
     </span>
   </a>
@@ -702,10 +702,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#anchor-result" class="md-nav__link">
+  <a href="#policyanchorresult" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Anchor Result
+        PolicyAnchorResult
       
     </span>
   </a>
@@ -724,10 +724,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#mock-anchor" class="md-nav__link">
+  <a href="#hedera-hcs-adapter" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Mock Anchor
+        Hedera HCS Adapter
       
     </span>
   </a>
@@ -735,10 +735,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#hedera-hcs-adapter" class="md-nav__link">
+  <a href="#xrpl-nft-adapter" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Hedera HCS Adapter
+        XRPL NFT Adapter
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#xrpl-payment-memos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        XRPL Payment Memos
       
     </span>
   </a>
@@ -1172,10 +1183,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#supported-rails" class="md-nav__link">
+  <a href="#anchorref-format" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Supported Rails
+        anchorRef Format
       
     </span>
   </a>
@@ -1194,10 +1205,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#anchor-result" class="md-nav__link">
+  <a href="#policyanchorresult" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Anchor Result
+        PolicyAnchorResult
       
     </span>
   </a>
@@ -1216,10 +1227,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#mock-anchor" class="md-nav__link">
+  <a href="#hedera-hcs-adapter" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Mock Anchor
+        Hedera HCS Adapter
       
     </span>
   </a>
@@ -1227,10 +1238,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#hedera-hcs-adapter" class="md-nav__link">
+  <a href="#xrpl-nft-adapter" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Hedera HCS Adapter
+        XRPL NFT Adapter
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#xrpl-payment-memos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        XRPL Payment Memos
       
     </span>
   </a>
@@ -1262,65 +1284,63 @@
   
 
 
-<h1 id="intent-anchoring">Intent Anchoring</h1>
-<p>Optional support for publishing intent hashes to distributed ledgers. Provides public auditability, dispute protection, and replay protection.</p>
-<p><strong>Mock anchor</strong> is included for development. <strong>Hedera HCS</strong> adapter is implemented. XRPL and EVM are future work.</p>
+<h1 id="policy-anchoring">Policy Anchoring</h1>
+<p>Optional support for publishing MPCP policy documents to distributed ledgers. Provides public auditability, dispute protection, and tamper-evident policy history.</p>
+<p><strong>Hedera HCS</strong> adapter is implemented (publish policy document to a topic). <strong>XRPL NFT</strong> adapter is implemented (mint an NFT representing the policy document). Both return an <code>anchorRef</code> that is stored on the PolicyGrant.</p>
 <h2 id="purpose">Purpose</h2>
 <ul>
-<li><strong>Public auditability</strong> — Intent hashes can be verified against a public record</li>
-<li><strong>Dispute protection</strong> — Timestamped proof of intent before settlement</li>
-<li><strong>Replay protection</strong> — Ledger sequence provides ordering and uniqueness</li>
+<li><strong>Public auditability</strong> — Policy documents can be verified against a public ledger record</li>
+<li><strong>Dispute protection</strong> — Timestamped proof that a policy document existed before settlement</li>
+<li><strong>Tamper evidence</strong> — On-chain record makes retroactive policy modification detectable</li>
 </ul>
-<h2 id="supported-rails">Supported Rails</h2>
+<h2 id="anchorref-format">anchorRef Format</h2>
+<p>The <code>anchorRef</code> field on a PolicyGrant identifies the on-chain location of the anchored policy document:</p>
 <table>
 <thead>
 <tr>
+<th>Format</th>
 <th>Rail</th>
-<th>Description</th>
+<th>Example</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td><code>hcs:{topicId}:{seq}</code></td>
 <td>Hedera HCS</td>
-<td>Hashgraph Consensus Service topic</td>
+<td><code>hcs:0.0.12345:42</code></td>
 </tr>
 <tr>
-<td>XRPL</td>
-<td>XRP Ledger memo or dedicated table</td>
-</tr>
-<tr>
-<td>EVM</td>
-<td>Ethereum / EVM-compatible chain</td>
-</tr>
-<tr>
-<td>mock</td>
-<td>Development and testing (no ledger)</td>
+<td><code>xrpl:nft:{tokenId}</code></td>
+<td>XRPL NFT</td>
+<td><code>xrpl:nft:ABC123...</code></td>
 </tr>
 </tbody>
 </table>
 <h2 id="usage">Usage</h2>
-<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">computeSettlementIntentHash</span><span class="p">,</span><span class="w"> </span><span class="nx">mockAnchorIntentHash</span><span class="p">,</span><span class="w"> </span><span class="nx">hederaHcsAnchorIntentHash</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;mpcp-service&quot;</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">hederaHcsAnchorPolicyDocument</span><span class="p">,</span><span class="w"> </span><span class="nx">checkXrplNftRevocation</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;mpcp-service/anchor&quot;</span><span class="p">;</span>
 
-<span class="kd">const</span><span class="w"> </span><span class="nx">intent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">version</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">rail</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;xrpl&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">amount</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;1000&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">destination</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;rDest...&quot;</span><span class="w"> </span><span class="p">};</span>
-<span class="kd">const</span><span class="w"> </span><span class="nx">intentHash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">computeSettlementIntentHash</span><span class="p">(</span><span class="nx">intent</span><span class="p">);</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">policyDoc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">version</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">policyHash</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;a1b2c3...&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">issuedAt</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;2026-01-01T00:00:00Z&quot;</span><span class="w"> </span><span class="p">};</span>
 
-<span class="c1">// Mock anchor (development)</span>
-<span class="kd">const</span><span class="w"> </span><span class="nx">mockResult</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">mockAnchorIntentHash</span><span class="p">(</span><span class="nx">intentHash</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">rail</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;mock&quot;</span><span class="w"> </span><span class="p">});</span>
-<span class="c1">// { rail: &quot;mock&quot;, txHash: &quot;mock-...&quot;, anchoredAt: &quot;...&quot; }</span>
+<span class="c1">// Hedera HCS (requires MPCP_HCS_POLICY_TOPIC_ID, MPCP_HCS_OPERATOR_ID, MPCP_HCS_OPERATOR_KEY)</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">hederaHcsAnchorPolicyDocument</span><span class="p">(</span><span class="nx">policyDoc</span><span class="p">);</span>
+<span class="c1">// { anchorRef: &quot;hcs:0.0.12345:42&quot;, rail: &quot;hedera-hcs&quot;, anchoredAt: &quot;...&quot; }</span>
 
-<span class="c1">// Hedera HCS (requires @hashgraph/sdk, HEDERA_OPERATOR_*, HEDERA_TOPIC_ID)</span>
-<span class="kd">const</span><span class="w"> </span><span class="nx">hederaResult</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">hederaHcsAnchorIntentHash</span><span class="p">(</span><span class="nx">intentHash</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">rail</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;hedera-hcs&quot;</span><span class="w"> </span><span class="p">});</span>
-<span class="c1">// { rail: &quot;hedera-hcs&quot;, topicId, sequenceNumber, intentHash, anchoredAt }</span>
+<span class="c1">// Store the anchorRef on the PolicyGrant</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">grant</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">createPolicyGrant</span><span class="p">({</span>
+<span class="w">  </span><span class="nx">policyHash</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;a1b2c3&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">allowedRails</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;xrpl&quot;</span><span class="p">],</span>
+<span class="w">  </span><span class="nx">allowedAssets</span><span class="o">:</span><span class="w"> </span><span class="p">[...],</span>
+<span class="w">  </span><span class="nx">expiresAt</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;2030-12-31T23:59:59Z&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">anchorRef</span><span class="o">:</span><span class="w"> </span><span class="kt">result.anchorRef</span><span class="p">,</span>
+<span class="p">});</span>
 </code></pre></div>
-<h2 id="anchor-result">Anchor Result</h2>
-<div class="highlight"><pre><span></span><code><span class="kd">interface</span><span class="w"> </span><span class="nx">AnchorResult</span><span class="w"> </span><span class="p">{</span>
+<h2 id="policyanchorresult">PolicyAnchorResult</h2>
+<div class="highlight"><pre><span></span><code><span class="kd">interface</span><span class="w"> </span><span class="nx">PolicyAnchorResult</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">anchorRef</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">         </span><span class="c1">// &quot;hcs:{topicId}:{seq}&quot; | &quot;xrpl:nft:{tokenId}&quot;</span>
 <span class="w">  </span><span class="nx">rail</span><span class="o">:</span><span class="w"> </span><span class="kt">AnchorRail</span><span class="p">;</span>
-<span class="w">  </span><span class="nx">txHash?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">           </span><span class="c1">// XRPL, EVM transaction hash</span>
-<span class="w">  </span><span class="nx">reference?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">        </span><span class="c1">// Rail-neutral reference (e.g. topicId:sequenceNumber)</span>
-<span class="w">  </span><span class="nx">consensusTimestamp?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w"> </span><span class="c1">// Hedera HCS (ISO 8601)</span>
-<span class="w">  </span><span class="nx">topicId?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">          </span><span class="c1">// Hedera HCS</span>
-<span class="w">  </span><span class="nx">sequenceNumber?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">   </span><span class="c1">// Hedera HCS</span>
-<span class="w">  </span><span class="nx">intentHash?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">        </span><span class="c1">// For verification</span>
+<span class="w">  </span><span class="nx">txHash?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">           </span><span class="c1">// XRPL transaction hash</span>
+<span class="w">  </span><span class="nx">topicId?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">          </span><span class="c1">// Hedera HCS topic ID</span>
+<span class="w">  </span><span class="nx">sequenceNumber?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">   </span><span class="c1">// Hedera HCS sequence number</span>
 <span class="w">  </span><span class="nx">anchoredAt?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">       </span><span class="c1">// ISO 8601</span>
 <span class="p">}</span>
 </code></pre></div>
@@ -1331,23 +1351,26 @@
 <li>Audit trails</li>
 <li>Compliance and attestation</li>
 </ul>
-<h2 id="mock-anchor">Mock Anchor</h2>
-<p>The <code>mockAnchorIntentHash</code> function simulates anchoring without contacting a ledger. Use for:</p>
-<ul>
-<li>Development</li>
-<li>Testing</li>
-<li>Demos</li>
-</ul>
-<p><strong>Validation:</strong> Requires 64-char hex intentHash. Throws on invalid input. Only accepts <code>rail: "mock"</code> — passing other rails throws to avoid confusion with real ledger behavior.</p>
 <h2 id="hedera-hcs-adapter">Hedera HCS Adapter</h2>
-<p>The Hedera HCS adapter publishes intent hashes to a Hedera Consensus Service topic.</p>
+<p>The Hedera HCS adapter publishes policy documents to a Hedera Consensus Service topic.</p>
 <p><strong>Requirements:</strong>
 - <code>npm install @hashgraph/sdk</code> (optional peer dependency; install when using Hedera HCS)
-- <code>HEDERA_OPERATOR_ACCOUNT_ID</code> — Operator account ID
-- <code>HEDERA_OPERATOR_PRIVATE_KEY</code> — Operator private key (DER or hex)
-- <code>HEDERA_TOPIC_ID</code> — HCS topic ID
+- <code>MPCP_HCS_OPERATOR_ID</code> — Operator account ID
+- <code>MPCP_HCS_OPERATOR_KEY</code> — Operator private key (DER or hex)
+- <code>MPCP_HCS_POLICY_TOPIC_ID</code> — HCS topic ID for policy anchoring
 - <code>HEDERA_NETWORK</code> (optional) — <code>testnet</code> or <code>mainnet</code>, default <code>testnet</code></p>
-<p><strong>Verification:</strong> Use <code>verifyDisputedSettlementAsync</code> for full verification against the Hedera mirror node. The sync <code>verifyDisputedSettlement</code> accepts hedera-hcs anchors when <code>intentHash</code> is present in the anchor result.</p>
+<h2 id="xrpl-nft-adapter">XRPL NFT Adapter</h2>
+<p>The XRPL NFT adapter mints an NFT on the XRP Ledger representing the policy document. The NFT token ID becomes the <code>anchorRef</code>.</p>
+<p><strong>Revocation check:</strong> Use <code>checkXrplNftRevocation(tokenId)</code> to verify whether the NFT has been burned (which signals policy revocation).</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">checkXrplNftRevocation</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;mpcp-service/anchor&quot;</span><span class="p">;</span>
+
+<span class="kd">const</span><span class="w"> </span><span class="nx">revoked</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">checkXrplNftRevocation</span><span class="p">(</span><span class="s2">&quot;ABC123...&quot;</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">revoked</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Policy has been revoked on-chain</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="xrpl-payment-memos">XRPL Payment Memos</h2>
+<p>Every XRPL payment submitted via the Trust Gateway includes an <code>mpcp/grant-id</code> memo field. This provides a lightweight on-chain audit trail linking each payment to its PolicyGrant — even without a full policy document anchor.</p>
 
 
 

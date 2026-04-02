@@ -752,10 +752,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#mock-anchor" class="md-nav__link">
+  <a href="#async-verification-hedera-hcs-mirror" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Mock Anchor
+        Async Verification (Hedera HCS Mirror)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#xrpl-audit-trail" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        XRPL Audit Trail
       
     </span>
   </a>
@@ -1205,10 +1216,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#mock-anchor" class="md-nav__link">
+  <a href="#async-verification-hedera-hcs-mirror" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Mock Anchor
+        Async Verification (Hedera HCS Mirror)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#xrpl-audit-trail" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        XRPL Audit Trail
       
     </span>
   </a>
@@ -1241,20 +1263,25 @@
 
 
 <h1 id="dispute-verification">Dispute Verification</h1>
-<p>Tooling to verify disputed settlements using the full MPCP chain plus optional ledger anchor.</p>
+<p>Tooling to verify disputed settlements using the full MPCP chain plus optional policy anchor.</p>
 <h2 id="purpose">Purpose</h2>
 <p>When a settlement is disputed, <code>verifyDisputedSettlement</code> validates:</p>
 <ol>
-<li><strong>MPCP chain</strong> — PolicyGrant → SignedBudgetAuthorization → SignedPaymentAuthorization → SettlementIntent</li>
-<li><strong>Ledger anchor</strong> (optional) — When provided, verifies the anchor is consistent with the settlement intent</li>
+<li><strong>MPCP chain</strong> — PolicyGrant → SignedBudgetAuthorization → Settlement</li>
+<li><strong>Policy anchor</strong> (optional) — When provided, verifies the <code>anchorRef</code> on the PolicyGrant is consistent with an on-chain record of the policy document</li>
 </ol>
 <h2 id="usage">Usage</h2>
-<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">verifyDisputedSettlement</span><span class="p">,</span><span class="w"> </span><span class="nx">mockAnchorIntentHash</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;mpcp-service&quot;</span><span class="p">;</span>
-<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">computeSettlementIntentHash</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;mpcp-service&quot;</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">verifyDisputedSettlement</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;mpcp-service&quot;</span><span class="p">;</span>
 
 <span class="kd">const</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">verifyDisputedSettlement</span><span class="p">({</span>
 <span class="w">  </span><span class="nx">context</span><span class="o">:</span><span class="w"> </span><span class="kt">settlementVerificationContext</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">ledgerAnchor</span><span class="o">:</span><span class="w"> </span><span class="kt">await</span><span class="w"> </span><span class="nx">mockAnchorIntentHash</span><span class="p">(</span><span class="nx">computeSettlementIntentHash</span><span class="p">(</span><span class="nx">intent</span><span class="p">)),</span>
+<span class="w">  </span><span class="c1">// Optional: ledger anchor result from policy document anchoring</span>
+<span class="w">  </span><span class="nx">ledgerAnchor</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">anchorRef</span><span class="o">:</span><span class="w"> </span><span class="kt">grant.anchorRef</span><span class="p">,</span><span class="w">  </span><span class="c1">// &quot;hcs:0.0.12345:42&quot; or &quot;xrpl:nft:ABC123...&quot;</span>
+<span class="w">    </span><span class="nx">rail</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;hedera-hcs&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">sequenceNumber</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;42&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">topicId</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;0.0.12345&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="p">},</span>
 <span class="p">});</span>
 
 <span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">verified</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
@@ -1265,8 +1292,8 @@
 </code></pre></div>
 <h2 id="inputs">Inputs</h2>
 <ul>
-<li><strong>context</strong> — Full <code>SettlementVerificationContext</code> (settlement, artifacts, policy grant, SBA, SPA, decision, settlement intent)</li>
-<li><strong>ledgerAnchor</strong> — Optional <code>AnchorResult</code> from intent anchoring</li>
+<li><strong>context</strong> — Full <code>SettlementVerificationContext</code> (settlement, policyGrant, signedBudgetAuthorization, decision)</li>
+<li><strong>ledgerAnchor</strong> — Optional <code>PolicyAnchorResult</code> from policy document anchoring</li>
 </ul>
 <h2 id="output">Output</h2>
 <ul>
@@ -1276,12 +1303,20 @@
 <h2 id="failure-reasons">Failure Reasons</h2>
 <ul>
 <li><code>settlement_verification_failed</code> — Standard MPCP chain verification failed</li>
-<li><code>anchor_provided_but_settlement_intent_missing</code> — Anchor provided but context has no settlement intent</li>
-<li><code>anchor_mismatch: ...</code> — Mock anchor txHash does not match intent hash</li>
-<li><code>anchor_rail_not_supported: ...</code> — Real ledger anchor verification not yet implemented</li>
+<li><code>anchor_provided_but_anchor_ref_missing</code> — Anchor provided but PolicyGrant has no <code>anchorRef</code></li>
+<li><code>anchor_mismatch</code> — PolicyGrant <code>anchorRef</code> does not match the provided ledger anchor</li>
+<li><code>anchor_rail_not_supported</code> — Anchor rail not available for verification</li>
 </ul>
-<h2 id="mock-anchor">Mock Anchor</h2>
-<p>Only mock anchors are supported. Real ledger verification (Hedera HCS, XRPL, EVM) is future work.</p>
+<h2 id="async-verification-hedera-hcs-mirror">Async Verification (Hedera HCS Mirror)</h2>
+<p>Use <code>verifyDisputedSettlementAsync</code> to verify a Hedera HCS anchor by querying the mirror node:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">verifyDisputedSettlementAsync</span><span class="p">({</span>
+<span class="w">  </span><span class="nx">context</span><span class="o">:</span><span class="w"> </span><span class="kt">settlementVerificationContext</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">ledgerAnchor</span><span class="o">:</span><span class="w"> </span><span class="kt">hcsAnchorResult</span><span class="p">,</span>
+<span class="p">});</span>
+</code></pre></div>
+<p>This fetches the anchored policy document from the Hedera mirror node and confirms it matches the PolicyGrant's <code>policyHash</code>.</p>
+<h2 id="xrpl-audit-trail">XRPL Audit Trail</h2>
+<p>Even without a policy document anchor, every XRPL payment submitted via the Trust Gateway includes an <code>mpcp/grant-id</code> memo. Disputes can reference this memo to confirm the on-chain payment was associated with the correct PolicyGrant.</p>
 
 
 

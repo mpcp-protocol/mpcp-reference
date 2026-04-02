@@ -1222,8 +1222,8 @@
 <p>The MPCP SDK creates and verifies authorization artifacts. This guide shows how the artifacts fit together as a connected lifecycle.</p>
 <p>For the full API reference (all function signatures, parameters, and env vars), see <a href="../../reference/sdk/">SDK Reference</a>.</p>
 <h2 id="artifact-lifecycle">Artifact Lifecycle</h2>
-<p>MPCP authorization flows through three artifact types, each constraining the next:</p>
-<div class="highlight"><pre><span></span><code>PolicyGrant  →  SBA (session budget)  →  SPA (per-payment)  →  Settlement
+<p>MPCP authorization flows through two artifact types before reaching the Trust Gateway:</p>
+<div class="highlight"><pre><span></span><code>PolicyGrant  →  SBA (per-payment budget)  →  Trust Gateway  →  XRPL Settlement
 </code></pre></div>
 <p>Each artifact references the previous via shared fields:</p>
 <table>
@@ -1242,36 +1242,42 @@
 </tr>
 <tr>
 <td><code>sessionId</code></td>
-<td>SPA</td>
-<td><code>SBA.authorization.sessionId</code></td>
+<td>SBA</td>
+<td>Session identifier</td>
 </tr>
 <tr>
-<td><code>intentHash</code></td>
-<td>SPA</td>
-<td><code>computeSettlementIntentHash(intent)</code></td>
+<td><code>policyHash</code></td>
+<td>SBA</td>
+<td><code>PolicyGrant.policyHash</code></td>
+</tr>
+<tr>
+<td><code>anchorRef</code></td>
+<td>PolicyGrant</td>
+<td>On-chain policy document anchor (optional)</td>
 </tr>
 </tbody>
 </table>
+<p>The Trust Gateway verifies the SBA chain and submits the XRPL payment. Every XRPL payment includes an <code>mpcp/grant-id</code> memo for on-chain audit trail.</p>
 <h2 id="full-lifecycle-example">Full Lifecycle Example</h2>
 <div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="nx">createPolicyGrant</span><span class="p">,</span>
 <span class="w">  </span><span class="nx">createSignedBudgetAuthorization</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">createSettlementIntent</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">createSignedPaymentAuthorization</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">computeSettlementIntentHash</span><span class="p">,</span>
 <span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;mpcp-service/sdk&quot;</span><span class="p">;</span>
 
 <span class="c1">// 1. PolicyGrant — fleet policy evaluation result</span>
 <span class="c1">//    Defines allowed rails, assets, and expiration for this session.</span>
+<span class="c1">//    Optional anchorRef links to on-chain policy document.</span>
 <span class="kd">const</span><span class="w"> </span><span class="nx">grant</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">createPolicyGrant</span><span class="p">({</span>
 <span class="w">  </span><span class="nx">policyHash</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;a1b2c3&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nx">allowedRails</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;xrpl&quot;</span><span class="p">],</span>
 <span class="w">  </span><span class="nx">allowedAssets</span><span class="o">:</span><span class="w"> </span><span class="p">[{</span><span class="w"> </span><span class="nx">kind</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;IOU&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">currency</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;RLUSD&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">issuer</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;rIssuer&quot;</span><span class="w"> </span><span class="p">}],</span>
 <span class="w">  </span><span class="nx">expiresAt</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;2030-12-31T23:59:59Z&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="c1">// anchorRef: &quot;hcs:0.0.12345:42&quot;,  // optional on-chain anchor</span>
 <span class="p">});</span>
 
-<span class="c1">// 2. SBA — session spending envelope</span>
+<span class="c1">// 2. SBA — per-payment spending envelope</span>
 <span class="c1">//    grantId binds this SBA to the PolicyGrant above.</span>
+<span class="c1">//    maxAmountMinor is the amount for this specific payment.</span>
 <span class="c1">//    Returns null if MPCP_SBA_SIGNING_PRIVATE_KEY_PEM is not set.</span>
 <span class="kd">const</span><span class="w"> </span><span class="nx">sba</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">createSignedBudgetAuthorization</span><span class="p">({</span>
 <span class="w">  </span><span class="nx">grantId</span><span class="o">:</span><span class="w"> </span><span class="kt">grant.grantId</span><span class="p">,</span>
@@ -1279,54 +1285,34 @@
 <span class="w">  </span><span class="nx">actorId</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;actor-001&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nx">policyHash</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;a1b2c3&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nx">currency</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;USD&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">maxAmountMinor</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;3000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">maxAmountMinor</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;1000&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nx">allowedRails</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;xrpl&quot;</span><span class="p">],</span>
 <span class="w">  </span><span class="nx">allowedAssets</span><span class="o">:</span><span class="w"> </span><span class="p">[{</span><span class="w"> </span><span class="nx">kind</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;IOU&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">currency</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;RLUSD&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">issuer</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;rIssuer&quot;</span><span class="w"> </span><span class="p">}],</span>
 <span class="w">  </span><span class="nx">destinationAllowlist</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;rParking&quot;</span><span class="p">],</span>
 <span class="w">  </span><span class="nx">expiresAt</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;2030-12-31T23:59:59Z&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="c1">// Required when the merchant uses Trust Bundle key resolution:</span>
+<span class="w">  </span><span class="c1">// issuer: &quot;vehicle:ev-001.fleet.example.com&quot;,</span>
 <span class="p">});</span>
 
-<span class="c1">// 3. SettlementIntent — canonical representation of the payment</span>
-<span class="kd">const</span><span class="w"> </span><span class="nx">intent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">createSettlementIntent</span><span class="p">({</span>
-<span class="w">  </span><span class="nx">rail</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;xrpl&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">amount</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;1000&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">destination</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;rParking&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">asset</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">kind</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;IOU&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">currency</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;RLUSD&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">issuer</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;rIssuer&quot;</span><span class="w"> </span><span class="p">},</span>
-<span class="p">});</span>
+<span class="c1">// 3. Trust Gateway submits the XRPL payment</span>
+<span class="c1">//    The gateway verifies the SBA chain (PolicyGrant → SBA) then</span>
+<span class="c1">//    executes the XRPL transaction with mpcp/grant-id memo attached.</span>
 
-<span class="c1">// 4. SPA — per-payment authorization</span>
-<span class="c1">//    sessionId matches SBA. intentHash binds SPA to the specific settlement.</span>
-<span class="c1">//    Returns null if MPCP_SPA_SIGNING_PRIVATE_KEY_PEM is not set.</span>
-<span class="kd">const</span><span class="w"> </span><span class="nx">spa</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">createSignedPaymentAuthorization</span><span class="p">({</span>
-<span class="w">  </span><span class="nx">decisionId</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;dec-789&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">sessionId</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;sess-123&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">policyHash</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;a1b2c3&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">quoteId</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;quote-17&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">rail</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;xrpl&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">asset</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">kind</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;IOU&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">currency</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;RLUSD&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">issuer</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;rIssuer&quot;</span><span class="w"> </span><span class="p">},</span>
-<span class="w">  </span><span class="nx">amount</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;1000&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">destination</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;rParking&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">intentHash</span><span class="o">:</span><span class="w"> </span><span class="kt">computeSettlementIntentHash</span><span class="p">(</span><span class="nx">intent</span><span class="p">),</span>
-<span class="w">  </span><span class="nx">expiresAt</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;2030-12-31T23:59:59Z&quot;</span><span class="p">,</span>
-<span class="p">});</span>
-
-<span class="c1">// 5. Verify the settlement bundle</span>
+<span class="c1">// 4. Verify the settlement bundle</span>
 <span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">verifySettlement</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;mpcp-service/sdk&quot;</span><span class="p">;</span>
 
 <span class="kd">const</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">verifySettlement</span><span class="p">({</span>
 <span class="w">  </span><span class="nx">policyGrant</span><span class="o">:</span><span class="w"> </span><span class="kt">grant</span><span class="p">,</span>
 <span class="w">  </span><span class="nx">signedBudgetAuthorization</span><span class="o">:</span><span class="w"> </span><span class="kt">sba</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">signedPaymentAuthorization</span><span class="o">:</span><span class="w"> </span><span class="kt">spa</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">settlementIntent</span><span class="o">:</span><span class="w"> </span><span class="kt">intent</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">settlement</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">rail</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;xrpl&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">amount</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;1000&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">destination</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;rParking&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">asset</span><span class="o">:</span><span class="w"> </span><span class="kt">intent.asset</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="nx">settlement</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">rail</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;xrpl&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">amount</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;1000&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">destination</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;rParking&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">asset</span><span class="o">:</span><span class="w"> </span><span class="kt">grant.allowedAssets</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span><span class="w"> </span><span class="p">},</span>
 <span class="p">});</span>
 <span class="c1">// result.valid === true</span>
 </code></pre></div>
 <h2 id="actor-roles">Actor Roles</h2>
-<p>In an autonomous deployment, the wallet plays both roles in this lifecycle:</p>
+<p>In an autonomous deployment, the wallet acts as the session authority and the Trust Gateway handles payment execution:</p>
 <ul>
-<li><strong>Session authority</strong> — signs the SBA, establishing the session budget</li>
-<li><strong>Payment decision service</strong> — evaluates each payment request and signs the SPA locally</li>
+<li><strong>Session authority</strong> — signs the SBA, establishing the per-payment budget envelope</li>
+<li><strong>Trust Gateway</strong> — mandatory actor that verifies the SBA chain and submits XRPL payments with <code>mpcp/grant-id</code> memo</li>
 </ul>
 <p>See <a href="../machine-wallet-guardrails/">Machine Wallet Guardrails</a> for the full guardrail model, threat analysis, and integration checklist.</p>
 <h2 id="environment-variables">Environment Variables</h2>
@@ -1349,18 +1335,6 @@
 <tr>
 <td>MPCP_SBA_SIGNING_KEY_ID</td>
 <td>Key identifier (default: <code>mpcp-sba-signing-key-1</code>)</td>
-</tr>
-<tr>
-<td>MPCP_SPA_SIGNING_PRIVATE_KEY_PEM</td>
-<td>Private key for signing SPAs</td>
-</tr>
-<tr>
-<td>MPCP_SPA_SIGNING_PUBLIC_KEY_PEM</td>
-<td>Public key for verifying SPAs</td>
-</tr>
-<tr>
-<td>MPCP_SPA_SIGNING_KEY_ID</td>
-<td>Key identifier (default: <code>mpcp-spa-signing-key-1</code>)</td>
 </tr>
 </tbody>
 </table>

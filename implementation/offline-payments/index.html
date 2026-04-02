@@ -619,6 +619,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#trust-bundles-for-offline-key-resolution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trust Bundles for Offline Key Resolution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#offline-payment-flow" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1201,6 +1212,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#trust-bundles-for-offline-key-resolution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trust Bundles for Offline Key Resolution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#offline-payment-flow" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1292,10 +1314,14 @@
 <p>Before going offline, the vehicle obtains:</p>
 <ol>
 <li><strong>PolicyGrant</strong> — Fleet policy constraints (allowed rails, assets, expiration)</li>
-<li><strong>BudgetAuthorization</strong> — Session spending envelope (max amount, destinations)</li>
+<li><strong>BudgetAuthorization</strong> — Per-payment spending envelope (max amount, destinations)</li>
 <li><strong>SignedBudgetAuthorization (SBA)</strong> — Cryptographically signed budget</li>
 </ol>
 <p>The vehicle stores this chain onboard. When connectivity is restored, it can refresh the chain.</p>
+<h3 id="trust-bundles-for-offline-key-resolution">Trust Bundles for Offline Key Resolution</h3>
+<p>To verify SBA signatures without network access, the verifier needs the issuer's public key. MPCP solves this with <strong>Trust Bundles</strong> — pre-distributed signed documents that package trusted issuer public keys.</p>
+<p>Before going offline, the verifier (e.g., parking meter) obtains one or more Trust Bundles from the fleet's Policy Authority. Each bundle contains approved issuer identities and their public keys (as JWKs). The bundle itself is signed by the Policy Authority's root key, so the verifier can confirm authenticity locally.</p>
+<p>When the SBA envelope includes an <code>issuer</code> field, the verifier resolves the signing key from the Trust Bundle by matching <code>issuer</code> + <code>issuerKeyId</code> — no network call required.</p>
 <h3 id="offline-payment-flow">Offline Payment Flow</h3>
 <ol>
 <li>
@@ -1313,35 +1339,35 @@
 <p>Asset and rail permitted?</p>
 </li>
 <li>
-<p>Vehicle signs <strong>SignedPaymentAuthorization (SPA)</strong> locally.</p>
+<p>Vehicle presents the SBA to the local verifier (parking meter).</p>
 </li>
 <li>
-<p>Parking system verifies the MPCP artifact chain <strong>locally</strong> (PolicyGrant → SignedBudgetAuthorization → SignedPaymentAuthorization → SettlementIntent).</p>
+<p>Parking system verifies the MPCP artifact chain <strong>locally</strong> (PolicyGrant → SignedBudgetAuthorization → Settlement). Signing keys are resolved from the pre-loaded <strong>Trust Bundle</strong> — no network call needed.</p>
 </li>
 <li>
-<p>Payment succeeds. Gate opens. <strong>No central backend contacted.</strong></p>
+<p>When connectivity returns, the vehicle or merchant submits the payment via the <strong>Trust Gateway</strong>, which executes the XRPL transaction with the <code>mpcp/grant-id</code> memo. <strong>No central backend is needed for the authorization check.</strong></p>
 </li>
 </ol>
 <h3 id="reconciliation">Reconciliation</h3>
-<p>When connectivity returns, the parking system (or settlement rail) can:</p>
+<p>When connectivity returns:</p>
 <ul>
-<li>Submit the offline payment for settlement</li>
-<li>Reconcile with the fleet operator</li>
-<li>Update session state</li>
+<li>The Trust Gateway submits the XRPL payment referencing the SBA</li>
+<li>The <code>mpcp/grant-id</code> memo on the XRPL transaction provides an on-chain audit trail</li>
+<li>Fleet operator can reconcile with the on-chain record</li>
 </ul>
 <h2 id="key-behaviors">Key Behaviors</h2>
 <ul>
 <li><strong>Local authorization</strong> — BudgetAuthorization decisions use only onboard data</li>
 <li><strong>Deterministic verification</strong> — MPCP artifacts can be verified without network</li>
-<li><strong>Successful payment during outage</strong> — No central approval API required</li>
-<li><strong>Later reconciliation</strong> — Settlement can complete when connectivity returns</li>
+<li><strong>Successful payment during outage</strong> — No central approval API required at authorization time</li>
+<li><strong>Later settlement</strong> — XRPL payment executes via Trust Gateway when connectivity returns</li>
 </ul>
 <h2 id="demo">Demo</h2>
 <p>Run the offline payment demo:</p>
 <div class="highlight"><pre><span></span><code>npm<span class="w"> </span>run<span class="w"> </span>build
 npm<span class="w"> </span>run<span class="w"> </span>example:offline
 </code></pre></div>
-<p>The demo simulates the full flow: vehicle with pre-authorized chain, enters garage (no network), payment request, local SPA signing, local verification, gate opens.</p>
+<p>The demo simulates the full flow: vehicle with pre-authorized chain, enters garage (no network), payment request, local SBA verification, gate opens, settlement submitted via Trust Gateway when back online.</p>
 
 
 

@@ -1249,11 +1249,10 @@
 <p>The following remain fixed in MPCP and are not profile-specific:</p>
 <ul>
 <li><strong>PolicyGrant</strong> — Fleet policy authorization</li>
-<li><strong>SignedBudgetAuthorization</strong> — Session budget envelope</li>
-<li><strong>SignedPaymentAuthorization</strong> — Signed payment binding</li>
-<li><strong>SettlementIntent</strong> — Canonical intent for hashing</li>
+<li><strong>SignedBudgetAuthorization</strong> — Per-payment spending envelope</li>
 <li><strong>Canonical hashing</strong> — Deterministic JSON serialization and SHA-256</li>
-<li><strong>Verification chain</strong> — PolicyGrant → SBA → SPA → SettlementIntent → Settlement</li>
+<li><strong>Verification chain</strong> — PolicyGrant → SBA → Trust Gateway → XRPL Settlement</li>
+<li><strong>Trust Gateway</strong> — Mandatory actor for XRPL payment execution in v1.0</li>
 </ul>
 <hr />
 <h2 id="what-belongs-in-a-profile">What belongs in a profile</h2>
@@ -1271,7 +1270,7 @@
 <h2 id="why-profiles-exist">Why profiles exist</h2>
 <p>Profiles serve several goals:</p>
 <ul>
-<li><strong>Keep MPCP rail-agnostic</strong> — The base protocol does not hard-code rails or assets</li>
+<li><strong>Keep MPCP extensible</strong> — The base protocol does not hard-code rails or assets beyond XRPL v1.0 primary</li>
 <li><strong>Avoid forking the protocol per ecosystem</strong> — Each ecosystem gets a profile instead of a protocol fork</li>
 <li><strong>Make adoption concrete</strong> — Adopters choose a profile and know exactly what to implement</li>
 <li><strong>Support interoperability</strong> — Implementations following the same profile interoperate</li>

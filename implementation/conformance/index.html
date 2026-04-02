@@ -1211,7 +1211,7 @@
 <tr>
 <td><strong>Artifact</strong></td>
 <td>Single artifact</td>
-<td>Produces valid PolicyGrant, SBA, SPA, SettlementIntent per spec</td>
+<td>Produces valid PolicyGrant and SBA per spec</td>
 </tr>
 <tr>
 <td><strong>Chain</strong></td>
@@ -1236,8 +1236,7 @@
 <li><code>valid-settlement.json</code> — Full valid chain, must pass</li>
 <li><code>expired-grant.json</code> — Expired PolicyGrant, must fail</li>
 <li><code>budget-exceeded.json</code> — Amount exceeds budget, must fail</li>
-<li><code>intent-hash-mismatch.json</code> — Intent hash mismatch, must fail</li>
-<li><code>settlement-mismatch.json</code> — Settlement does not match SPA, must fail</li>
+<li><code>settlement-mismatch.json</code> — Settlement does not match SBA constraints, must fail</li>
 </ul>
 <p>Run the conformance tests:</p>
 <div class="highlight"><pre><span></span><code>npm<span class="w"> </span><span class="nb">test</span>
@@ -1250,7 +1249,7 @@ npx<span class="w"> </span>mpcp<span class="w"> </span>verify<span class="w"> </
 <li><strong>Canonical JSON</strong> — Deterministic serialization for hashing</li>
 <li><strong>Domain-separated hashing</strong> — Correct prefix per artifact type</li>
 <li><strong>Signature verification</strong> — Valid key resolution and signature check</li>
-<li><strong>Constraint propagation</strong> — SBA ⊆ PolicyGrant, SPA ⊆ SBA</li>
+<li><strong>Constraint propagation</strong> — SBA ⊆ PolicyGrant</li>
 </ol>
 <h2 id="see-also">See Also</h2>
 <ul>

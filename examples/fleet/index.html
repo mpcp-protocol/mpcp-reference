@@ -1287,7 +1287,7 @@
 <h1 id="fleet-example">Fleet Example</h1>
 <p>Machine-to-machine payment loop for autonomous fleet vehicles.</p>
 <h2 id="scenario">Scenario</h2>
-<p>Robotaxi enters parking facility → parking meter sends payment request → vehicle evaluates fleet policy and session budget → vehicle signs SPA → payment executes on rail → parking system verifies MPCP chain → gate opens.</p>
+<p>Robotaxi enters parking facility → parking meter sends payment request → vehicle evaluates fleet policy and session budget → vehicle issues SBA → Trust Gateway verifies chain and executes XRPL payment → parking system verifies MPCP chain → gate opens.</p>
 <h2 id="architecture">Architecture</h2>
 <div class="highlight"><pre><span></span><code>┌─────────────────┐     payment request      ┌─────────────────┐
 │ Parking Service │ ────────────────────────► │  Vehicle Agent  │
@@ -1295,18 +1295,24 @@
 │                 │                            │  wallet)        │
 │ • request       │     MPCP artifacts         │                 │
 │ • verify        │ ◄────────────────────────  │ • policy check  │
-└────────┬────────┘     (SBA, SPA, intent)     │ • budget check  │
-         │                                      │ • sign SPA      │
+└────────┬────────┘     (PolicyGrant, SBA)     │ • budget check  │
+         │                                      │ • issue SBA     │
          │ verify                               └────────┬────────┘
          ▼                                                │
-┌─────────────────┐                                      │ execute
+┌─────────────────┐                                      │ SBA to gateway
 │    Verifier     │                                      ▼
 │ (local, no API) │                            ┌─────────────────┐
-└─────────────────┘                            │ Settlement Rail │
-         │                                      │ (mock / XRPL)   │
-         │ PASS                                 └─────────────────┘
-         ▼
-    Gate opens
+└─────────────────┘                            │  Trust Gateway  │
+         │                                      │ verify chain +  │
+         │ PASS                                 │ submit XRPL     │
+         ▼                                      └────────┬────────┘
+    Gate opens                                           │
+                                                         ▼
+                                               ┌─────────────────┐
+                                               │   XRPL Ledger   │
+                                               │ (mpcp/grant-id  │
+                                               │  memo attached) │
+                                               └─────────────────┘
 </code></pre></div>
 <h2 id="components">Components</h2>
 <table>
@@ -1327,11 +1333,11 @@
 </tr>
 <tr>
 <td><strong>Verifier</strong></td>
-<td>Validates PolicyGrant → SBA → SPA → SettlementIntent chain</td>
+<td>Validates PolicyGrant → SBA → Settlement chain</td>
 </tr>
 <tr>
-<td><strong>Settlement Rail</strong></td>
-<td>Mock rail or XRPL</td>
+<td><strong>Trust Gateway</strong></td>
+<td>Verifies SBA chain, submits XRPL payment with <code>mpcp/grant-id</code> memo</td>
 </tr>
 </tbody>
 </table>
@@ -1355,7 +1361,7 @@ npm<span class="w"> </span>run<span class="w"> </span>example:fleet
 <ul>
 <li>Autonomous payment authorization within fleet limits</li>
 <li>Session budget enforcement</li>
-<li>Deterministic SettlementIntent hashing</li>
+<li>Trust Gateway handles XRPL execution with on-chain audit trail</li>
 <li>Verification without centralized payment infrastructure</li>
 </ul>
 <h2 id="see-also">See Also</h2>
