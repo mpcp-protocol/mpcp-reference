@@ -2,86 +2,86 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://mpcp-protocol.github.io/mpcp-reference/</loc>
-         <lastmod>2026-04-01</lastmod>
+         <lastmod>2026-04-02</lastmod>
     </url>
     <url>
          <loc>https://mpcp-protocol.github.io/mpcp-reference/quickstart/</loc>
-         <lastmod>2026-04-01</lastmod>
+         <lastmod>2026-04-02</lastmod>
     </url>
     <url>
          <loc>https://mpcp-protocol.github.io/mpcp-reference/animation/MPCP_ANIMATION_PACK/</loc>
-         <lastmod>2026-04-01</lastmod>
+         <lastmod>2026-04-02</lastmod>
     </url>
     <url>
          <loc>https://mpcp-protocol.github.io/mpcp-reference/examples/charging/</loc>
-         <lastmod>2026-04-01</lastmod>
+         <lastmod>2026-04-02</lastmod>
     </url>
     <url>
          <loc>https://mpcp-protocol.github.io/mpcp-reference/examples/fleet/</loc>
-         <lastmod>2026-04-01</lastmod>
+         <lastmod>2026-04-02</lastmod>
     </url>
     <url>
          <loc>https://mpcp-protocol.github.io/mpcp-reference/examples/machine-wallet-guardrails/</loc>
-         <lastmod>2026-04-01</lastmod>
+         <lastmod>2026-04-02</lastmod>
     </url>
     <url>
          <loc>https://mpcp-protocol.github.io/mpcp-reference/examples/parking/</loc>
-         <lastmod>2026-04-01</lastmod>
+         <lastmod>2026-04-02</lastmod>
     </url>
     <url>
          <loc>https://mpcp-protocol.github.io/mpcp-reference/implementation/conformance/</loc>
-         <lastmod>2026-04-01</lastmod>
+         <lastmod>2026-04-02</lastmod>
     </url>
     <url>
          <loc>https://mpcp-protocol.github.io/mpcp-reference/implementation/dispute-verification/</loc>
-         <lastmod>2026-04-01</lastmod>
+         <lastmod>2026-04-02</lastmod>
     </url>
     <url>
          <loc>https://mpcp-protocol.github.io/mpcp-reference/implementation/fleet-operator-tooling/</loc>
-         <lastmod>2026-04-01</lastmod>
+         <lastmod>2026-04-02</lastmod>
     </url>
     <url>
          <loc>https://mpcp-protocol.github.io/mpcp-reference/implementation/intent-anchoring/</loc>
-         <lastmod>2026-04-01</lastmod>
+         <lastmod>2026-04-02</lastmod>
     </url>
     <url>
          <loc>https://mpcp-protocol.github.io/mpcp-reference/implementation/machine-wallet-guardrails/</loc>
-         <lastmod>2026-04-01</lastmod>
+         <lastmod>2026-04-02</lastmod>
     </url>
     <url>
          <loc>https://mpcp-protocol.github.io/mpcp-reference/implementation/offline-payments/</loc>
-         <lastmod>2026-04-01</lastmod>
+         <lastmod>2026-04-02</lastmod>
     </url>
     <url>
          <loc>https://mpcp-protocol.github.io/mpcp-reference/implementation/profile-model/</loc>
-         <lastmod>2026-04-01</lastmod>
+         <lastmod>2026-04-02</lastmod>
     </url>
     <url>
          <loc>https://mpcp-protocol.github.io/mpcp-reference/implementation/reference-profiles/</loc>
-         <lastmod>2026-04-01</lastmod>
+         <lastmod>2026-04-02</lastmod>
     </url>
     <url>
          <loc>https://mpcp-protocol.github.io/mpcp-reference/implementation/sdk/</loc>
-         <lastmod>2026-04-01</lastmod>
+         <lastmod>2026-04-02</lastmod>
     </url>
     <url>
          <loc>https://mpcp-protocol.github.io/mpcp-reference/implementation/verifier/</loc>
-         <lastmod>2026-04-01</lastmod>
+         <lastmod>2026-04-02</lastmod>
     </url>
     <url>
          <loc>https://mpcp-protocol.github.io/mpcp-reference/implementation/xrpl-stablecoin-profile/</loc>
-         <lastmod>2026-04-01</lastmod>
+         <lastmod>2026-04-02</lastmod>
     </url>
     <url>
          <loc>https://mpcp-protocol.github.io/mpcp-reference/reference/cli/</loc>
-         <lastmod>2026-04-01</lastmod>
+         <lastmod>2026-04-02</lastmod>
     </url>
     <url>
          <loc>https://mpcp-protocol.github.io/mpcp-reference/reference/sdk/</loc>
-         <lastmod>2026-04-01</lastmod>
+         <lastmod>2026-04-02</lastmod>
     </url>
     <url>
          <loc>https://mpcp-protocol.github.io/mpcp-reference/reference/service-api/</loc>
-         <lastmod>2026-04-01</lastmod>
+         <lastmod>2026-04-02</lastmod>
     </url>
 </urlset>
