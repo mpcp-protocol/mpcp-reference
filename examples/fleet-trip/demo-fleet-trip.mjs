@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * PR24 — Automated Fleet Trip Demo
+ * Automated Fleet Trip Demo
  *
  * A robotaxi (EV-001) completes a commercial trip with three service payments:
  *   Stop 1: Toll booth          — $6.00
@@ -15,7 +15,7 @@
  * Key concepts demonstrated:
  *   • Multi-payment session: same PolicyGrant and SBA used across 3 payments
  *   • Cumulative budget enforcement: vehicle wallet tracks spend across stops
- *   • Clean rejection: 4th payment refused before SPA is signed
+ *   • Clean rejection: 4th payment refused before SBA is signed
  *   • destinationAllowlist: only pre-approved service types accepted
  *   • Stateless audit: each bundle verifies independently after the trip
  *   • Tamper detection: any modification to a settled payment is detected
@@ -34,7 +34,6 @@ const EXAMPLE_DIR = __dirname;
 // ─── Signing keys (ephemeral for demo; production uses HSM-backed long-lived keys) ──
 const policyGrantKeys = crypto.generateKeyPairSync("ed25519");
 const sbaKeys = crypto.generateKeyPairSync("ed25519");
-const spaKeys = crypto.generateKeyPairSync("ed25519");
 
 process.env.MPCP_POLICY_GRANT_SIGNING_PRIVATE_KEY_PEM = policyGrantKeys.privateKey
   .export({ type: "pkcs8", format: "pem" }).toString();
@@ -48,19 +47,11 @@ process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM = sbaKeys.publicKey
   .export({ type: "spki", format: "pem" }).toString();
 process.env.MPCP_SBA_SIGNING_KEY_ID = "fleet-sba-signing-key-1";
 
-process.env.MPCP_SPA_SIGNING_PRIVATE_KEY_PEM = spaKeys.privateKey
-  .export({ type: "pkcs8", format: "pem" }).toString();
-process.env.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM = spaKeys.publicKey
-  .export({ type: "spki", format: "pem" }).toString();
-process.env.MPCP_SPA_SIGNING_KEY_ID = "fleet-spa-signing-key-1";
-
 const {
   createPolicyGrant,
   createSignedPolicyGrant,
   createBudgetAuthorization,
   createSignedBudgetAuthorization,
-  createSignedPaymentAuthorization,
-  createSettlementIntent,
   verifySignedBudgetAuthorization,
 } = await import("../../dist/sdk/index.js");
 const { runVerify } = await import("../../dist/cli/verify.js");
@@ -193,7 +184,7 @@ console.log("");
 
 // ─── Vehicle Wallet: cumulative spend tracker ─────────────────────────────────
 // The wallet is the session authority — it MUST track cumulative spend.
-// Each stop deducts from this counter before a new SPA is signed.
+// Each stop deducts from this counter before a new SBA payment is submitted.
 let cumulativeSpentMinor = BigInt(0);
 
 const settledBundles = [];
@@ -228,7 +219,7 @@ for (const stop of STOPS) {
     ],
   };
 
-  // Vehicle wallet: check cumulative budget before signing SPA
+  // Vehicle wallet: check cumulative budget before submitting SBA to Trust Gateway
   console.log("[Vehicle Wallet] Checking cumulative budget...");
   const budgetCheck = verifySignedBudgetAuthorization(signedBudgetAuth, {
     sessionId: SESSION_ID,
@@ -242,22 +233,9 @@ for (const stop of STOPS) {
     `  ✓ Budget OK: $${(Number(cumulativeSpentMinor) / 100).toFixed(2)} spent + $${(Number(stop.amountFiatMinor) / 100).toFixed(2)} = $${(Number(spentAfter) / 100).toFixed(2)} of $${(Number(SESSION_BUDGET_MINOR) / 100).toFixed(2)}`,
   );
 
-  // Create settlement intent + SPA
-  const intent = createSettlementIntent({
-    rail: "xrpl",
-    amount: stop.amountRail,
-    destination: stop.destination,
-    asset: ASSET,
-    createdAt: stop.settlementTime,
-  });
-  const spa = createSignedPaymentAuthorization(SESSION_ID, paymentPolicyDecision, {
-    settlementIntent: intent,
-    budgetId: signedBudgetAuth.authorization.budgetId,
-  });
-  if (!spa) throw new Error(`Failed to create SPA for ${stop.label}`);
-  console.log(`  ✓ SPA signed: amount=${stop.amountRail} RLUSD, intentHash bound`);
+  console.log(`  ✓ SBA submitted to Trust Gateway → XRPL payment: amount=${stop.amountRail} RLUSD`);
 
-  // Mock settlement execution
+  // Mock settlement execution (Trust Gateway would submit to XRPL with mpcp/grant-id memo)
   const settlement = {
     amount: stop.amountRail,
     rail: "xrpl",
@@ -269,13 +247,10 @@ for (const stop of STOPS) {
   // Service verifies MPCP chain immediately
   const bundle = {
     settlement,
-    settlementIntent: intent,
-    spa,
     sba: signedBudgetAuth,
     policyGrant: signedPolicyGrantFlat,
     paymentPolicyDecision,
     sbaPublicKeyPem: process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM,
-    spaPublicKeyPem: process.env.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM,
   };
   const bundlePath = join(EXAMPLE_DIR, stop.bundleFile);
   writeFileSync(bundlePath, JSON.stringify(bundle, null, 2));
@@ -332,7 +307,7 @@ const wouldSpend = cumulativeSpentMinor + BigInt(REJECTED_STOP.amountFiatMinor);
 console.log(
   `  ✗ Budget EXCEEDED: $${(Number(cumulativeSpentMinor) / 100).toFixed(2)} spent + $${(Number(REJECTED_STOP.amountFiatMinor) / 100).toFixed(2)} = $${(Number(wouldSpend) / 100).toFixed(2)} > $${(Number(SESSION_BUDGET_MINOR) / 100).toFixed(2)} budget`,
 );
-console.log(`  ✗ SPA not signed — payment request rejected`);
+console.log(`  ✗ SBA not submitted — payment request rejected`);
 
 if (rejectedBudgetCheck.ok) {
   console.error("ERROR: Expected budget_exceeded rejection but got ok");

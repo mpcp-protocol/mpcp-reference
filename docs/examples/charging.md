@@ -4,7 +4,7 @@ MPCP for EV charging: variable session length, multiple kWh, charging operator d
 
 ## Scenario
 
-EV connects to a charging station. The station requests payment authorization. The vehicle (or charging session manager) evaluates policy and budget, signs an SPA for the charging session, and the station verifies the MPCP chain before supplying power.
+EV connects to a charging station. The station requests payment authorization. The vehicle (or charging session manager) evaluates policy and budget, issues an SBA for the charging session, and the station verifies the MPCP chain before supplying power. The Trust Gateway executes the XRPL payment when the session ends.
 
 ## Profile
 
@@ -35,9 +35,9 @@ Similar to parking, but with higher `maxSessionSpend` and charging-specific dest
 
 1. Vehicle (or fleet) obtains PolicyGrant + SBA with charging destinations
 2. Charging station requests payment (amount may be estimated or updated during session)
-3. Vehicle signs SPA for the authorized amount
-4. Station verifies MPCP chain
-5. Power is supplied; settlement executes when session ends
+3. Vehicle issues SBA for the authorized amount
+4. Station verifies MPCP chain locally
+5. Power is supplied; Trust Gateway submits XRPL settlement when session ends
 
 ## Run Parking Example (Same Flow)
 

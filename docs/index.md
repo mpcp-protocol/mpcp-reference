@@ -6,10 +6,10 @@ For the **canonical protocol specification** — overview, architecture, protoco
 
 ## What This Repo Provides
 
-- **SDK** — Create and verify MPCP artifacts (PolicyGrant, SBA, SPA, SettlementIntent)
+- **SDK** — Create and verify MPCP artifacts (PolicyGrant, SBA, Trust Bundles, policy anchoring)
 - **Verifier** — Settlement verification pipeline
 - **CLI** — `mpcp verify` and `mpcp policy-summary`
-- **Service API** — Backend facade for `issueBudget`, `verifySettlementService`, `anchorIntent`
+- **Service API** — Backend facade for `issueBudget`, `verifySettlementService`, policy anchoring
 - **Examples** — Parking, EV charging, machine commerce
 
 ## Quick Start

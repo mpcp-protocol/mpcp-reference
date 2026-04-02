@@ -4,7 +4,7 @@ A full MPCP settlement flow for a parking payment scenario.
 
 ## Scenario
 
-Vehicle parks at a meter or garage gate. The parking system requests payment. The vehicle evaluates fleet policy and session budget, signs an SPA, and returns the authorization. The parking system verifies the MPCP chain locally and opens the gate.
+Vehicle parks at a meter or garage gate. The parking system requests payment. The vehicle evaluates fleet policy and session budget, issues an SBA, and presents it to the Trust Gateway. The Trust Gateway verifies the MPCP chain and executes the XRPL payment. The parking system verifies the chain locally and opens the gate.
 
 ## Artifacts
 
@@ -13,9 +13,7 @@ Vehicle parks at a meter or garage gate. The parking system requests payment. Th
 | policy-grant.json | Grant derived from policy constraints |
 | budget-auth.json | Unsigned budget authorization |
 | signed-budget-auth.json | Signed budget auth (SBA) |
-| spa.json | Signed payment authorization |
-| settlement-intent.json | Settlement intent |
-| settlement.json | Settlement result |
+| settlement.json | Settlement result (XRPL via Trust Gateway) |
 | settlement-bundle.json | Combined bundle for verification |
 
 ## Run
@@ -55,7 +53,7 @@ npm run example:guardrails
 
 ### Offline Payment
 
-Demonstrates offline machine payments: vehicle holds pre-authorized policy chain, completes payment when network is unavailable.
+Demonstrates offline machine payments: vehicle holds pre-authorized policy chain, authorizes payment when network is unavailable, Trust Gateway settles on XRPL when connectivity returns.
 
 ```bash
 npm run example:offline

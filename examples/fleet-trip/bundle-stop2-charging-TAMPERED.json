@@ -10,41 +10,6 @@
     "destination": "rChargingStation",
     "nowISO": "2026-03-14T10:45:00Z"
   },
-  "settlementIntent": {
-    "version": "1.0",
-    "rail": "xrpl",
-    "amount": "18000000",
-    "createdAt": "2026-03-14T10:45:00Z",
-    "destination": "rChargingStation",
-    "asset": {
-      "kind": "IOU",
-      "currency": "RLUSD",
-      "issuer": "rIssuer"
-    }
-  },
-  "spa": {
-    "authorization": {
-      "version": "1.0",
-      "decisionId": "dec-charge-001",
-      "sessionId": "trip-20260314-EV001",
-      "policyHash": "a1b2c3d4e5f6",
-      "budgetId": "d26d4e94-dac4-4af6-81ad-7fd4080a2779",
-      "quoteId": "q-charge-001",
-      "rail": "xrpl",
-      "asset": {
-        "kind": "IOU",
-        "currency": "RLUSD",
-        "issuer": "rIssuer"
-      },
-      "amount": "18000000",
-      "destination": "rChargingStation",
-      "intentHash": "c5b3fef249390716d89e732c4c38bdc07c424e85ecb0a2b69af1f9c5fc280ea1",
-      "expiresAt": "2030-12-31T23:59:59Z",
-      "nonce": "7284de37-62eb-4823-957d-a0c23fd73eeb"
-    },
-    "issuerKeyId": "fleet-spa-signing-key-1",
-    "signature": "kAM7xStR3Zh8/8twk5B0OlMXo7r8AnEqzYAMgooDhTHIMwN0WtI4bob2axT3T4r8fpwelPA88fbSxVykd0TuDA=="
-  },
   "sba": {
     "authorization": {
       "version": "1.0",
@@ -136,6 +101,5 @@
       }
     ]
   },
-  "sbaPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAr7H9fidwL/o6BxBbWDp864CFpXpW4xehPl3LY3zMAw8=\n-----END PUBLIC KEY-----\n",
-  "spaPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEApNN61UHHMjipJXLvQ+gzZsGjjMznj3lGzwtJmhWitiw=\n-----END PUBLIC KEY-----\n"
+  "sbaPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAr7H9fidwL/o6BxBbWDp864CFpXpW4xehPl3LY3zMAw8=\n-----END PUBLIC KEY-----\n"
 }

@@ -10,7 +10,7 @@ import {
   verifySettlementService,
   verifyDispute,
   verifyDisputeAsync,
-  anchorIntent,
+  anchorPolicyDocument,
 } from "mpcp-service/service";
 ```
 
@@ -23,7 +23,7 @@ const sba = issueBudget({
   policyGrant,
   sessionId: "session-123",
   actorId: "actor-001",
-  maxAmountMinor: "3000",
+  maxAmountMinor: "1000",
   destinationAllowlist: ["rParking", "rCharging"],
 });
 
@@ -52,28 +52,32 @@ const result = verifySettlementService(context);
 Verify a disputed settlement with optional ledger anchor.
 
 ```typescript
-// Sync (mock anchor, or Hedera with intentHash in anchor)
+// Sync (in-memory verification against SBA chain)
 const result = verifyDispute({ context, ledgerAnchor });
 
-// Async (Hedera HCS mirror verification)
+// Async (Hedera HCS mirror verification for policy anchor)
 const result = await verifyDisputeAsync({ context, ledgerAnchor });
 ```
 
 ---
 
-## anchorIntent
+## anchorPolicyDocument
 
-Publish an intent hash to a ledger.
+Publish a policy document to a ledger and return an `anchorRef` for use in PolicyGrant.
 
 ```typescript
-// Mock (development)
-const anchor = await anchorIntent(intentHash, { rail: "mock" });
+// Hedera HCS (requires MPCP_HCS_POLICY_TOPIC_ID, MPCP_HCS_OPERATOR_ID, MPCP_HCS_OPERATOR_KEY)
+const result = await anchorPolicyDocument(policyDoc, { rail: "hedera-hcs" });
+// result.anchorRef: "hcs:{topicId}:{sequenceNumber}"
 
-// Hedera HCS (requires HEDERA_OPERATOR_ACCOUNT_ID, etc.)
-const anchor = await anchorIntent(intentHash, { rail: "hedera-hcs" });
+// XRPL NFT
+const result = await anchorPolicyDocument(policyDoc, { rail: "xrpl-nft" });
+// result.anchorRef: "xrpl:nft:{tokenId}"
 ```
 
-Supported rails: `mock`, `hedera-hcs`.
+Supported rails: `hedera-hcs`, `xrpl-nft`.
+
+The returned `anchorRef` can be stored on the PolicyGrant (`grant.anchorRef`) to provide on-chain auditability.
 
 ---
 

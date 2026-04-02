@@ -10,41 +10,6 @@
     "destination": "rTollBooth",
     "nowISO": "2026-03-14T09:12:00Z"
   },
-  "settlementIntent": {
-    "version": "1.0",
-    "rail": "xrpl",
-    "amount": "6000000",
-    "createdAt": "2026-03-14T09:12:00Z",
-    "destination": "rTollBooth",
-    "asset": {
-      "kind": "IOU",
-      "currency": "RLUSD",
-      "issuer": "rIssuer"
-    }
-  },
-  "spa": {
-    "authorization": {
-      "version": "1.0",
-      "decisionId": "dec-toll-001",
-      "sessionId": "trip-20260314-EV001",
-      "policyHash": "a1b2c3d4e5f6",
-      "budgetId": "d26d4e94-dac4-4af6-81ad-7fd4080a2779",
-      "quoteId": "q-toll-001",
-      "rail": "xrpl",
-      "asset": {
-        "kind": "IOU",
-        "currency": "RLUSD",
-        "issuer": "rIssuer"
-      },
-      "amount": "6000000",
-      "destination": "rTollBooth",
-      "intentHash": "cdf6b71ed131b1cdda74962727d06430644d2b4fb030cc72b6a19cc2e87c5003",
-      "expiresAt": "2030-12-31T23:59:59Z",
-      "nonce": "4009f172-7591-4d45-8d8d-fc109fca72a6"
-    },
-    "issuerKeyId": "fleet-spa-signing-key-1",
-    "signature": "HnMSCzbrLZ0VI+GisKzwjvDdfsXcmOcha5XLXsz8lJxd5JFuB8iHP0+QvFcYbBPeGGLmPUlhVKzu8O865c8EBQ=="
-  },
   "sba": {
     "authorization": {
       "version": "1.0",
@@ -136,6 +101,5 @@
       }
     ]
   },
-  "sbaPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAr7H9fidwL/o6BxBbWDp864CFpXpW4xehPl3LY3zMAw8=\n-----END PUBLIC KEY-----\n",
-  "spaPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEApNN61UHHMjipJXLvQ+gzZsGjjMznj3lGzwtJmhWitiw=\n-----END PUBLIC KEY-----\n"
+  "sbaPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAr7H9fidwL/o6BxBbWDp864CFpXpW4xehPl3LY3zMAw8=\n-----END PUBLIC KEY-----\n"
 }

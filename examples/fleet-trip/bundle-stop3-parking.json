@@ -10,41 +10,6 @@
     "destination": "rParkingGarage",
     "nowISO": "2026-03-14T14:30:00Z"
   },
-  "settlementIntent": {
-    "version": "1.0",
-    "rail": "xrpl",
-    "amount": "12000000",
-    "createdAt": "2026-03-14T14:30:00Z",
-    "destination": "rParkingGarage",
-    "asset": {
-      "kind": "IOU",
-      "currency": "RLUSD",
-      "issuer": "rIssuer"
-    }
-  },
-  "spa": {
-    "authorization": {
-      "version": "1.0",
-      "decisionId": "dec-park-001",
-      "sessionId": "trip-20260314-EV001",
-      "policyHash": "a1b2c3d4e5f6",
-      "budgetId": "d26d4e94-dac4-4af6-81ad-7fd4080a2779",
-      "quoteId": "q-park-001",
-      "rail": "xrpl",
-      "asset": {
-        "kind": "IOU",
-        "currency": "RLUSD",
-        "issuer": "rIssuer"
-      },
-      "amount": "12000000",
-      "destination": "rParkingGarage",
-      "intentHash": "758aac608a48da53b5a9126973f5367f21308162b9e2665b269afda633011652",
-      "expiresAt": "2030-12-31T23:59:59Z",
-      "nonce": "8e9986b2-afc0-4c13-b73f-154f4ed8f8e1"
-    },
-    "issuerKeyId": "fleet-spa-signing-key-1",
-    "signature": "3cWFI2eAF89psJyMgJXsR/IAPv5vujkBwWYLvBXHlbzEvX3ctDGmtmu5qO+NdlJmYnQtzzbf2a+j97JUcumvAA=="
-  },
   "sba": {
     "authorization": {
       "version": "1.0",
@@ -136,6 +101,5 @@
       }
     ]
   },
-  "sbaPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAr7H9fidwL/o6BxBbWDp864CFpXpW4xehPl3LY3zMAw8=\n-----END PUBLIC KEY-----\n",
-  "spaPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEApNN61UHHMjipJXLvQ+gzZsGjjMznj3lGzwtJmhWitiw=\n-----END PUBLIC KEY-----\n"
+  "sbaPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAr7H9fidwL/o6BxBbWDp864CFpXpW4xehPl3LY3zMAw8=\n-----END PUBLIC KEY-----\n"
 }

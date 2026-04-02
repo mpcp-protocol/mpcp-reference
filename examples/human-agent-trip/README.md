@@ -6,14 +6,14 @@ delegating an $800 travel budget to her AI trip planner for a 3-day Paris trip.
 ## Delegation chain
 
 ```
-Alice (DID key) → PolicyGrant → AI Agent → SBA (TRIP scope) → SPA → Settlement
+Alice (DID key) → PolicyGrant → AI Agent → SBA (TRIP scope) → Trust Gateway → XRPL Settlement
 ```
 
 This mirrors the fleet pattern exactly:
 
 ```
-Fleet Operator (DID) → PolicyGrant → Vehicle Wallet → SBA → SPA → Settlement
-Human (DID)          → PolicyGrant → AI Agent        → SBA → SPA → Settlement
+Fleet Operator (DID) → PolicyGrant → Vehicle Wallet → SBA → Trust Gateway → XRPL Settlement
+Human (DID)          → PolicyGrant → AI Agent        → SBA → Trust Gateway → XRPL Settlement
 ```
 
 ## What this demo shows

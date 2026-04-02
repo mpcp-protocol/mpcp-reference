@@ -1,6 +1,6 @@
 # mpcp-reference — Implementation Roadmap
 
-TypeScript reference implementation and canonical protocol SDK for the [Machine Payment Control Protocol (MPCP)](https://mpcp-protocol.github.io/spec/).
+TypeScript reference implementation and canonical protocol SDK for the [Machine Payment Control Protocol (MPCP)](https://github.com/mpcp-protocol/mpcp-spec).
 
 Implements: protocol verification engine, artifact schemas, cryptographic signing, on-chain anchoring adapters, golden test vectors, and the full SDK consumed by `mpcp-policy-authority`, `mpcp-wallet-sdk`, and `mpcp-merchant-sdk`.
 
@@ -96,7 +96,7 @@ Implements: protocol verification engine, artifact schemas, cryptographic signin
 
 ## PR29 — Trust Bundle
 
-Implement the [Trust Bundle](https://mpcp-protocol.github.io/spec/protocol/trust-bundles/) specification as defined in the MPCP spec.
+Implement the Trust Bundle specification as defined in the MPCP spec (see `mpcp-spec/docs/protocol/trust-bundles.md`).
 
 Trust Bundles are pre-distributed signed documents that package trusted issuer public keys for MPCP verifiers operating without network access at verification time.
 

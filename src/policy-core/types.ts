@@ -93,8 +93,9 @@ export interface MoneyMinor {
 export interface Policy {
   version: PolicySchemaVersion;
   lotAllowlist?: string[];
-  operatorAllowlist?: string[];
   vendorAllowlist?: string[];
+  /** @deprecated Use `vendorAllowlist`. Retained for backward compatibility. */
+  operatorAllowlist?: string[];
   geoAllowlist?: GeoCircle[];
   railAllowlist?: Rail[];
   assetAllowlist?: Asset[];

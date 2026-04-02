@@ -17,10 +17,6 @@ import {
   createPolicyGrant,
   createBudgetAuthorization,
   createSignedBudgetAuthorization,
-  createSignedPaymentAuthorization,
-  createSettlementIntent,
-  computeSettlementIntentHash,
-  computeIntentHash,
   canonicalJson,
   verifyPolicyGrant,
   verifySettlement,
@@ -36,9 +32,11 @@ import { createPolicyGrant, createSignedPolicyGrant } from "mpcp-service/sdk";
 
 const grant = createPolicyGrant({
   policyHash: "a1b2c3d4e5f6",
-  allowedRails: ["xrpl", "evm"],
+  allowedRails: ["xrpl"],
   allowedAssets: [{ kind: "IOU", currency: "RLUSD", issuer: "rIssuer" }],
   expiresAt: "2030-12-31T23:59:59Z",
+  // Optional: on-chain anchor reference for this policy document
+  // anchorRef: "hcs:0.0.12345:42" | "xrpl:nft:ABC123..."
 });
 
 // Signed (requires MPCP_POLICY_GRANT_SIGNING_PRIVATE_KEY_PEM — returns null if not set)
@@ -59,7 +57,7 @@ const budgetAuth = createBudgetAuthorization({
   actorId: "actor-001",
   policyHash: "a1b2c3",
   currency: "USD",
-  maxAmountMinor: "3000",
+  maxAmountMinor: "1000",      // amount for this specific payment
   allowedRails: ["xrpl"],
   allowedAssets: [{ kind: "IOU", currency: "RLUSD", issuer: "rIssuer" }],
   destinationAllowlist: ["rParking"],
@@ -78,47 +76,16 @@ const sba = createSignedBudgetAuthorization({
   allowedAssets: budgetAuth.allowedAssets,
   destinationAllowlist: budgetAuth.destinationAllowlist,
   expiresAt: budgetAuth.expiresAt,
+  // Required when the merchant uses Trust Bundle key resolution:
+  // issuer: "vehicle:ev-001.fleet.example.com",
 });
 ```
-
-## Payment Authorization
-
-```typescript
-import {
-  createSignedPaymentAuthorization,
-  createSettlementIntent,
-  computeSettlementIntentHash,
-} from "mpcp-service/sdk";
-
-const intent = createSettlementIntent({
-  rail: "xrpl",
-  amount: "1000",
-  destination: "rParking",
-  asset: { kind: "IOU", currency: "RLUSD", issuer: "rIssuer" },
-});
-
-const spa = createSignedPaymentAuthorization({
-  decisionId: "dec-789",
-  sessionId: "sess-123",
-  policyHash: "a1b2c3",
-  quoteId: "quote-17",
-  rail: "xrpl",
-  asset: { kind: "IOU", currency: "RLUSD", issuer: "rIssuer" },
-  amount: "1000",
-  destination: "rParking",
-  intentHash: computeSettlementIntentHash(intent),
-  expiresAt: "2030-12-31T23:59:59Z",
-});
-```
-
-Requires `MPCP_SPA_SIGNING_PRIVATE_KEY_PEM`.
 
 ## Hashing
 
 ```typescript
-import { computeSettlementIntentHash, computeIntentHash, canonicalJson } from "mpcp-service/sdk";
+import { canonicalJson } from "mpcp-service/sdk";
 
-const intentHash = computeSettlementIntentHash(intent);
 const canonical = canonicalJson({ rail: "xrpl", amount: "1000", destination: "rDest" });
 ```
 
@@ -131,6 +98,41 @@ const result = verifySettlement(context);
 const { result, steps } = verifySettlementWithReport(context);
 const { valid, checks } = verifySettlementDetailed(context);
 ```
+
+## Trust Bundles
+
+Trust Bundles enable offline key resolution for SBA and PolicyGrant signature verification. They are signed documents that package trusted issuer public keys.
+
+```typescript
+import {
+  signTrustBundle,
+  verifyTrustBundle,
+  resolveFromTrustBundle,
+} from "mpcp-service/sdk";
+
+// Sign a bundle (Policy Authority)
+const bundle = signTrustBundle(unsignedBundle, rootPrivateKeyPem);
+
+// Verify a bundle before use (any verifier)
+const check = verifyTrustBundle(bundle, rootPublicKeyPem);
+if (!check.valid) throw new Error(check.reason);
+
+// Resolve a key from loaded bundles
+const jwk = resolveFromTrustBundle("vehicle:ev-001.fleet.example.com", "key-1", [bundle]);
+```
+
+### `issuer` and Trust Bundle key resolution
+
+When the verifier uses Trust Bundles, the SBA envelope must include `issuer` so the verifier can match the signing key. Pass `issuer` when creating the SBA:
+
+```typescript
+const sba = createSignedBudgetAuthorization({
+  ...budgetFields,
+  issuer: "vehicle:ev-001.fleet.example.com",
+});
+```
+
+The `issuer` field is **optional** when the verifier resolves keys via `MPCP_SBA_SIGNING_PUBLIC_KEY_PEM` or HTTPS well-known.
 
 ## Cumulative Budget Enforcement
 
@@ -145,6 +147,17 @@ const result = verifySettlement({
 
 The session authority MUST maintain this counter. The verifier is stateless and will not track prior payments on its own.
 
+## Trust Bundle Verification
+
+Pass `trustBundles` to the verification context for offline key resolution:
+
+```typescript
+const result = verifySettlement({
+  ...context,
+  trustBundles: [verifiedBundle],
+});
+```
+
 ## Environment Variables
 
 | Variable | Purpose |
@@ -152,9 +165,6 @@ The session authority MUST maintain this counter. The verifier is stateless and 
 | MPCP_SBA_SIGNING_PRIVATE_KEY_PEM | Private key for signing SBAs |
 | MPCP_SBA_SIGNING_PUBLIC_KEY_PEM | Public key for verifying SBAs |
 | MPCP_SBA_SIGNING_KEY_ID | Key identifier (default: mpcp-sba-signing-key-1) |
-| MPCP_SPA_SIGNING_PRIVATE_KEY_PEM | Private key for signing SPAs |
-| MPCP_SPA_SIGNING_PUBLIC_KEY_PEM | Public key for verifying SPAs |
-| MPCP_SPA_SIGNING_KEY_ID | Key identifier (default: mpcp-spa-signing-key-1) |
 | MPCP_POLICY_GRANT_SIGNING_PRIVATE_KEY_PEM | Private key for signing PolicyGrants |
 | MPCP_POLICY_GRANT_SIGNING_PUBLIC_KEY_PEM | Public key for verifying PolicyGrant signatures (when set, unsigned grants are rejected) |
 | MPCP_POLICY_GRANT_SIGNING_KEY_ID | Key identifier (default: mpcp-policy-grant-signing-key-1) |

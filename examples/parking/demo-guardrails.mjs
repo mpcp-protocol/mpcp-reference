@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
- * PR8A — Machine Wallet Guardrails Demo
+ * Machine Wallet Guardrails Demo
  *
  * Demonstrates MPCP's core capability: autonomous systems spending money safely
  * within cryptographically enforced limits. No centralized payment API required.
  *
  * Scenario: Robotaxi arrives at parking → meter issues payment request
- * → vehicle evaluates policy → vehicle signs SPA within budget
+ * → vehicle evaluates policy → vehicle signs per-payment SBA
  * → meter verifies MPCP chain → gate opens
  *
  * Run: npm run build && npm run example:guardrails
@@ -20,7 +20,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const EXAMPLE_DIR = __dirname;
 
 const sbaKeys = crypto.generateKeyPairSync("ed25519");
-const spaKeys = crypto.generateKeyPairSync("ed25519");
 process.env.MPCP_SBA_SIGNING_PRIVATE_KEY_PEM = sbaKeys.privateKey
   .export({ type: "pkcs8", format: "pem" })
   .toString();
@@ -28,20 +27,11 @@ process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM = sbaKeys.publicKey
   .export({ type: "spki", format: "pem" })
   .toString();
 process.env.MPCP_SBA_SIGNING_KEY_ID = "mpcp-sba-signing-key-1";
-process.env.MPCP_SPA_SIGNING_PRIVATE_KEY_PEM = spaKeys.privateKey
-  .export({ type: "pkcs8", format: "pem" })
-  .toString();
-process.env.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM = spaKeys.publicKey
-  .export({ type: "spki", format: "pem" })
-  .toString();
-process.env.MPCP_SPA_SIGNING_KEY_ID = "mpcp-spa-signing-key-1";
 
 const {
   createPolicyGrant,
   createBudgetAuthorization,
   createSignedBudgetAuthorization,
-  createSignedPaymentAuthorization,
-  createSettlementIntent,
 } = await import("../../dist/sdk/index.js");
 const { runVerify } = await import("../../dist/cli/verify.js");
 
@@ -58,7 +48,7 @@ log("MPCP Machine Wallet Guardrails Demo");
 log("====================================");
 log("");
 log("Scenario: Robotaxi at parking facility. Payment request → local policy check");
-log("→ sign SPA within budget → meter verifies chain → gate opens.");
+log("→ sign per-payment SBA → meter verifies chain → gate opens.");
 log("");
 
 log("1. Fleet Policy → Policy Grant");
@@ -105,15 +95,8 @@ if (!signedBudgetAuth) throw new Error("Failed to create SBA");
 log("   ✓ SBA signed with vehicle key");
 log("");
 
-log("4. Settlement Intent + Signed Payment Authorization (SPA)");
-log("   Guardrail: SPA binds to specific amount, destination, intentHash");
-const intent = createSettlementIntent({
-  rail: "xrpl",
-  amount: "19440000",
-  destination: "rDestination",
-  asset: { kind: "IOU", currency: "RLUSD", issuer: "rIssuer" },
-  createdAt: SETTLEMENT_NOW,
-});
+log("4. Per-payment SBA (authorizes this specific payment)");
+log("   Guardrail: SBA binds to specific amount, destination, and grant");
 const paymentPolicyDecision = {
   decisionId: "dec-1",
   policyHash,
@@ -135,16 +118,10 @@ const paymentPolicyDecision = {
     },
   ],
 };
-const signedPaymentAuth = createSignedPaymentAuthorization(
-  budgetAuth.sessionId,
-  paymentPolicyDecision,
-  { settlementIntent: intent },
-);
-if (!signedPaymentAuth) throw new Error("Failed to create SPA");
-log(`   ✓ SPA signed: amount=${intent.amount}, destination=${intent.destination}`);
+log(`   ✓ SBA signed: maxAmount=2500 cents, destination=rDestination`);
 log("");
 
-log("5. Settlement (executed)");
+log("5. Settlement (executed by Trust Gateway)");
 const settlement = {
   amount: "19440000",
   rail: "xrpl",
@@ -152,20 +129,17 @@ const settlement = {
   destination: "rDestination",
   nowISO: SETTLEMENT_NOW,
 };
-log("   ✓ Payment executed on rail");
+log("   ✓ Trust Gateway submits XRPL payment with mpcp/grant-id memo");
 log("");
 
 log("6. Local Verification (no centralized API)");
 log("   Guardrail: parking meter verifies full chain locally");
 const bundle = {
   settlement,
-  settlementIntent: intent,
-  spa: signedPaymentAuth,
   sba: signedBudgetAuth,
   policyGrant,
   paymentPolicyDecision,
   sbaPublicKeyPem: process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM,
-  spaPublicKeyPem: process.env.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM,
 };
 const bundlePath = join(EXAMPLE_DIR, "guardrails-demo-bundle.json");
 writeFileSync(bundlePath, JSON.stringify(bundle, null, 2));
@@ -205,7 +179,8 @@ log("");
 
 log("Summary: Machine-enforced spending sandbox —");
 log("  • Policy limits (rails, assets, destinations, max spend)");
-log("  • Cryptographic signatures (SBA, SPA)");
+log("  • Cryptographic signatures (PolicyGrant → SBA chain)");
+log("  • Trust Gateway enforces budget ceiling on-chain");
 log("  • Local verification (no central approval API)");
 log("  • Tamper detection (modified amount rejected)");
 log("");

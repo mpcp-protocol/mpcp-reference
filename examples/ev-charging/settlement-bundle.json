@@ -10,41 +10,6 @@
     "destination": "rChargingStation",
     "nowISO": "2026-01-15T12:00:00Z"
   },
-  "settlementIntent": {
-    "version": "1.0",
-    "rail": "xrpl",
-    "amount": "25000000",
-    "createdAt": "2026-01-15T12:00:00Z",
-    "destination": "rChargingStation",
-    "asset": {
-      "kind": "IOU",
-      "currency": "RLUSD",
-      "issuer": "rIssuer"
-    }
-  },
-  "spa": {
-    "authorization": {
-      "version": "1.0",
-      "decisionId": "dec-ev-1",
-      "sessionId": "22222222-2222-4222-8222-222222222222",
-      "policyHash": "a1b2c3d4e5f7",
-      "budgetId": "1565798f-6d51-4070-b3f9-8727f36290ad",
-      "quoteId": "q1",
-      "rail": "xrpl",
-      "asset": {
-        "kind": "IOU",
-        "currency": "RLUSD",
-        "issuer": "rIssuer"
-      },
-      "amount": "25000000",
-      "destination": "rChargingStation",
-      "intentHash": "62b57f4ca753d014bca80b82cac2c7ca33850e3697c4707e636326e365c58687",
-      "expiresAt": "2030-12-31T23:59:59Z",
-      "nonce": "53095b6c-8696-472d-90b7-a89be33bc806"
-    },
-    "issuerKeyId": "mpcp-spa-signing-key-1",
-    "signature": "F43hQ+6I6Gj+7mvgtQZ8xl7KpeZIwloPCsKUlczMkhg5T++kJcdou/WOo05QncckJqESi9ibqC6wdLg1xdxtAQ=="
-  },
   "sba": {
     "authorization": {
       "version": "1.0",
@@ -130,6 +95,5 @@
       }
     ]
   },
-  "sbaPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEA0XxXWe8kRGwxGqP4P/WAyALlT4gwE0Mxry6yd7ekekc=\n-----END PUBLIC KEY-----\n",
-  "spaPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEArqv7N8PvYS5ojGR6B+ZPVdiXzGfQi6Sy+Km105Zi84I=\n-----END PUBLIC KEY-----\n"
+  "sbaPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEA0XxXWe8kRGwxGqP4P/WAyALlT4gwE0Mxry6yd7ekekc=\n-----END PUBLIC KEY-----\n"
 }

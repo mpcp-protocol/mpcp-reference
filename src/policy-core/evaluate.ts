@@ -46,9 +46,9 @@ export function evaluateEntryPolicy(ctx: EntryPolicyContext): SessionPolicyGrant
   const reasons: PolicyReasonCode[] = [];
   let requireApproval = false;
 
-  const operatorAllowlist = policy.operatorAllowlist ?? policy.vendorAllowlist;
-  if (operatorAllowlist !== undefined) {
-    if (!ctx.operatorId || !operatorAllowlist.includes(ctx.operatorId)) {
+  const vendorAllowlist = policy.vendorAllowlist ?? policy.operatorAllowlist;
+  if (vendorAllowlist !== undefined) {
+    if (!ctx.operatorId || !vendorAllowlist.includes(ctx.operatorId)) {
       return denyEntry(ctx, ["VENDOR_NOT_ALLOWED"]);
     }
   }
@@ -223,9 +223,9 @@ export function evaluatePaymentPolicy(ctx: PaymentPolicyContext): PaymentPolicyD
     return requireApprovalPayment(ctx, [...new Set(reasons)]);
   }
 
-  const operatorAllowlist = policy.operatorAllowlist ?? policy.vendorAllowlist;
-  if (operatorAllowlist !== undefined) {
-    if (!ctx.operatorId || !operatorAllowlist.includes(ctx.operatorId)) {
+  const vendorAllowlist = policy.vendorAllowlist ?? policy.operatorAllowlist;
+  if (vendorAllowlist !== undefined) {
+    if (!ctx.operatorId || !vendorAllowlist.includes(ctx.operatorId)) {
       return denyPayment(ctx, ["VENDOR_NOT_ALLOWED"]);
     }
   }

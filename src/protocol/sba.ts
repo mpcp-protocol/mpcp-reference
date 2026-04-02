@@ -76,7 +76,7 @@ export function createSignedSessionBudgetAuthorization(input: {
   allowedAssets: Asset[];
   destinationAllowlist: string[];
   expiresAt: string;
-  /** Issuer identity (domain or DID). Required for Trust Bundle key resolution. */
+  /** Issuer identity (domain or DID). Required when the merchant uses Trust Bundle key resolution. */
   issuer?: string;
 }): SignedSessionBudgetAuthorization | null {
   const privateKey = parseSigningPrivateKey();
@@ -114,7 +114,10 @@ export function verifySignedSessionBudgetAuthorizationForDecision(
   envelope: SignedSessionBudgetAuthorization,
   input: { sessionId: string; decision: PaymentPolicyDecision; nowMs?: number; cumulativeSpentMinor?: string; trustBundles?: TrustBundle[] },
 ): { ok: true } | { ok: false; reason: "invalid_signature" | "expired" | "budget_exceeded" | "mismatch" } {
-  // Step 1: Trust Bundle key resolution (if provided and issuer known)
+  // Key resolution per spec (3-step algorithm):
+  //   1. Trust Bundle — offline JWK lookup by issuer + issuerKeyId
+  //   2. Pre-configured key — MPCP_SBA_SIGNING_PUBLIC_KEY_PEM env var
+  //   3. HTTPS well-known — not yet implemented
   let publicKey: crypto.KeyObject | null = null;
   if (input.trustBundles?.length && envelope.issuer) {
     const jwk = resolveFromTrustBundle(envelope.issuer, envelope.issuerKeyId, input.trustBundles);
@@ -122,11 +125,11 @@ export function verifySignedSessionBudgetAuthorizationForDecision(
       try {
         publicKey = crypto.createPublicKey({ key: jwk, format: "jwk" });
       } catch {
-        // fall through to env var
+        // fall through to pre-configured key
       }
     }
   }
-  // Step 2: Env var fallback (existing behavior, with key ID check)
+  // Step 2: Pre-configured key (env var fallback, with key ID check)
   if (!publicKey) {
     if (envelope.issuerKeyId !== getExpectedKeyId()) return { ok: false, reason: "invalid_signature" };
     publicKey = parseVerificationPublicKey();

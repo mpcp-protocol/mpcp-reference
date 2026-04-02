@@ -6,10 +6,10 @@ For the full API reference (all function signatures, parameters, and env vars), 
 
 ## Artifact Lifecycle
 
-MPCP authorization flows through three artifact types, each constraining the next:
+MPCP authorization flows through two artifact types before reaching the Trust Gateway:
 
 ```
-PolicyGrant  →  SBA (session budget)  →  SPA (per-payment)  →  Settlement
+PolicyGrant  →  SBA (per-payment budget)  →  Trust Gateway  →  XRPL Settlement
 ```
 
 Each artifact references the previous via shared fields:
@@ -17,8 +17,11 @@ Each artifact references the previous via shared fields:
 | Field | Carried by | Links to |
 |-------|-----------|----------|
 | `grantId` | SBA | `PolicyGrant.grantId` |
-| `sessionId` | SPA | `SBA.authorization.sessionId` |
-| `intentHash` | SPA | `computeSettlementIntentHash(intent)` |
+| `sessionId` | SBA | Session identifier |
+| `policyHash` | SBA | `PolicyGrant.policyHash` |
+| `anchorRef` | PolicyGrant | On-chain policy document anchor (optional) |
+
+The Trust Gateway verifies the SBA chain and submits the XRPL payment. Every XRPL payment includes an `mpcp/grant-id` memo for on-chain audit trail.
 
 ## Full Lifecycle Example
 
@@ -26,22 +29,22 @@ Each artifact references the previous via shared fields:
 import {
   createPolicyGrant,
   createSignedBudgetAuthorization,
-  createSettlementIntent,
-  createSignedPaymentAuthorization,
-  computeSettlementIntentHash,
 } from "mpcp-service/sdk";
 
 // 1. PolicyGrant — fleet policy evaluation result
 //    Defines allowed rails, assets, and expiration for this session.
+//    Optional anchorRef links to on-chain policy document.
 const grant = createPolicyGrant({
   policyHash: "a1b2c3",
   allowedRails: ["xrpl"],
   allowedAssets: [{ kind: "IOU", currency: "RLUSD", issuer: "rIssuer" }],
   expiresAt: "2030-12-31T23:59:59Z",
+  // anchorRef: "hcs:0.0.12345:42",  // optional on-chain anchor
 });
 
-// 2. SBA — session spending envelope
+// 2. SBA — per-payment spending envelope
 //    grantId binds this SBA to the PolicyGrant above.
+//    maxAmountMinor is the amount for this specific payment.
 //    Returns null if MPCP_SBA_SIGNING_PRIVATE_KEY_PEM is not set.
 const sba = createSignedBudgetAuthorization({
   grantId: grant.grantId,
@@ -49,56 +52,36 @@ const sba = createSignedBudgetAuthorization({
   actorId: "actor-001",
   policyHash: "a1b2c3",
   currency: "USD",
-  maxAmountMinor: "3000",
+  maxAmountMinor: "1000",
   allowedRails: ["xrpl"],
   allowedAssets: [{ kind: "IOU", currency: "RLUSD", issuer: "rIssuer" }],
   destinationAllowlist: ["rParking"],
   expiresAt: "2030-12-31T23:59:59Z",
+  // Required when the merchant uses Trust Bundle key resolution:
+  // issuer: "vehicle:ev-001.fleet.example.com",
 });
 
-// 3. SettlementIntent — canonical representation of the payment
-const intent = createSettlementIntent({
-  rail: "xrpl",
-  amount: "1000",
-  destination: "rParking",
-  asset: { kind: "IOU", currency: "RLUSD", issuer: "rIssuer" },
-});
+// 3. Trust Gateway submits the XRPL payment
+//    The gateway verifies the SBA chain (PolicyGrant → SBA) then
+//    executes the XRPL transaction with mpcp/grant-id memo attached.
 
-// 4. SPA — per-payment authorization
-//    sessionId matches SBA. intentHash binds SPA to the specific settlement.
-//    Returns null if MPCP_SPA_SIGNING_PRIVATE_KEY_PEM is not set.
-const spa = createSignedPaymentAuthorization({
-  decisionId: "dec-789",
-  sessionId: "sess-123",
-  policyHash: "a1b2c3",
-  quoteId: "quote-17",
-  rail: "xrpl",
-  asset: { kind: "IOU", currency: "RLUSD", issuer: "rIssuer" },
-  amount: "1000",
-  destination: "rParking",
-  intentHash: computeSettlementIntentHash(intent),
-  expiresAt: "2030-12-31T23:59:59Z",
-});
-
-// 5. Verify the settlement bundle
+// 4. Verify the settlement bundle
 import { verifySettlement } from "mpcp-service/sdk";
 
 const result = verifySettlement({
   policyGrant: grant,
   signedBudgetAuthorization: sba,
-  signedPaymentAuthorization: spa,
-  settlementIntent: intent,
-  settlement: { rail: "xrpl", amount: "1000", destination: "rParking", asset: intent.asset },
+  settlement: { rail: "xrpl", amount: "1000", destination: "rParking", asset: grant.allowedAssets[0] },
 });
 // result.valid === true
 ```
 
 ## Actor Roles
 
-In an autonomous deployment, the wallet plays both roles in this lifecycle:
+In an autonomous deployment, the wallet acts as the session authority and the Trust Gateway handles payment execution:
 
-- **Session authority** — signs the SBA, establishing the session budget
-- **Payment decision service** — evaluates each payment request and signs the SPA locally
+- **Session authority** — signs the SBA, establishing the per-payment budget envelope
+- **Trust Gateway** — mandatory actor that verifies the SBA chain and submits XRPL payments with `mpcp/grant-id` memo
 
 See [Machine Wallet Guardrails](machine-wallet-guardrails.md) for the full guardrail model, threat analysis, and integration checklist.
 
@@ -109,9 +92,6 @@ See [Machine Wallet Guardrails](machine-wallet-guardrails.md) for the full guard
 | MPCP_SBA_SIGNING_PRIVATE_KEY_PEM | Private key for signing SBAs |
 | MPCP_SBA_SIGNING_PUBLIC_KEY_PEM | Public key for verifying SBAs |
 | MPCP_SBA_SIGNING_KEY_ID | Key identifier (default: `mpcp-sba-signing-key-1`) |
-| MPCP_SPA_SIGNING_PRIVATE_KEY_PEM | Private key for signing SPAs |
-| MPCP_SPA_SIGNING_PUBLIC_KEY_PEM | Public key for verifying SPAs |
-| MPCP_SPA_SIGNING_KEY_ID | Key identifier (default: `mpcp-spa-signing-key-1`) |
 
 ## See Also
 

@@ -10,40 +10,6 @@
     "destination": "rParkingMeter",
     "nowISO": "2026-01-15T12:00:00Z"
   },
-  "settlementIntent": {
-    "version": "1.0",
-    "rail": "xrpl",
-    "amount": "5400000",
-    "createdAt": "2026-01-15T12:00:00Z",
-    "destination": "rParkingMeter",
-    "asset": {
-      "kind": "IOU",
-      "currency": "RLUSD",
-      "issuer": "rIssuer"
-    }
-  },
-  "spa": {
-    "authorization": {
-      "version": "1.0",
-      "decisionId": "dec-fleet-1",
-      "sessionId": "22222222-2222-4222-8222-222222222222",
-      "policyHash": "a1b2c3d4e5f6",
-      "budgetId": "f36321d4-b5e2-449f-b0ad-e7a7917fa28c",
-      "quoteId": "q-fleet-1",
-      "rail": "xrpl",
-      "asset": {
-        "kind": "IOU",
-        "currency": "RLUSD",
-        "issuer": "rIssuer"
-      },
-      "amount": "5400000",
-      "destination": "rParkingMeter",
-      "intentHash": "8113a95f897563a4a17c8973fcad629ce7f10efbf8d358d3bc30294d0a40c841",
-      "expiresAt": "2030-12-31T23:59:59Z"
-    },
-    "signature": "+UOifTtjdYclt1KUNWJZinTHcE7hwcoqy6XmLNznCPoqKyjoqZhLqdm4fY8DNz0HSwXr6FGXxZbNxfYE2eLECw==",
-    "issuerKeyId": "mpcp-spa-signing-key-1"
-  },
   "sba": {
     "authorization": {
       "version": "1.0",
@@ -131,6 +97,5 @@
       }
     ]
   },
-  "sbaPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAbjUHo0PjFidDz3QXxb1BdWEuNu+gd6HDpJ0gsgi/1Ao=\n-----END PUBLIC KEY-----\n",
-  "spaPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAq5EBppLPt82NfqsTf/j/2n17fodRIufgAdnRwFve5zE=\n-----END PUBLIC KEY-----\n"
+  "sbaPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAbjUHo0PjFidDz3QXxb1BdWEuNu+gd6HDpJ0gsgi/1Ao=\n-----END PUBLIC KEY-----\n"
 }

@@ -1,30 +1,26 @@
 #!/usr/bin/env node
 /**
- * PR23 — Machine Wallet Guardrails: Wallet Integration Example
+ * Machine Wallet Guardrails: Wallet Integration Example
  *
  * Demonstrates how a machine wallet integrates MPCP guardrails before signing.
- * The wallet checks PolicyGrant and SBA constraints, then signs SPA only if all pass.
+ * The wallet checks PolicyGrant and SBA constraints, then submits to the Trust Gateway
+ * only if all guardrail checks pass.
  *
  * Run: npm run build && node examples/machine-wallet-guardrails/wallet-integration.mjs
  */
 import crypto from "node:crypto";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-const spaKeys = crypto.generateKeyPairSync("ed25519");
-process.env.MPCP_SPA_SIGNING_PRIVATE_KEY_PEM = spaKeys.privateKey
+const sbaKeys = crypto.generateKeyPairSync("ed25519");
+process.env.MPCP_SBA_SIGNING_PRIVATE_KEY_PEM = sbaKeys.privateKey
   .export({ type: "pkcs8", format: "pem" })
   .toString();
-process.env.MPCP_SPA_SIGNING_PUBLIC_KEY_PEM = spaKeys.publicKey
+process.env.MPCP_SBA_SIGNING_PUBLIC_KEY_PEM = sbaKeys.publicKey
   .export({ type: "spki", format: "pem" })
   .toString();
-process.env.MPCP_SPA_SIGNING_KEY_ID = "mpcp-spa-signing-key-1";
+process.env.MPCP_SBA_SIGNING_KEY_ID = "mpcp-sba-signing-key-1";
 
 const {
-  createSignedPaymentAuthorization,
-  createSettlementIntent,
+  createSignedBudgetAuthorization,
 } = await import("../../dist/sdk/index.js");
 
 const EXPIRY = "2030-12-31T23:59:59Z";
@@ -89,7 +85,7 @@ function checkGuardrails(policyGrant, sba, paymentRequest) {
 }
 
 /**
- * Wallet integration: check guardrails, then sign SPA if allowed.
+ * Wallet integration: check guardrails, then sign and submit SBA if allowed.
  */
 async function handlePaymentRequest(policyGrant, sba, paymentRequest, sessionSpentMinor = "0") {
   // Optional: session balance check (cumulative spend)
@@ -105,43 +101,20 @@ async function handlePaymentRequest(policyGrant, sba, paymentRequest, sessionSpe
     return { ok: false, reason: check.reason, signed: null };
   }
 
-  const intent = createSettlementIntent({
-    rail: paymentRequest.rail,
-    amount: paymentRequest.amount,
-    destination: paymentRequest.destination,
-    asset: paymentRequest.asset,
-    createdAt: "2030-01-01T00:00:00Z",
+  // Sign per-payment SBA and submit to Trust Gateway
+  const paymentSba = createSignedBudgetAuthorization({
+    sessionId: sba.authorization.sessionId,
+    actorId: sba.authorization.actorId,
+    policyHash: sba.authorization.policyHash,
+    currency: sba.authorization.currency ?? "USD",
+    maxAmountMinor: paymentRequest.amount,
+    allowedRails: sba.authorization.allowedRails,
+    allowedAssets: sba.authorization.allowedAssets,
+    destinationAllowlist: [paymentRequest.destination],
+    expiresAt: sba.authorization.expiresAt,
   });
 
-  const paymentPolicyDecision = {
-    decisionId: "dec-1",
-    policyHash,
-    action: "ALLOW",
-    reasons: ["OK"],
-    expiresAtISO: EXPIRY,
-    rail: paymentRequest.rail,
-    asset: paymentRequest.asset,
-    priceFiat: { amountMinor: paymentRequest.amount, currency: "USD" },
-    chosen: { rail: paymentRequest.rail, quoteId: "q1" },
-    settlementQuotes: [
-      {
-        quoteId: "q1",
-        rail: paymentRequest.rail,
-        amount: { amount: paymentRequest.amount, decimals: 6 },
-        destination: paymentRequest.destination,
-        expiresAt: EXPIRY,
-        asset: paymentRequest.asset,
-      },
-    ],
-  };
-
-  const spa = createSignedPaymentAuthorization(
-    sba.authorization.sessionId,
-    paymentPolicyDecision,
-    { settlementIntent: intent, budgetId: sba.authorization.budgetId }
-  );
-
-  return { ok: true, signed: { spa, intent } };
+  return { ok: true, signed: paymentSba };
 }
 
 // Demo
@@ -157,7 +130,9 @@ async function main() {
   const sba = {
     authorization: {
       sessionId: "11111111-1111-4111-8111-111111111111",
+      actorId: "veh-001",
       policyHash,
+      currency: "USD",
       maxAmountMinor: "3000",
       destinationAllowlist: ["rParking", "rCharging"],
       allowedRails: ["xrpl"],
@@ -179,7 +154,7 @@ async function main() {
   };
   const res1 = await handlePaymentRequest(policyGrant, sba, req1);
   console.log("Request 1: $15 to rParking");
-  console.log(res1.ok ? `  ✓ Signed SPA` : `  ✗ Rejected: ${res1.reason}`);
+  console.log(res1.ok ? `  ✓ SBA signed — submitting to Trust Gateway` : `  ✗ Rejected: ${res1.reason}`);
   console.log("");
 
   // Request 2: Wrong destination
@@ -191,7 +166,7 @@ async function main() {
   };
   const res2 = await handlePaymentRequest(policyGrant, sba, req2, "1500");
   console.log("Request 2: $5 to rAttacker");
-  console.log(res2.ok ? `  ✓ Signed SPA` : `  ✗ Rejected: ${res2.reason}`);
+  console.log(res2.ok ? `  ✓ SBA signed — submitting to Trust Gateway` : `  ✗ Rejected: ${res2.reason}`);
   console.log("");
 
   // Request 3: Would exceed budget
@@ -203,7 +178,7 @@ async function main() {
   };
   const res3 = await handlePaymentRequest(policyGrant, sba, req3, "1500");
   console.log("Request 3: $20 to rCharging (session already spent $15)");
-  console.log(res3.ok ? `  ✓ Signed SPA` : `  ✗ Rejected: ${res3.reason}`);
+  console.log(res3.ok ? `  ✓ SBA signed — submitting to Trust Gateway` : `  ✗ Rejected: ${res3.reason}`);
   console.log("");
 
   console.log("Summary: Guardrails prevent wrong destination and overspend.");
