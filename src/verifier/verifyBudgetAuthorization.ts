@@ -69,6 +69,7 @@ export function verifyBudgetAuthorization(
     nowMs: options?.nowMs,
     cumulativeSpentMinor: options?.cumulativeSpentMinor,
     trustBundles: options?.trustBundles,
+    clockDriftToleranceMs: options?.clockDriftToleranceMs,
   });
   if (!result.ok) return { valid: false, reason: result.reason, artifact: "signedBudgetAuthorization" };
   return { valid: true };

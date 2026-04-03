@@ -172,8 +172,7 @@ export function runVerificationPipeline(
     const sba = ctx.signedBudgetAuthorization;
     const budgetId = sba.authorization.budgetId;
     const isNew = ctx.budgetIdStore.markSeen(budgetId);
-    const resolved = isNew instanceof Promise ? false : isNew;
-    if (!resolved) {
+    if (!isNew) {
       const r: VerificationResult = { valid: false, reason: "BUDGET_ID_REPLAY", artifact: "signedBudgetAuthorization" };
       pushCheck(checks, "SignedBudgetAuthorization", "budgetIdReplay", "policy", false, { reason: r.reason });
       return fail(r);

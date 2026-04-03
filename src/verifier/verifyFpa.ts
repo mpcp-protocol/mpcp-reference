@@ -52,9 +52,9 @@ export function verifyFleetPolicyAuthorization(
 
   // Signature verification
   let publicKey: crypto.KeyObject | null = null;
-  if (options?.trustBundles?.length && (envelope as { issuer?: string }).issuer) {
+  if (options?.trustBundles?.length && envelope.issuer) {
     const jwk = resolveFromTrustBundle(
-      (envelope as { issuer?: string }).issuer!,
+      envelope.issuer,
       envelope.issuerKeyId,
       options.trustBundles,
     );

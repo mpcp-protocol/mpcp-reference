@@ -10,8 +10,11 @@ export interface BudgetIdStore {
   /**
    * Attempt to record a budgetId. Returns `true` if the id was new and recorded;
    * `false` if it was already seen (replay).
+   *
+   * Synchronous — the verification pipeline is sync. Async stores should pre-load
+   * or use a sync wrapper (e.g. in-memory cache backed by durable writes).
    */
-  markSeen(budgetId: string): boolean | Promise<boolean>;
+  markSeen(budgetId: string): boolean;
 }
 
 export class InMemoryBudgetIdStore implements BudgetIdStore {
