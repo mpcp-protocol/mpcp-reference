@@ -144,6 +144,7 @@ describe("MPCP full lifecycle integration", () => {
       signedBudgetAuthorization: signedBudgetAuth,
       paymentPolicyDecision,
       nowMs: Date.now(),
+      clockDriftToleranceMs: 0,
     });
 
     expect(result.valid).toBe(false);

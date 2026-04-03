@@ -2,7 +2,9 @@ import type {
   PaymentPolicyDecision,
 } from "../policy-core/types.js";
 import type { SignedSessionBudgetAuthorization } from "../protocol/sba.js";
+import type { FleetPolicyAuthorization } from "../protocol/schema/fleetPolicyAuthorization.js";
 import type { TrustBundle } from "../protocol/trustBundle.js";
+import type { BudgetIdStore } from "./budgetIdStore.js";
 
 /** Minimal grant shape for verification */
 export interface PolicyGrantLike {
@@ -14,25 +16,29 @@ export interface PolicyGrantLike {
   allowedAssets?: unknown[];
   revocationEndpoint?: string;
   allowedPurposes?: string[];
-  anchorRef?: string; // "hcs:{topicId}:{seq}" | "xrpl:nft:{tokenId}"
-  /** Total authorized spend for this grant in minor units (e.g. drops for XRP). PA-signed. */
+  anchorRef?: string;
   budgetMinor?: string;
-  /** Currency code for budgetMinor (e.g. "XRP"). Required when budgetMinor is set. */
   budgetCurrency?: string;
-  /**
-   * On-chain budget escrow reference — proof that budgetMinor is locked on-chain.
-   * Format is rail-specific:
-   *   XRPL:    "xrpl:escrow:{account}:{sequence}"
-   *   (future) "eth:timelock:{contract}:{lockId}"
-   * Included in the PA signature, making the escrow commitment tamper-evident.
-   */
   budgetEscrowRef?: string;
-  /** Address of the only gateway authorized to spend against this grant's escrow. Rail-specific format. PA-signed. */
   authorizedGateway?: string;
-  /** PA-signed per-transaction cap for offline merchant acceptance, in minor units (see offlineMaxSinglePaymentCurrency). */
   offlineMaxSinglePayment?: string;
-  /** Currency for offlineMaxSinglePayment (e.g. "XRP"). */
   offlineMaxSinglePaymentCurrency?: string;
+  offlineMaxCumulativePayment?: string;
+  offlineMaxCumulativePaymentCurrency?: string;
+  velocityLimit?: { maxPayments: number; windowSeconds: number };
+  maxSpend?: { perTxMinor?: string; perSessionMinor?: string; perDayMinor?: string };
+  destinationAllowlist?: string[];
+  merchantCredentialIssuer?: string;
+  merchantCredentialType?: string;
+  activeGrantCredentialIssuer?: string;
+  gatewayCredentialIssuer?: string;
+  gatewayCredentialType?: string;
+  subjectCredentialIssuer?: string;
+  subjectCredentialType?: string;
+  operatorId?: string;
+  issuer?: string;
+  issuerKeyId?: string;
+  signature?: string;
 }
 
 /** Shared verification result for all verifiers. Use with CLI and callers. */
@@ -86,15 +92,24 @@ export interface DetailedVerificationReport {
 export interface SettlementVerificationContext {
   policyGrant: PolicyGrantLike;
   signedBudgetAuthorization: SignedSessionBudgetAuthorization;
-  /** Decision used to create the SBA; required for budget limit verification */
   paymentPolicyDecision: PaymentPolicyDecision;
   nowMs?: number;
-  /** Running total of minor-unit amounts spent in this session before this payment.
-   *  When provided, budget check becomes: cumulativeSpentMinor + currentAmount <= maxAmountMinor.
-   *  Session authority MUST maintain this counter for correct cumulative enforcement. */
+  /** Running total of minor-unit amounts spent in this session before this payment. */
   cumulativeSpentMinor?: string;
-  /** Pre-verified Trust Bundles for offline key resolution.
-   *  When provided, SBA and PolicyGrant signature verification resolves issuer keys
-   *  from the bundles before falling back to pre-configured key or HTTPS well-known. */
+  /** Running total of minor-unit amounts spent against the grant's budgetMinor ceiling.
+   *  Trust Gateway tracks this across all sessions for a grantId. */
+  grantCumulativeSpentMinor?: string;
   trustBundles?: TrustBundle[];
+  /** This gateway's own address (e.g. XRPL r-address) for authorizedGateway check. */
+  gatewayAddress?: string;
+  /** Payment purpose for allowedPurposes enforcement. */
+  purpose?: string;
+  /** Expected actorId for actorId binding validation. */
+  expectedActorId?: string;
+  /** Store for budgetId replay prevention. When provided, verifier rejects duplicate budgetIds. */
+  budgetIdStore?: BudgetIdStore;
+  /** Clock drift tolerance in milliseconds (default 300000 = 5 min). */
+  clockDriftToleranceMs?: number;
+  /** Optional FleetPolicyAuthorization artifact for fleet governance. */
+  fleetPolicyAuthorization?: FleetPolicyAuthorization;
 }

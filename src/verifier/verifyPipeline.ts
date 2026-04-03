@@ -1,18 +1,14 @@
 /**
- * Single internal verification pipeline.
- * Emits bare result, steps (for report), and checks (for detailed report).
+ * Single internal verification pipeline (SECOP-aligned).
  *
- * Ordering: steps are chain-oriented (leaf → root for display); checks are phase-oriented
- * (schema → linkage → hash → policy, sorted before return). Keep both orderings intentional.
- *
- * Check naming: Artifact.check (PascalCase artifact, camelCase check)
- * - PolicyGrant.schema, PolicyGrant.valid
- * - SignedBudgetAuthorization.schema, SignedBudgetAuthorization.valid
+ * Check order: schema → FPA (optional) → grant → authorizedGateway → purpose →
+ * budgetId replay → actorId → budgetMinor → SBA linkage + budget.
  */
 
 import { signedBudgetAuthorizationSchema } from "../protocol/schema/signedBudgetAuthorization.js";
 import { policyGrantForVerificationSchema } from "../protocol/schema/verifySchemas.js";
 import { verifyBudgetAuthorization } from "./verifyBudgetAuthorization.js";
+import { verifyFleetPolicyAuthorization } from "./verifyFpa.js";
 import { verifyPolicyGrant } from "./verifyPolicyGrant.js";
 import type {
   SettlementVerificationContext,
@@ -24,7 +20,6 @@ import type {
 
 const PHASE_ORDER: VerificationCheckPhase[] = ["schema", "linkage", "hash", "policy"];
 
-/** Internal pipeline output — single source of truth. */
 export interface VerificationPipelineOutput {
   result: VerificationResult;
   steps: VerificationStep[];
@@ -80,14 +75,12 @@ function pushStep(steps: VerificationStep[], name: string, result: VerificationR
   return ok;
 }
 
-/**
- * Single verification pipeline. Runs once, collects result + steps + checks.
- */
 export function runVerificationPipeline(
   ctx: SettlementVerificationContext,
 ): VerificationPipelineOutput {
   const steps: VerificationStep[] = [];
   const checks: VerificationCheck[] = [];
+  const driftMs = ctx.clockDriftToleranceMs;
 
   const out = (): VerificationPipelineOutput => ({
     result: { valid: true },
@@ -115,8 +108,28 @@ export function runVerificationPipeline(
     return fail(sbaCheck);
   }
 
-  // --- Policy grant ---
-  const grantResult = verifyPolicyGrant(ctx.policyGrant, { nowMs: ctx.nowMs, trustBundles: ctx.trustBundles });
+  // --- Step 0a: Fleet Policy Authorization (optional, SECOP 10c) ---
+  if (ctx.fleetPolicyAuthorization) {
+    const fpaResult = verifyFleetPolicyAuthorization(
+      ctx.fleetPolicyAuthorization,
+      ctx.policyGrant,
+      { nowMs: ctx.nowMs, clockDriftToleranceMs: driftMs, trustBundles: ctx.trustBundles },
+    );
+    if (!pushStep(steps, "FleetPolicyAuthorization.valid", fpaResult)) {
+      pushCheck(checks, "FleetPolicyAuthorization", "valid", "policy", false, {
+        reason: fpaResult.valid ? undefined : fpaResult.reason,
+      });
+      return fail(fpaResult);
+    }
+    pushCheck(checks, "FleetPolicyAuthorization", "valid", "policy", true);
+  }
+
+  // --- Step 0: Policy grant (signature + expiry with drift) ---
+  const grantResult = verifyPolicyGrant(ctx.policyGrant, {
+    nowMs: ctx.nowMs,
+    trustBundles: ctx.trustBundles,
+    clockDriftToleranceMs: driftMs,
+  });
   if (!pushStep(steps, "PolicyGrant.valid", grantResult)) {
     pushCheck(checks, "PolicyGrant", "valid", "policy", false, {
       reason: grantResult.valid ? undefined : grantResult.reason,
@@ -125,12 +138,98 @@ export function runVerificationPipeline(
   }
   pushCheck(checks, "PolicyGrant", "valid", "policy", true);
 
-  // --- Budget (linkage) ---
+  // --- SECOP 6b: authorizedGateway ---
+  if (ctx.gatewayAddress && ctx.policyGrant.authorizedGateway) {
+    if (ctx.policyGrant.authorizedGateway !== ctx.gatewayAddress) {
+      const r: VerificationResult = { valid: false, reason: "GATEWAY_NOT_AUTHORIZED", artifact: "policyGrant" };
+      pushCheck(checks, "PolicyGrant", "authorizedGateway", "policy", false, {
+        reason: r.reason,
+        expected: ctx.policyGrant.authorizedGateway,
+        actual: ctx.gatewayAddress,
+      });
+      return fail(r);
+    }
+    pushCheck(checks, "PolicyGrant", "authorizedGateway", "policy", true);
+  }
+
+  // --- SECOP 1a: allowedPurposes ---
+  const purpose = ctx.purpose ?? ctx.paymentPolicyDecision.purpose;
+  if (purpose && ctx.policyGrant.allowedPurposes?.length) {
+    if (!ctx.policyGrant.allowedPurposes.includes(purpose)) {
+      const r: VerificationResult = { valid: false, reason: "PURPOSE_NOT_ALLOWED", artifact: "policyGrant" };
+      pushCheck(checks, "PolicyGrant", "allowedPurposes", "policy", false, {
+        reason: r.reason,
+        expected: ctx.policyGrant.allowedPurposes,
+        actual: purpose,
+      });
+      return fail(r);
+    }
+    pushCheck(checks, "PolicyGrant", "allowedPurposes", "policy", true);
+  }
+
+  // --- SECOP 4a / 3b: budgetId replay ---
+  if (ctx.budgetIdStore) {
+    const sba = ctx.signedBudgetAuthorization;
+    const budgetId = sba.authorization.budgetId;
+    const isNew = ctx.budgetIdStore.markSeen(budgetId);
+    if (!isNew) {
+      const r: VerificationResult = { valid: false, reason: "BUDGET_ID_REPLAY", artifact: "signedBudgetAuthorization" };
+      pushCheck(checks, "SignedBudgetAuthorization", "budgetIdReplay", "policy", false, { reason: r.reason });
+      return fail(r);
+    }
+    pushCheck(checks, "SignedBudgetAuthorization", "budgetIdReplay", "policy", true);
+  }
+
+  // --- SECOP 5a-c: actorId binding ---
+  if (ctx.expectedActorId) {
+    const sbaActorId = ctx.signedBudgetAuthorization.authorization.actorId;
+    if (sbaActorId !== ctx.expectedActorId) {
+      const r: VerificationResult = { valid: false, reason: "ACTOR_ID_MISMATCH", artifact: "signedBudgetAuthorization" };
+      pushCheck(checks, "SignedBudgetAuthorization", "actorIdBinding", "policy", false, {
+        reason: r.reason,
+        expected: ctx.expectedActorId,
+        actual: sbaActorId,
+      });
+      return fail(r);
+    }
+    pushCheck(checks, "SignedBudgetAuthorization", "actorIdBinding", "policy", true);
+  }
+
+  // --- SECOP 10a: grant-level budgetMinor ceiling ---
+  if (ctx.policyGrant.budgetMinor) {
+    const ceiling = BigInt(ctx.policyGrant.budgetMinor);
+    const grantSpent = BigInt(ctx.grantCumulativeSpentMinor ?? "0");
+    const paymentAmount = ctx.paymentPolicyDecision.priceFiat?.amountMinor
+      ? BigInt(ctx.paymentPolicyDecision.priceFiat.amountMinor)
+      : 0n;
+    if (grantSpent + paymentAmount > ceiling) {
+      const r: VerificationResult = { valid: false, reason: "GRANT_BUDGET_EXCEEDED", artifact: "policyGrant" };
+      pushCheck(checks, "PolicyGrant", "budgetMinorCeiling", "policy", false, { reason: r.reason });
+      return fail(r);
+    }
+    pushCheck(checks, "PolicyGrant", "budgetMinorCeiling", "policy", true);
+  }
+
+  // --- SECOP 1b: grant-level destinationAllowlist ---
+  if (ctx.policyGrant.destinationAllowlist?.length) {
+    const quoteId = ctx.paymentPolicyDecision.chosen?.quoteId;
+    const chosenQuote = quoteId
+      ? ctx.paymentPolicyDecision.settlementQuotes?.find((q) => q.quoteId === quoteId)
+      : ctx.paymentPolicyDecision.settlementQuotes?.find((q) => q.rail === ctx.paymentPolicyDecision.rail);
+    if (chosenQuote && !ctx.policyGrant.destinationAllowlist.includes(chosenQuote.destination)) {
+      const r: VerificationResult = { valid: false, reason: "DESTINATION_NOT_ALLOWED", artifact: "policyGrant" };
+      pushCheck(checks, "PolicyGrant", "destinationAllowlist", "policy", false, { reason: r.reason });
+      return fail(r);
+    }
+    pushCheck(checks, "PolicyGrant", "destinationAllowlist", "policy", true);
+  }
+
+  // --- Budget (linkage + SBA-level checks) ---
   const budgetResult = verifyBudgetAuthorization(
     ctx.signedBudgetAuthorization,
     ctx.policyGrant,
     ctx.paymentPolicyDecision,
-    { nowMs: ctx.nowMs, cumulativeSpentMinor: ctx.cumulativeSpentMinor, trustBundles: ctx.trustBundles },
+    { nowMs: ctx.nowMs, cumulativeSpentMinor: ctx.cumulativeSpentMinor, trustBundles: ctx.trustBundles, clockDriftToleranceMs: driftMs },
   );
   if (!pushStep(steps, "SignedBudgetAuthorization.valid", budgetResult)) {
     pushCheck(checks, "SignedBudgetAuthorization", "valid", "linkage", false, {

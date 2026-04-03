@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   railSchema,
+  assetSchema,
   mpcpVersionSchema,
   currencySchema,
   minorUnitSchema,
@@ -19,7 +20,7 @@ export const fleetPolicyAuthorizationPayloadSchema = z.strictObject({
   minorUnit: minorUnitSchema,
   maxAmountMinor: z.string(),
   allowedRails: z.array(railSchema),
-  allowedAssets: z.array(z.string()),
+  allowedAssets: z.array(z.union([assetSchema, z.string()])),
   allowedOperators: z.array(z.string()),
   geoFence: z.array(z.string()).optional(),
   expiresAt: iso8601DatetimeSchema,

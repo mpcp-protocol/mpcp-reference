@@ -103,7 +103,7 @@ describe("Reference Implementation Conformance", () => {
 
     it("fails when grant expired", () => {
       const expired = { ...baseGrant, expiresAt: pastExpiry };
-      expect(verifyPolicyGrant(expired)).toMatchObject({ valid: false, reason: "policy_grant_expired", artifact: "policyGrant" });
+      expect(verifyPolicyGrant(expired, { clockDriftToleranceMs: 0 })).toMatchObject({ valid: false, reason: "policy_grant_expired", artifact: "policyGrant" });
     });
   });
 
@@ -168,6 +168,7 @@ describe("Reference Implementation Conformance", () => {
         signedBudgetAuthorization: sba,
         paymentPolicyDecision: baseDecision,
         nowMs: Date.now(),
+        clockDriftToleranceMs: 0,
       });
       expect(result).toMatchObject({ valid: false, reason: "policy_grant_expired", artifact: "policyGrant" });
     });

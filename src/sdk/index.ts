@@ -40,7 +40,7 @@ export type {
   PolicyDocumentCustody,
   XrplPolicyAnchorPreparation,
 } from "../anchor/index.js";
-export { canonicalJson } from "../hash/index.js";
+export { canonicalJson, hashPolicyDocument, isLowS, ensureLowS } from "../hash/index.js";
 
 export { signTrustBundle, verifyTrustBundle, resolveFromTrustBundle } from "../protocol/trustBundle.js";
 export type { TrustBundle, TrustBundleIssuerEntry, UnsignedTrustBundle, KeyWithKid } from "../protocol/trustBundle.js";
@@ -54,3 +54,7 @@ export {
   verifySettlementWithReportSafe,
   verifySettlementDetailedSafe,
 } from "../verifier/verifySettlement.js";
+export { verifyFleetPolicyAuthorization } from "../verifier/verifyFpa.js";
+export { InMemoryBudgetIdStore } from "../verifier/budgetIdStore.js";
+export type { BudgetIdStore } from "../verifier/budgetIdStore.js";
+export { fetchJwks, resolveFromJwks } from "../protocol/jwksResolver.js";
