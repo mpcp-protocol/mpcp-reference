@@ -112,7 +112,7 @@ export function createSignedSessionBudgetAuthorization(input: {
 
 export function verifySignedSessionBudgetAuthorizationForDecision(
   envelope: SignedSessionBudgetAuthorization,
-  input: { sessionId: string; decision: PaymentPolicyDecision; nowMs?: number; cumulativeSpentMinor?: string; trustBundles?: TrustBundle[] },
+  input: { sessionId: string; decision: PaymentPolicyDecision; nowMs?: number; cumulativeSpentMinor?: string; trustBundles?: TrustBundle[]; clockDriftToleranceMs?: number },
 ): { ok: true } | { ok: false; reason: "invalid_signature" | "expired" | "budget_exceeded" | "mismatch" } {
   // Key resolution per spec (3-step algorithm):
   //   1. Trust Bundle — offline JWK lookup by issuer + issuerKeyId
@@ -145,7 +145,8 @@ export function verifySignedSessionBudgetAuthorizationForDecision(
   if (!isValid) return { ok: false, reason: "invalid_signature" };
 
   const nowMs = typeof input.nowMs === "number" ? input.nowMs : Date.now();
-  if (Date.parse(envelope.authorization.expiresAt) <= nowMs) return { ok: false, reason: "expired" };
+  const driftMs = input.clockDriftToleranceMs ?? 300_000;
+  if (Date.parse(envelope.authorization.expiresAt) <= nowMs - driftMs) return { ok: false, reason: "expired" };
 
   const { authorization } = envelope;
   const { decision } = input;

@@ -177,6 +177,8 @@ export interface PaymentPolicyDecision {
   chosen?: { rail: Rail; quoteId: string };
   createdAt?: string;
   maxSpend?: { perTxMinor?: string; perSessionMinor?: string; perDayMinor?: string };
+  /** Payment purpose / merchant category for allowedPurposes enforcement. */
+  purpose?: string;
 }
 
 export interface SettlementResult {

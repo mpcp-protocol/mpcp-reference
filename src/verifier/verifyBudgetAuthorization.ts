@@ -23,7 +23,7 @@ export function verifyBudgetAuthorization(
   envelope: unknown,
   grant: unknown,
   decision: PaymentPolicyDecision,
-  options?: { nowMs?: number; cumulativeSpentMinor?: string; trustBundles?: TrustBundle[] },
+  options?: { nowMs?: number; cumulativeSpentMinor?: string; trustBundles?: TrustBundle[]; clockDriftToleranceMs?: number },
 ): VerificationResult {
   // 1. Schema validation
   const sbaResult = signedBudgetAuthorizationSchema.safeParse(envelope);
@@ -55,8 +55,11 @@ export function verifyBudgetAuthorization(
     }
   }
 
-  // 5. Policy constraints (grant expiry)
-  const grantVerify = verifyPolicyGrant(grantParsed, { nowMs: options?.nowMs, trustBundles: options?.trustBundles });
+  const grantVerify = verifyPolicyGrant(grantParsed, {
+    nowMs: options?.nowMs,
+    trustBundles: options?.trustBundles,
+    clockDriftToleranceMs: options?.clockDriftToleranceMs,
+  });
   if (!grantVerify.valid) return grantVerify;
 
   // 4. Budget limits + 5. Policy (SBA signature, expiry) — via protocol

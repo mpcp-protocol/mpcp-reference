@@ -20,3 +20,7 @@ export {
 } from "./verifySettlement.js";
 export { runVerificationPipeline } from "./verifyPipeline.js";
 export type { VerificationPipelineOutput } from "./verifyPipeline.js";
+export { verifyFleetPolicyAuthorization } from "./verifyFpa.js";
+export type { VerifyFpaOptions } from "./verifyFpa.js";
+export { InMemoryBudgetIdStore } from "./budgetIdStore.js";
+export type { BudgetIdStore } from "./budgetIdStore.js";

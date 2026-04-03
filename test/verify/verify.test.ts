@@ -75,7 +75,7 @@ describe("verifyPolicyGrant", () => {
 
   it("fails when grant expired", () => {
     const expired = { ...baseGrant, expiresAt: pastExpiry };
-    expect(verifyPolicyGrant(expired)).toMatchObject({ valid: false, reason: "policy_grant_expired", artifact: "policyGrant" });
+    expect(verifyPolicyGrant(expired, { clockDriftToleranceMs: 0 })).toMatchObject({ valid: false, reason: "policy_grant_expired", artifact: "policyGrant" });
   });
 
   it("fails when grant missing expiry", () => {
@@ -190,6 +190,7 @@ describe("verifySettlement", () => {
       signedBudgetAuthorization: sba!,
       paymentPolicyDecision: baseDecision,
       nowMs: Date.now(),
+      clockDriftToleranceMs: 0,
     });
     expect(result).toMatchObject({ valid: false, reason: "policy_grant_expired", artifact: "policyGrant" });
   });
@@ -294,6 +295,7 @@ describe("verifySettlement", () => {
       signedBudgetAuthorization: sba!,
       paymentPolicyDecision: baseDecision,
       nowMs: Date.now(),
+      clockDriftToleranceMs: 0,
     });
     expect(report.result.valid).toBe(false);
     expect(report.steps).toHaveLength(1);
