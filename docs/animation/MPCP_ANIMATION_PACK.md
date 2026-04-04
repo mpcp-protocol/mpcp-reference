@@ -113,7 +113,7 @@ Autonomous parking example
 Vehicle enters → policy → budget → Trust Gateway → XRPL settlement
 
 Scene 5
-Policy document anchored to ledger (Hedera HCS / XRPL NFT)
+Policy document anchored to ledger (Hedera HCS or XRPL NFT)
 
 Scene 6
 Verification replay animation
