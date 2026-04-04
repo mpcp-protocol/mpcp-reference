@@ -18,14 +18,14 @@
  * Post-trip audit: 3/3 bundles verified
  *
  * Revocation demo:
- *   Alice revokes mid-trip via revocationEndpoint
+ *   Alice revokes mid-trip via PA revocation API
  *   checkRevocation() → { revoked: true }
  *   Service provider refuses further payments
  *
  * Key concepts demonstrated:
  *   • Human DID as policy authority — PolicyGrant signed by Alice's key
  *   • allowedPurposes — agent enforces merchant category filter (hotel, flight, transport)
- *   • revocationEndpoint — Alice can cancel the travel budget mid-trip
+ *   • Revocation — Alice can cancel the travel budget via the PA
  *   • TRIP scope — budget spans multiple days and sessions
  *   • checkRevocation utility — in-process mock endpoint for demo
  *
@@ -175,7 +175,6 @@ const policyGrant = createPolicyGrant({
   allowedAssets: [ASSET],
   expiresAt: EXPIRY,
   allowedPurposes: ALLOWED_PURPOSES,
-  revocationEndpoint: REVOCATION_ENDPOINT,
 });
 
 const signedPolicyGrant = createSignedPolicyGrant(policyGrant, {
@@ -194,7 +193,6 @@ console.log(`  ✓ PolicyGrant signed by Alice's DID key`);
 console.log(`    grantId:              ${policyGrant.grantId}`);
 console.log(`    issuer:               ${ALICE_DID}`);
 console.log(`    allowedPurposes:      ${ALLOWED_PURPOSES.join(", ")}`);
-console.log(`    revocationEndpoint:   ${REVOCATION_ENDPOINT}`);
 console.log(`    budget scope:         TRIP / $${(Number(TRIP_BUDGET_MINOR) / 100).toFixed(2)}`);
 console.log("");
 

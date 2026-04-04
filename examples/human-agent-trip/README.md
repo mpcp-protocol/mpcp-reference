@@ -21,7 +21,7 @@ Human (DID)          → PolicyGrant → AI Agent        → SBA → Trust Gatew
 | Feature | Demo behavior |
 |---------|--------------|
 | `allowedPurposes` | Agent enforces category filter — dining request skipped |
-| `revocationEndpoint` | Alice cancels mid-trip; `checkRevocation()` returns `{ revoked: true }` |
+| Revocation | Alice cancels mid-trip; `checkRevocation()` returns `{ revoked: true }` |
 | TRIP scope | Single SBA covers all 3 days, agent tracks cumulative spend |
 | Budget exceeded | $300 hotel attempt rejected ($550 + $300 > $800) |
 | Stateless verifier | Merchant verifies chain without calling Alice's wallet |
@@ -44,7 +44,6 @@ Human (DID)          → PolicyGrant → AI Agent        → SBA → Trust Gatew
 ```json
 {
   "allowedPurposes": ["travel:hotel", "travel:flight", "travel:transport"],
-  "revocationEndpoint": "https://wallet.alice.example.com/revoke",
   "issuer": "did:key:z6Mk..."
 }
 ```
