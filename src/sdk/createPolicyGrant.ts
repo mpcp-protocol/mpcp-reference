@@ -62,7 +62,7 @@ export function createPolicyGrant(input: CreatePolicyGrantInput): PolicyGrantLik
   for (const key of optionalFields) {
     const val = input[key];
     if (val !== undefined && val !== null) {
-      (grant as Record<string, unknown>)[key] = val;
+      (grant as unknown as Record<string, unknown>)[key] = val;
     }
   }
   return grant;
