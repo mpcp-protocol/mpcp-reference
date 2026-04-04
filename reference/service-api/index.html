@@ -1285,15 +1285,18 @@
 <h2 id="anchorpolicydocument">anchorPolicyDocument</h2>
 <p>Publish a policy document to a ledger and return an <code>anchorRef</code> for use in PolicyGrant.</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Hedera HCS (requires MPCP_HCS_POLICY_TOPIC_ID, MPCP_HCS_OPERATOR_ID, MPCP_HCS_OPERATOR_KEY)</span>
-<span class="kd">const</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">anchorPolicyDocument</span><span class="p">(</span><span class="nx">policyDoc</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">rail</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;hedera-hcs&quot;</span><span class="w"> </span><span class="p">});</span>
-<span class="c1">// result.anchorRef: &quot;hcs:{topicId}:{sequenceNumber}&quot;</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">hcs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">anchorPolicyDocument</span><span class="p">(</span><span class="nx">policyDoc</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">rail</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;hedera-hcs&quot;</span><span class="w"> </span><span class="p">});</span>
+<span class="c1">// hcs.anchorRef: &quot;hcs:{topicId}:{sequenceNumber}&quot;</span>
 
-<span class="c1">// XRPL NFT</span>
-<span class="kd">const</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">anchorPolicyDocument</span><span class="p">(</span><span class="nx">policyDoc</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">rail</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;xrpl-nft&quot;</span><span class="w"> </span><span class="p">});</span>
-<span class="c1">// result.anchorRef: &quot;xrpl:nft:{tokenId}&quot;</span>
+<span class="c1">// XRPL NFT — policy document anchoring (encrypted doc → IPFS URI on NFToken; mint completed by policy authority)</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">nft</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">anchorPolicyDocument</span><span class="p">(</span><span class="nx">policyDoc</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">rail</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;xrpl-nft&quot;</span><span class="w"> </span><span class="cm">/* + encryption / ipfs options */</span><span class="w"> </span><span class="p">});</span>
+<span class="c1">// nft.anchorRef: &quot;xrpl:nft:{tokenId}&quot;</span>
 </code></pre></div>
-<p>Supported rails: <code>hedera-hcs</code>, <code>xrpl-nft</code>.</p>
-<p>The returned <code>anchorRef</code> can be stored on the PolicyGrant (<code>grant.anchorRef</code>) to provide on-chain auditability.</p>
+<p>Supported rails for <strong>policy document</strong> anchoring: <strong><code>hedera-hcs</code></strong>, <strong><code>xrpl-nft</code></strong>.</p>
+<blockquote>
+<p><strong>Grant liveness</strong> (whether a grant is still valid) is <strong>not</strong> defined by burning the policy anchor NFT. Use <strong>XLS-70</strong> <code>CredentialCreate</code> / <code>CredentialDelete</code> on XRPL for credential-based grant revocation. Policy <code>anchorRef</code> (HCS or XRPL NFT) remains the tamper-evident <strong>policy document</strong> anchor only.</p>
+</blockquote>
+<p>The returned <code>anchorRef</code> can be stored on the PolicyGrant (<code>grant.anchorRef</code>) to provide on-chain auditability of the <strong>policy document</strong>.</p>
 <hr />
 <h2 id="see-also">See Also</h2>
 <ul>

@@ -735,10 +735,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#xrpl-nft-adapter" class="md-nav__link">
+  <a href="#xrpl-nft-adapter-policy-document-anchoring" class="md-nav__link">
     <span class="md-ellipsis">
       
-        XRPL NFT Adapter
+        XRPL NFT Adapter (policy document anchoring)
       
     </span>
   </a>
@@ -1238,10 +1238,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#xrpl-nft-adapter" class="md-nav__link">
+  <a href="#xrpl-nft-adapter-policy-document-anchoring" class="md-nav__link">
     <span class="md-ellipsis">
       
-        XRPL NFT Adapter
+        XRPL NFT Adapter (policy document anchoring)
       
     </span>
   </a>
@@ -1286,7 +1286,10 @@
 
 <h1 id="policy-anchoring">Policy Anchoring</h1>
 <p>Optional support for publishing MPCP policy documents to distributed ledgers. Provides public auditability, dispute protection, and tamper-evident policy history.</p>
-<p><strong>Hedera HCS</strong> adapter is implemented (publish policy document to a topic). <strong>XRPL NFT</strong> adapter is implemented (mint an NFT representing the policy document). Both return an <code>anchorRef</code> that is stored on the PolicyGrant.</p>
+<p><strong>Hedera HCS</strong> and <strong>XRPL NFT</strong> adapters support <strong>policy document</strong> anchoring: HCS publishes to a topic; the XRPL path encrypts (optional), stores ciphertext on IPFS, and records the policy via an NFToken whose URI points at that content (<code>anchorRef</code> = <code>xrpl:nft:{tokenId}</code> with the policy hash in the anchoring flow). Store the returned reference on the PolicyGrant for auditability and dispute resolution.</p>
+<blockquote>
+<p><strong>Grant liveness</strong> (revoking or invalidating a grant) is a <strong>separate</strong> mechanism: XRPL <strong>XLS-70</strong> credentials (<code>CredentialCreate</code> / <code>CredentialDelete</code>). That replaces the older <strong>NFT mint-on-issue / burn-on-revoke</strong> pattern for <strong>grants</strong>. Do not conflate XLS-70 grant credentials with <strong>policy</strong> <code>anchorRef</code> on HCS or XRPL NFT.</p>
+</blockquote>
 <h2 id="purpose">Purpose</h2>
 <ul>
 <li><strong>Public auditability</strong> — Policy documents can be verified against a public ledger record</li>
@@ -1311,34 +1314,46 @@
 </tr>
 <tr>
 <td><code>xrpl:nft:{tokenId}</code></td>
-<td>XRPL NFT</td>
-<td><code>xrpl:nft:ABC123...</code></td>
+<td>XRPL NFT (policy document URI)</td>
+<td><code>xrpl:nft:00080000...</code></td>
 </tr>
 </tbody>
 </table>
 <h2 id="usage">Usage</h2>
-<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">hederaHcsAnchorPolicyDocument</span><span class="p">,</span><span class="w"> </span><span class="nx">checkXrplNftRevocation</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;mpcp-service/anchor&quot;</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">hederaHcsAnchorPolicyDocument</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">xrplEncryptAndStorePolicyDocument</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">checkXrplNftRevocation</span><span class="p">,</span>
+<span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;mpcp-service/anchor&quot;</span><span class="p">;</span>
 
 <span class="kd">const</span><span class="w"> </span><span class="nx">policyDoc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">version</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">policyHash</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;a1b2c3...&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">issuedAt</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;2026-01-01T00:00:00Z&quot;</span><span class="w"> </span><span class="p">};</span>
 
 <span class="c1">// Hedera HCS (requires MPCP_HCS_POLICY_TOPIC_ID, MPCP_HCS_OPERATOR_ID, MPCP_HCS_OPERATOR_KEY)</span>
 <span class="kd">const</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">hederaHcsAnchorPolicyDocument</span><span class="p">(</span><span class="nx">policyDoc</span><span class="p">);</span>
-<span class="c1">// { anchorRef: &quot;hcs:0.0.12345:42&quot;, rail: &quot;hedera-hcs&quot;, anchoredAt: &quot;...&quot; }</span>
+<span class="c1">// { reference: &quot;hcs:0.0.12345:42&quot;, rail: &quot;hedera-hcs&quot;, anchoredAt: &quot;...&quot; }</span>
 
-<span class="c1">// Store the anchorRef on the PolicyGrant</span>
+<span class="c1">// XRPL NFT path: encrypt + IPFS → CID for NFToken URI (`ipfs://{cid}`); mint off-chain / policy authority, then anchorRef = `xrpl:nft:{tokenId}`</span>
+<span class="c1">// const prep = await xrplEncryptAndStorePolicyDocument(policyDoc, { encryption: {...}, ipfsStore: myStore });</span>
+
+<span class="c1">// Optional: verify the policy-anchor NFT still exists on XRPL (policy audit / tamper check).</span>
+<span class="c1">// This is not grant liveness — use XLS-70 credentials for that (see PolicyGrant).</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">nftStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">checkXrplNftRevocation</span><span class="p">(</span><span class="s2">&quot;00080000ABCD...&quot;</span><span class="p">);</span>
+<span class="c1">// { revoked: false } if the anchor NFT still exists; { revoked: true } if burned</span>
+
+<span class="c1">// Store the anchor reference on the PolicyGrant (maps to anchorRef on the grant)</span>
 <span class="kd">const</span><span class="w"> </span><span class="nx">grant</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">createPolicyGrant</span><span class="p">({</span>
 <span class="w">  </span><span class="nx">policyHash</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;a1b2c3&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nx">allowedRails</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;xrpl&quot;</span><span class="p">],</span>
 <span class="w">  </span><span class="nx">allowedAssets</span><span class="o">:</span><span class="w"> </span><span class="p">[...],</span>
 <span class="w">  </span><span class="nx">expiresAt</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;2030-12-31T23:59:59Z&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">anchorRef</span><span class="o">:</span><span class="w"> </span><span class="kt">result.anchorRef</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">anchorRef</span><span class="o">:</span><span class="w"> </span><span class="kt">result.reference</span><span class="p">,</span>
 <span class="p">});</span>
 </code></pre></div>
 <h2 id="policyanchorresult">PolicyAnchorResult</h2>
 <div class="highlight"><pre><span></span><code><span class="kd">interface</span><span class="w"> </span><span class="nx">PolicyAnchorResult</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="nx">anchorRef</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">         </span><span class="c1">// &quot;hcs:{topicId}:{seq}&quot; | &quot;xrpl:nft:{tokenId}&quot;</span>
+<span class="w">  </span><span class="nx">anchorRef</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">         </span><span class="c1">// &quot;hcs:{topicId}:{seq}&quot; | &quot;xrpl:nft:{tokenId}&quot; (SDK field: `reference`)</span>
 <span class="w">  </span><span class="nx">rail</span><span class="o">:</span><span class="w"> </span><span class="kt">AnchorRail</span><span class="p">;</span>
-<span class="w">  </span><span class="nx">txHash?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">           </span><span class="c1">// XRPL transaction hash</span>
+<span class="w">  </span><span class="nx">txHash?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">           </span><span class="c1">// Optional ledger record id (implementation-specific)</span>
 <span class="w">  </span><span class="nx">topicId?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">          </span><span class="c1">// Hedera HCS topic ID</span>
 <span class="w">  </span><span class="nx">sequenceNumber?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">   </span><span class="c1">// Hedera HCS sequence number</span>
 <span class="w">  </span><span class="nx">anchoredAt?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">       </span><span class="c1">// ISO 8601</span>
@@ -1359,16 +1374,15 @@
 - <code>MPCP_HCS_OPERATOR_KEY</code> — Operator private key (DER or hex)
 - <code>MPCP_HCS_POLICY_TOPIC_ID</code> — HCS topic ID for policy anchoring
 - <code>HEDERA_NETWORK</code> (optional) — <code>testnet</code> or <code>mainnet</code>, default <code>testnet</code></p>
-<h2 id="xrpl-nft-adapter">XRPL NFT Adapter</h2>
-<p>The XRPL NFT adapter mints an NFT on the XRP Ledger representing the policy document. The NFT token ID becomes the <code>anchorRef</code>.</p>
-<p><strong>Revocation check:</strong> Use <code>checkXrplNftRevocation(tokenId)</code> to verify whether the NFT has been burned (which signals policy revocation).</p>
-<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">checkXrplNftRevocation</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;mpcp-service/anchor&quot;</span><span class="p">;</span>
-
-<span class="kd">const</span><span class="w"> </span><span class="nx">revoked</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">checkXrplNftRevocation</span><span class="p">(</span><span class="s2">&quot;ABC123...&quot;</span><span class="p">);</span>
-<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">revoked</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="c1">// Policy has been revoked on-chain</span>
-<span class="p">}</span>
-</code></pre></div>
+<h2 id="xrpl-nft-adapter-policy-document-anchoring">XRPL NFT Adapter (policy document anchoring)</h2>
+<blockquote>
+<p><strong>Scope:</strong> This path is for <strong>policy document anchoring</strong> only (tamper-evident policy history on XRPL). <strong>Grant liveness</strong> (revocation) uses <strong>XLS-70 Credentials</strong> — see PolicyGrant and the XRPL profile; do not use NFToken burn as the grant revocation mechanism.</p>
+</blockquote>
+<p>The reference SDK provides <code>xrplEncryptAndStorePolicyDocument</code> (in <code>mpcp-service/anchor</code>): it encrypts the policy document, uploads the ciphertext via an injected IPFS client, and returns a <strong>CID</strong> intended as the NFToken URI (<code>ipfs://{cid}</code>). <strong>NFTokenMint</strong> (and setting <code>anchorRef</code> to <code>xrpl:nft:{tokenId}</code>) is typically performed by the policy authority service, not inside the lightweight SDK.</p>
+<p><strong>Requirements:</strong>
+- Caller-supplied <strong>IPFS store</strong> (<code>PolicyDocumentIpfsStore</code>) — no bundled IPFS client
+- Encryption options when using encrypted submit mode (<code>PolicyAnchorEncryptionOptions</code>)
+- XRPL account with NFToken issuance rights for minting the policy anchor NFT</p>
 <h2 id="xrpl-payment-memos">XRPL Payment Memos</h2>
 <p>Every XRPL payment submitted via the Trust Gateway includes an <code>mpcp/grant-id</code> memo field. This provides a lightweight on-chain audit trail linking each payment to its PolicyGrant — even without a full policy document anchor.</p>
 
