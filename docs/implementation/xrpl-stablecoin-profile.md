@@ -26,7 +26,7 @@ Policies using this profile must include:
 - `allowedAssets`: Array of `{ kind: "IOU", currency: string, issuer: string }`
 - `destinationAllowlist` (in SBA): XRPL account addresses allowed as payment destinations
 - `maxAmountMinor`, `expiresAt` per standard MPCP
-- `anchorRef` (optional): on-chain policy document anchor (`hcs:{topicId}:{seq}`)
+- `anchorRef` (optional): on-chain policy document anchor (`hcs:{topicId}:{seq}` or `xrpl:nft:{tokenId}`)
 
 ## Wallet Expectations
 

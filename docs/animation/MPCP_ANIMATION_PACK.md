@@ -65,7 +65,7 @@ Narration:
 
 ## Scene 5 — Policy Anchoring
 Visual:
-Policy document hash flowing into a public ledger (Hedera HCS).
+Policy document hash flowing into a public ledger (Hedera HCS or XRPL NFT).
 
 Narration:
 "An optional anchorRef on the PolicyGrant links it to a public ledger record — providing tamper-evident policy history for audit and dispute resolution."
@@ -113,7 +113,7 @@ Autonomous parking example
 Vehicle enters → policy → budget → Trust Gateway → XRPL settlement
 
 Scene 5
-Policy document anchored to ledger (Hedera HCS)
+Policy document anchored to ledger (Hedera HCS or XRPL NFT)
 
 Scene 6
 Verification replay animation

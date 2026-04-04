@@ -118,7 +118,7 @@ Import from `mpcp-service/sdk`.
 ```
 mpcp-reference
  ├── src
- │   ├── anchor/          # On-chain adapters: did:xrpl, HCS; grant liveness via XLS-70 credentials
+ │   ├── anchor/          # On-chain adapters: did:xrpl, HCS, XRPL NFT policy anchoring, XLS-70 credential revocation
  │   ├── hash/            # Canonical JSON serialization and SHA-256 hashing
  │   ├── policy-core/     # Policy evaluation engine and types
  │   ├── protocol/        # Artifact types, schemas, SBA/PolicyGrant signing, Trust Bundles

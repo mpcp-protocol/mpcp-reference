@@ -67,15 +67,19 @@ Publish a policy document to a ledger and return an `anchorRef` for use in Polic
 
 ```typescript
 // Hedera HCS (requires MPCP_HCS_POLICY_TOPIC_ID, MPCP_HCS_OPERATOR_ID, MPCP_HCS_OPERATOR_KEY)
-const result = await anchorPolicyDocument(policyDoc, { rail: "hedera-hcs" });
-// result.anchorRef: "hcs:{topicId}:{sequenceNumber}"
+const hcs = await anchorPolicyDocument(policyDoc, { rail: "hedera-hcs" });
+// hcs.anchorRef: "hcs:{topicId}:{sequenceNumber}"
+
+// XRPL NFT — policy document anchoring (encrypted doc → IPFS URI on NFToken; mint completed by policy authority)
+const nft = await anchorPolicyDocument(policyDoc, { rail: "xrpl-nft" /* + encryption / ipfs options */ });
+// nft.anchorRef: "xrpl:nft:{tokenId}"
 ```
 
-Supported rail: **`hedera-hcs`** (policy document anchoring).
+Supported rails for **policy document** anchoring: **`hedera-hcs`**, **`xrpl-nft`**.
 
-> **Removed / superseded:** The former `xrpl-nft` rail (NFTokenMint/Burn for policy anchors) is no longer supported. **Grant liveness** (whether a grant is still valid) is handled separately via **XLS-70** `CredentialCreate` / `CredentialDelete` on XRPL — not via policy `anchorRef`.
+> **Grant liveness** (whether a grant is still valid) is **not** defined by burning the policy anchor NFT. Use **XLS-70** `CredentialCreate` / `CredentialDelete` on XRPL for credential-based grant revocation. Policy `anchorRef` (HCS or XRPL NFT) remains the tamper-evident **policy document** anchor only.
 
-The returned `anchorRef` can be stored on the PolicyGrant (`grant.anchorRef`) to provide on-chain auditability of the **policy document** (HCS).
+The returned `anchorRef` can be stored on the PolicyGrant (`grant.anchorRef`) to provide on-chain auditability of the **policy document**.
 
 ---
 

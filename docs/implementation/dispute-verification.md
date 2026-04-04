@@ -18,7 +18,7 @@ const result = verifyDisputedSettlement({
   context: settlementVerificationContext,
   // Optional: ledger anchor result from policy document anchoring
   ledgerAnchor: {
-    anchorRef: grant.anchorRef,  // "hcs:0.0.12345:42"
+    anchorRef: grant.anchorRef,  // e.g. "hcs:0.0.12345:42" or "xrpl:nft:ABC123..."
     rail: "hedera-hcs",
     sequenceNumber: "42",
     topicId: "0.0.12345",
