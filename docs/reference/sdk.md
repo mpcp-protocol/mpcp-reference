@@ -36,7 +36,7 @@ const grant = createPolicyGrant({
   allowedAssets: [{ kind: "IOU", currency: "RLUSD", issuer: "rIssuer" }],
   expiresAt: "2030-12-31T23:59:59Z",
   // Optional: on-chain anchor reference for this policy document
-  // anchorRef: "hcs:0.0.12345:42" | "xrpl:nft:ABC123..."
+  // anchorRef: "hcs:0.0.12345:42"
 });
 
 // Signed (requires MPCP_POLICY_GRANT_SIGNING_PRIVATE_KEY_PEM — returns null if not set)

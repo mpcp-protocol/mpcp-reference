@@ -2,7 +2,11 @@
 
 Optional support for publishing MPCP policy documents to distributed ledgers. Provides public auditability, dispute protection, and tamper-evident policy history.
 
-**Hedera HCS** adapter is implemented (publish policy document to a topic). **XRPL NFT** adapter is implemented (mint an NFT representing the policy document). Both return an `anchorRef` that is stored on the PolicyGrant.
+**Hedera HCS** adapter is implemented (publish policy document to a topic). It returns an `anchorRef` that is stored on the PolicyGrant for **policy document** auditability and dispute resolution.
+
+> **Grant liveness** (revoking or invalidating a grant) is a **separate** mechanism: XRPL **XLS-70** credentials (`CredentialCreate` / `CredentialDelete`), not policy `anchorRef` on HCS.
+
+> **Historical note:** An earlier **XRPL NFT** policy-anchor path (`xrpl:nft:{tokenId}`) existed in reference discussions; it is **removed / superseded** for anchoring. Use HCS for policy documents; use XLS-70 for grant state.
 
 ## Purpose
 
@@ -17,12 +21,11 @@ The `anchorRef` field on a PolicyGrant identifies the on-chain location of the a
 | Format | Rail | Example |
 |--------|------|---------|
 | `hcs:{topicId}:{seq}` | Hedera HCS | `hcs:0.0.12345:42` |
-| `xrpl:nft:{tokenId}` | XRPL NFT | `xrpl:nft:ABC123...` |
 
 ## Usage
 
 ```typescript
-import { hederaHcsAnchorPolicyDocument, checkXrplNftRevocation } from "mpcp-service/anchor";
+import { hederaHcsAnchorPolicyDocument } from "mpcp-service/anchor";
 
 const policyDoc = { version: "1.0", policyHash: "a1b2c3...", issuedAt: "2026-01-01T00:00:00Z" };
 
@@ -44,9 +47,9 @@ const grant = createPolicyGrant({
 
 ```typescript
 interface PolicyAnchorResult {
-  anchorRef: string;         // "hcs:{topicId}:{seq}" | "xrpl:nft:{tokenId}"
+  anchorRef: string;         // "hcs:{topicId}:{seq}"
   rail: AnchorRail;
-  txHash?: string;           // XRPL transaction hash
+  txHash?: string;           // Optional ledger record id (implementation-specific)
   topicId?: string;          // Hedera HCS topic ID
   sequenceNumber?: string;   // Hedera HCS sequence number
   anchoredAt?: string;       // ISO 8601
@@ -71,21 +74,6 @@ The Hedera HCS adapter publishes policy documents to a Hedera Consensus Service 
 - `MPCP_HCS_OPERATOR_KEY` — Operator private key (DER or hex)
 - `MPCP_HCS_POLICY_TOPIC_ID` — HCS topic ID for policy anchoring
 - `HEDERA_NETWORK` (optional) — `testnet` or `mainnet`, default `testnet`
-
-## XRPL NFT Adapter
-
-The XRPL NFT adapter mints an NFT on the XRP Ledger representing the policy document. The NFT token ID becomes the `anchorRef`.
-
-**Revocation check:** Use `checkXrplNftRevocation(tokenId)` to verify whether the NFT has been burned (which signals policy revocation).
-
-```typescript
-import { checkXrplNftRevocation } from "mpcp-service/anchor";
-
-const revoked = await checkXrplNftRevocation("ABC123...");
-if (revoked) {
-  // Policy has been revoked on-chain
-}
-```
 
 ## XRPL Payment Memos
 

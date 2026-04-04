@@ -69,15 +69,13 @@ Publish a policy document to a ledger and return an `anchorRef` for use in Polic
 // Hedera HCS (requires MPCP_HCS_POLICY_TOPIC_ID, MPCP_HCS_OPERATOR_ID, MPCP_HCS_OPERATOR_KEY)
 const result = await anchorPolicyDocument(policyDoc, { rail: "hedera-hcs" });
 // result.anchorRef: "hcs:{topicId}:{sequenceNumber}"
-
-// XRPL NFT
-const result = await anchorPolicyDocument(policyDoc, { rail: "xrpl-nft" });
-// result.anchorRef: "xrpl:nft:{tokenId}"
 ```
 
-Supported rails: `hedera-hcs`, `xrpl-nft`.
+Supported rail: **`hedera-hcs`** (policy document anchoring).
 
-The returned `anchorRef` can be stored on the PolicyGrant (`grant.anchorRef`) to provide on-chain auditability.
+> **Removed / superseded:** The former `xrpl-nft` rail (NFTokenMint/Burn for policy anchors) is no longer supported. **Grant liveness** (whether a grant is still valid) is handled separately via **XLS-70** `CredentialCreate` / `CredentialDelete` on XRPL — not via policy `anchorRef`.
+
+The returned `anchorRef` can be stored on the PolicyGrant (`grant.anchorRef`) to provide on-chain auditability of the **policy document** (HCS).
 
 ---
 

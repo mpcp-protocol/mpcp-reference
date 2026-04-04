@@ -21,7 +21,7 @@ If any check fails, verification fails with a specific reason.
 | SBA | Signature valid; expiresAt not passed; sessionId, policyHash match |
 | SBA → decision | Budget not exceeded; rail, asset, destination in allowlists |
 | Settlement | Amount, rail, destination, asset match SBA constraints |
-| anchorRef | If present on PolicyGrant, format validated (`hcs:{topicId}:{seq}` or `xrpl:nft:{tokenId}`) |
+| anchorRef | If present on PolicyGrant, format validated (`hcs:{topicId}:{seq}`) |
 
 ## Usage
 
@@ -102,7 +102,7 @@ Settlement bundles for development and conformance testing may include `sbaPubli
 
 ## Dispute Verification
 
-When a settlement is disputed, `verifyDisputedSettlement` runs full chain verification plus optional policy anchor verification. If the PolicyGrant has an `anchorRef` (e.g., to Hedera HCS or XRPL NFT), the anchor can be checked to confirm the policy document was published before the settlement.
+When a settlement is disputed, `verifyDisputedSettlement` runs full chain verification plus optional policy anchor verification. If the PolicyGrant has an `anchorRef` (e.g., to Hedera HCS), the anchor can be checked to confirm the policy document was published before the settlement.
 
 See [Dispute Resolution](https://github.com/mpcp-protocol/mpcp-spec/blob/main/docs/guides/dispute-resolution.md) for the guide.
 

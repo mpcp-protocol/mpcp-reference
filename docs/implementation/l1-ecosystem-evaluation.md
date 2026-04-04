@@ -39,7 +39,7 @@ Adding a second rail is a protocol-level decision. It requires:
 | Identity | `did:xrpl` | On-ledger DID method; XLS-70 Credentials for grant liveness |
 | Offline friendliness | Strong | Trust Bundle + signature verification; no chain client needed |
 | Tooling | Good | `xrpl.js`, testnet faucet, well-documented |
-| MPCP integration | Deep | Anchor adapters, DID resolver, NFT revocation, stablecoin profile, golden vectors |
+| MPCP integration | Deep | Anchor adapters, DID resolver, XLS-70 credential revocation, stablecoin profile, golden vectors |
 
 **Assessment:** Production-ready for MPCP v1.0. No gaps.
 
