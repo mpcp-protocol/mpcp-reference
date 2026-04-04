@@ -37,7 +37,7 @@ The example generates the MPCP authorization chain:
 
 | File | Artifact | Description |
 |------|----------|-------------|
-| policy-grant.json | PolicyGrant | Permission envelope (allowedRails, policyHash, expiresAt) |
+| policy-grant.json | PolicyGrant | Permission envelope (allowedRails, allowedPurposes, policyHash, expiresAt, budgetMinor) |
 | budget-auth.json | BudgetAuthorization | Unsigned spending envelope |
 | signed-budget-auth.json | SignedBudgetAuthorization (SBA) | Signed budget for this payment (maxAmountMinor) |
 | settlement.json | Settlement | Executed settlement record (via Trust Gateway → XRPL) |

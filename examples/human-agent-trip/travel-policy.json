@@ -14,7 +14,6 @@
     "travel:flight",
     "travel:transport"
   ],
-  "revocationEndpoint": "https://wallet.alice.example.com/revoke",
   "allowedRails": ["xrpl"],
   "allowedAssets": [
     { "kind": "IOU", "currency": "RLUSD", "issuer": "rIssuer" }
