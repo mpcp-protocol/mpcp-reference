@@ -78,15 +78,15 @@ Implements: protocol verification engine, artifact schemas, cryptographic signin
 
 ---
 
-## Phase 6 — Adoption Acceleration
+## Phase 6 — Adoption Acceleration ✓
 
 | PR | Title | Status |
 |----|-------|--------|
-| PR21 | Payment profiles expansion (XRPL Stablecoin, RLUSD) | pending |
-| PR22 | Layer-1 ecosystem evaluation (XRPL, Hedera, Stellar, EVM) | pending |
-| PR23 | Machine wallet guardrails documentation | pending |
-| PR24 | Automated fleet payment demo (visual end-to-end) | pending |
-| PR25 | MPCP conformance badge | pending |
+| PR21 | Payment profiles expansion (XRPL Stablecoin, RLUSD) | ✓ |
+| PR22 | Layer-1 ecosystem evaluation (XRPL, Hedera, Stellar, EVM) | ✓ |
+| PR23 | Machine wallet guardrails documentation | ✓ |
+| PR24 | Automated fleet payment demo (visual end-to-end) | ✓ |
+| PR25 | MPCP conformance badge | ✓ |
 | PR26 | Human-to-Agent Delegation Profile (`revocationEndpoint`, `allowedPurposes`, TRIP scope, `checkRevocation()`) | ✓ |
 | PR27 | On-Chain Policy Anchoring (`anchorRef`, `resolveXrplDid`, `hederaHcsAnchorPolicyDocument`, `checkXrplNftRevocation`) | ✓ |
 | PR28 | Encrypted Policy Anchoring (`submitMode`, AES-256-GCM via `crypto.subtle`, `PolicyDocumentCustody`, XRPL IPFS prep) | ✓ |
@@ -154,65 +154,57 @@ All three functions flat-exported from `src/sdk/index.ts`, consistent with exist
 
 ---
 
-## PR21 — Payment Profiles Expansion
+## PR21 — Payment Profiles Expansion ✓
 
-Expand reference profiles so MPCP is immediately usable for real payment ecosystems.
+XRPL Stablecoin profile — RLUSD / issued-asset payment constraints, wallet and verifier expectations.
 
-Initial focus:
-- XRPL Stablecoin Profile — RLUSD / issued-asset payment constraints
-- Wallet and verifier expectations for stablecoin settlement
-
-Future candidates: Stellar, Hedera, EVM stablecoin.
-
-Deliverables:
-- Profile document(s)
-- Example artifact bundles
-- Verification guidance per profile
+Delivered:
+- `docs/implementation/xrpl-stablecoin-profile.md` — full profile doc (asset constraints, policy shape, wallet/verifier expectations, Trust Gateway integration)
+- `profiles/xrpl-stablecoin.json` — machine-readable profile definition
+- `examples/xrpl-stablecoin/` — example artifact bundle + README
+- `docs/implementation/reference-profiles.md` updated with XRPL Stablecoin entry
 
 ---
 
-## PR22 — Layer-1 Ecosystem Evaluation
+## PR22 — Layer-1 Ecosystem Evaluation ✓
 
-Research and document which L1/payment ecosystem to prioritize next for MPCP deployment profiles.
+Research document comparing XRPL, Stellar, Hedera, and EVM (L2) against MPCP settlement requirements: stablecoin maturity, budget reservation, finality, fees, identity, offline friendliness, tooling.
 
-Evaluation criteria: stablecoin support, settlement finality, fees, compliance features, offline/verifier friendliness, developer tooling.
-
-Deliverables:
-- Research document comparing candidates
-- Recommended next profile target with rationale
+Delivered:
+- `docs/implementation/l1-ecosystem-evaluation.md` — full comparison matrix and recommendation
+- **Recommendation:** Stellar (USDC + Claimable Balances) as next rail; EVM L2 second; Hedera continues as anchoring layer
 
 ---
 
-## PR23 — Machine Wallet Guardrails
+## PR23 — Machine Wallet Guardrails ✓
 
-Document and demonstrate how MPCP acts as a machine wallet guardrail layer: a machine wallet may not send funds unless the payment satisfies the full PolicyGrant → SBA → SPA constraint chain.
+How MPCP acts as a machine wallet guardrail layer: PolicyGrant constraints, SBA session limits, Trust Gateway verification.
 
-Deliverables:
-- Guide describing the guardrail model
-- Wallet integration example
-- Threat-model notes for overspend and misuse prevention
-
----
-
-## PR24 — Automated Fleet Payment Demo
-
-Visual end-to-end demonstration of an MPCP-controlled fleet payment (vehicle → parking/charging facility → verifier → settlement).
-
-Deliverables:
-- Runnable demo script
-- Architecture diagram
-- Companion documentation
+Delivered:
+- `docs/implementation/machine-wallet-guardrails.md` — guardrail model, Layer 1/2/3 enforcement, threat model, XRPL memo integration
+- `docs/examples/machine-wallet-guardrails.md` — example walkthrough
+- `examples/machine-wallet-guardrails/wallet-integration.mjs` — runnable script with allowed/rejected scenarios
 
 ---
 
-## PR25 — MPCP Conformance Badge
+## PR24 — Automated Fleet Payment Demo ✓
 
-Lightweight conformance process: implementations that pass the golden vectors and required verification checks may claim compatibility.
+End-to-end fleet payment demonstrations with architecture diagrams and runnable scripts.
 
-Deliverables:
-- Conformance criteria
-- Badge / claim format
-- Documentation for external implementers
+Delivered:
+- `examples/fleet-trip/` — multi-stop robotaxi demo (toll, charging, parking, tamper detection); `demo-fleet-trip.mjs`
+- `examples/machine-commerce/` — fleet spend simulator (`simulate.mjs`), fleet demo (`demo-fleet.mjs`), scenarios + policy JSON
+- `docs/examples/fleet.md` — architecture diagram (Vehicle Agent → Verifier → Trust Gateway → XRPL), run instructions, key behaviors
+
+---
+
+## PR25 — MPCP Conformance Badge ✓
+
+Formal conformance tiers (L0–L3), Shields.io badge, `package.json` claim format, implementer checklist.
+
+Delivered:
+- `docs/implementation/conformance.md` — expanded with L0 Hash / L1 Structural / L2 Full-chain / L3 Profile tiers; badge format; `package.json` claim schema; per-tier implementer checklist
+- Aligns with `mpcp-spec/test-vectors/CONFORMANCE.md` (L0/L1/L2 definitions)
 
 ---
 
